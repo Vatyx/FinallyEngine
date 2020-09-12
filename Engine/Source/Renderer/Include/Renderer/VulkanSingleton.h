@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma optimize("", off)
+
 #include "Renderer/VulkanDevice.h"
 #include "Renderer/VulkanFramebuffer.h"
 #include "Renderer/VulkanViewport.h"
@@ -13,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 const uint32_t WIDTH = 800;
@@ -43,11 +45,9 @@ public:
 
 	GLFWwindow* GetWindow() { return Window; }
 
-	static VulkanSingleton& GetInstance() { static VulkanSingleton GVulkanSingleton; return GVulkanSingleton; }
+	VkInstance GetHandle() { return VkInstanceResource.Get(); }
 
-	static VkInstance GetHandle() { return GetInstance().VkInstanceResource.Get(); }
-
-	static VmaAllocator GetAllocator() { return GetInstance().Allocator; }
+	VmaAllocator GetAllocator() { return Allocator; }
 
 private:
 	void CreateWindow();
@@ -56,20 +56,21 @@ private:
 	void CreateAllocator();
 
 	bool IsDeviceSuitable(VkPhysicalDevice PhysicalDevice);
-	std::pair<uint32_t, const char**> GetRequiredInstanceExtensions();
+	static std::pair<uint32_t, const char**> GetRequiredInstanceExtensions();
 
 	UniqueResource<VkInstance, VkInstanceDeleter> VkInstanceResource;
 
-	VmaAllocator Allocator;
+	VmaAllocator Allocator{};
 
-	VkPhysicalDevice PhysicalDevice;
+	VkPhysicalDevice PhysicalDevice{};
+
 	std::unique_ptr<VulkanDevice> Device;
 
 	std::unique_ptr<VulkanViewport> Viewport;
 
 	std::vector<std::unique_ptr<VulkanFramebuffer>> Framebuffers;
 
-	GLFWwindow* Window;
+	GLFWwindow* Window{};
 };
 
 } // namespace Finally

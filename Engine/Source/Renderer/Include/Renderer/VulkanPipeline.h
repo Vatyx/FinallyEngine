@@ -5,7 +5,7 @@
 #include "Utilities/EnumUtilities.h"
 #include <vector>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 using namespace EnumUtilities;

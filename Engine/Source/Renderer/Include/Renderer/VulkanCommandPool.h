@@ -2,15 +2,18 @@
 
 #include <vulkan/vulkan.h>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 class VulkanCommandPool
 {
-	VulkanCommandPool(const class VulkanDevice* Device);
+    [[nodiscard]]
+	explicit VulkanCommandPool(const class VulkanDevice* Device);
+
 	~VulkanCommandPool();
 
-	VkCommandPool GetHandle() { return CommandPool; }
+	[[nodiscard]]
+	VkCommandPool GetHandle() const { return CommandPool; }
 
 private:
 	VkCommandPool CommandPool;

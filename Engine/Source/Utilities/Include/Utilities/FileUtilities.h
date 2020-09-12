@@ -3,11 +3,9 @@
 #include <string>
 #include <vector>
 
-namespace Finally {
-namespace FileUtilities
+namespace Finally::FileUtilities
 {
 
 std::vector<char> ReadFile(const std::string& FileName);
 
-} // namespace FileUtilities
 } // namespace Finally

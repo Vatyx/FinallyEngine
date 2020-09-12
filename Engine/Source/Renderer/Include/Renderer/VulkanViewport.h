@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 class VulkanDevice;
@@ -26,10 +26,10 @@ public:
 
 	~VulkanViewport();
 
-	VkViewport CreateVkViewport() const;
+	[[nodiscard]] VkViewport CreateVkViewport() const;
 
-	VkFormat GetSwapchainFormat() const { return ImageFormat; }
-	VkExtent2D GetExtents() const { return Extent; }
+	[[nodiscard]] VkFormat GetSwapchainFormat() const { return ImageFormat; }
+	[[nodiscard]] VkExtent2D GetExtents() const { return Extent; }
 	const std::vector<VkImage>& GetSwapchainImages() { return SwapchainImages; }
 	const std::vector<VkImageView>& GetSwapchainImageViews() { return SwapchainImageViews; }
 

@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.17)
 
 project(FinallyRenderer CXX)
 
-find_package(Vulkan REQUIRED)
+find_package(Vulkan REQUIRED FATAL_ERROR)
 
-add_library(FinallyRenderer)
+add_library(FinallyRenderer SHARED)
 
 target_sources(FinallyRenderer
         PRIVATE

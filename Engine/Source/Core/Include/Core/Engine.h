@@ -2,8 +2,9 @@
 
 #include <memory>
 #include <chrono>
+#include <Renderer/VulkanSingleton.h>
 
-namespace Finally
+namespace Finally::Core
 {
 
 using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
@@ -11,8 +12,6 @@ using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
 class Engine
 {
 public:
-	static Engine& GetEngine() { static Engine GEngine; return GEngine; }
-
 	void Start();
 
 private:
@@ -28,6 +27,8 @@ private:
 	// Time
 	TimePoint PreviousFrameTime;
 	float DeltaSecondsThisFrame = 0.0f;
+
+	Renderer::VulkanSingleton VulkanInstance;
 };
 
 }

@@ -1,7 +1,7 @@
 
 #include "Renderer/VulkanQueue.h"
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanQueue::VulkanQueue(VkDevice Device, uint32_t InQueueFamilyIndex, uint32_t InQueueIndex)

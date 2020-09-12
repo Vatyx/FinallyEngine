@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanFramebuffer::VulkanFramebuffer(VkDevice InDevice, VkRenderPass RenderPass, const std::vector<VkImageView>& Attachments, VkExtent2D Extents)

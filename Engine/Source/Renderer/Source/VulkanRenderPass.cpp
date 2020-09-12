@@ -5,7 +5,7 @@
 
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanRenderPass::VulkanRenderPass(VkDevice InDevice, const VkFormat& SwapchainFormat)

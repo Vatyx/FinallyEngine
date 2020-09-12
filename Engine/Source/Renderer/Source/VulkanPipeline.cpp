@@ -8,7 +8,7 @@
 #include <xutility>
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanPipeline::VulkanPipeline(VkDevice InDevice, const VulkanViewport* Viewport, const VulkanRenderPass* RenderPass, const VulkanShader* VertexShader, const VulkanShader* FragmentShader)

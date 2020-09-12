@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanShader::VulkanShader(VkDevice InDevice, const std::string& FileName)

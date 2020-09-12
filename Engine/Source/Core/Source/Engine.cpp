@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace Finally
+namespace Finally::Core
 {
 
 void Engine::Start()
@@ -18,7 +18,7 @@ void Engine::Start()
 
 void Engine::Initialize()
 {
-	VulkanSingleton::GetInstance().Initialize();
+	VulkanInstance.Initialize();
 
 	PreviousFrameTime = std::chrono::high_resolution_clock::now();
 }
@@ -46,7 +46,7 @@ void Engine::Tick(float DeltaTime)
 
 bool Engine::ShouldShutdown()
 {
-	auto Window = VulkanSingleton::GetInstance().GetWindow();
+	auto Window = VulkanInstance.GetWindow();
 
 	return glfwWindowShouldClose(Window);
 }

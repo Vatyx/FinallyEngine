@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 class VulkanDevice;

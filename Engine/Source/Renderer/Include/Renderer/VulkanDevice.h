@@ -12,7 +12,7 @@
 #include <memory>
 #include <iostream>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 const std::vector<const char*> DeviceExtensions = {

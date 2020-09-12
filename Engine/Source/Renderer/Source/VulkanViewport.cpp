@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanViewport::VulkanViewport(VulkanDevice* InDevice, VkInstance InInstance, GLFWwindow* Window)

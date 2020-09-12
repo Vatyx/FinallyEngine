@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 class VulkanQueue

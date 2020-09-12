@@ -22,10 +22,10 @@ template<typename T, typename Deleter>
 struct UniqueResource
 {
 	constexpr UniqueResource() = default;
-	constexpr UniqueResource(T InResource) : Resource(std::move(InResource)) {}
+	constexpr explicit UniqueResource(T InResource) : Resource(std::move(InResource)) {}
 
 	template<typename... Args>
-	constexpr UniqueResource(Args&&... args) : Resource(std::forward<Args>(args)...) {}
+	constexpr explicit UniqueResource(Args&&... args) : Resource(std::forward<Args>(args)...) {}
 
 	constexpr UniqueResource(UniqueResource& other) = delete;
 	constexpr UniqueResource& operator=(UniqueResource& rhs) = delete;

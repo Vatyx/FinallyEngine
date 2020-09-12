@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 using namespace EnumUtilities;

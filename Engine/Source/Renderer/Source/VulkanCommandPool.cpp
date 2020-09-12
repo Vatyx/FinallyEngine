@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanCommandPool::VulkanCommandPool(const VulkanDevice* InDevice)

@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <utility>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 VulkanSingleton::~VulkanSingleton()
@@ -89,15 +89,15 @@ void VulkanSingleton::CreateInstance()
 void VulkanSingleton::GetPhysicalDevice()
 {
 	uint32_t DeviceCount = 0;
-	vkEnumeratePhysicalDevices(GetHandle(), &DeviceCount, nullptr);
+	vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, nullptr);
 
-	if (DeviceCount == 0) 
+	if (DeviceCount == 0)
 	{
 		throw std::runtime_error("failed to find GPUs with Vulkan support!");
 	}
 
 	std::vector<VkPhysicalDevice> Devices(DeviceCount);
-	vkEnumeratePhysicalDevices(GetHandle(), &DeviceCount, Devices.data());
+	vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, Devices.data());
 
 	for (const auto& Device : Devices)
 	{

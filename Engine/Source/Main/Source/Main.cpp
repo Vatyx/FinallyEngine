@@ -2,7 +2,7 @@
 #include <Core/Engine.h>
 
 int main() {
-	Finally::Engine::GetEngine().Start();
+	Finally::Core::Engine{}.Start();
 
 	return 0;
 }

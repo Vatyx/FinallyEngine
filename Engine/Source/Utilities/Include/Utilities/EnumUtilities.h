@@ -2,8 +2,7 @@
 
 #include <type_traits>
 
-namespace Finally {
-namespace EnumUtilities
+namespace Finally::EnumUtilities
 {
 
 template< typename Enumeration >
@@ -20,5 +19,4 @@ constexpr std::size_t EnumIndex(const Enumeration value) noexcept
 	return static_cast<std::size_t>(value);
 }
 
-} // namespace EnumUtilities
 } // namespace Finally

@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-namespace Finally
+namespace Finally::Renderer
 {
 
 class VulkanFramebuffer
