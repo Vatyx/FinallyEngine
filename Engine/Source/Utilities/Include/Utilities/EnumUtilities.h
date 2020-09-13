@@ -5,18 +5,18 @@
 namespace Finally::EnumUtilities
 {
 
-template< typename Enumeration >
+template <typename Enumeration>
 constexpr std::size_t EnumCount() noexcept
 {
-	static_assert(std::is_enum< Enumeration >::value, "Not an enum");
-	return static_cast<std::size_t>(Enumeration::MAX);
+    static_assert(std::is_enum<Enumeration>::value, "Not an enum");
+    return static_cast<std::size_t>(Enumeration::MAX);
 }
 
-template< typename Enumeration >
+template <typename Enumeration>
 constexpr std::size_t EnumIndex(const Enumeration value) noexcept
 {
-	static_assert(std::is_enum< Enumeration >::value, "Not an enum");
-	return static_cast<std::size_t>(value);
+    static_assert(std::is_enum<Enumeration>::value, "Not an enum");
+    return static_cast<std::size_t>(value);
 }
 
-} // namespace Finally
+}  // namespace Finally::EnumUtilities

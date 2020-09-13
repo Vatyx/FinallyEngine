@@ -1,8 +1,9 @@
 
 #include <Core/Engine.h>
 
-int main() {
-	Finally::Core::Engine{}.Start();
+int main()
+{
+    Finally::Core::Engine{}.Start();
 
-	return 0;
+    return 0;
 }

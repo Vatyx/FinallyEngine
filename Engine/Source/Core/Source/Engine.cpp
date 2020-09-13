@@ -1,8 +1,8 @@
 
 #include "Core/Engine.h"
 
+#include "Renderer/Vulkan/VulkanSingleton.h"
 #include <GLFW/glfw3.h>
-#include "Renderer/VulkanSingleton.h"
 
 #include <iostream>
 
@@ -11,44 +11,44 @@ namespace Finally::Core
 
 void Engine::Start()
 {
-	Initialize();
+    Initialize();
 
-	EngineLoop();
+    EngineLoop();
 }
 
 void Engine::Initialize()
 {
-	VulkanInstance.Initialize();
+    VulkanInstance.Initialize();
 
-	PreviousFrameTime = std::chrono::high_resolution_clock::now();
+    PreviousFrameTime = std::chrono::high_resolution_clock::now();
 }
 
 void Engine::EngineLoop()
 {
-	while (!ShouldShutdown())
-	{
-		glfwPollEvents();
+    while (!ShouldShutdown())
+    {
+        glfwPollEvents();
 
-		auto CurrentFrameTime = std::chrono::high_resolution_clock::now();
+        auto CurrentFrameTime = std::chrono::high_resolution_clock::now();
 
-		DeltaSecondsThisFrame = std::chrono::duration<float, std::chrono::seconds::period>(CurrentFrameTime - PreviousFrameTime).count();
+        DeltaSecondsThisFrame = std::chrono::duration<float, std::chrono::seconds::period>(CurrentFrameTime - PreviousFrameTime).count();
 
-		Tick(DeltaSecondsThisFrame);
+        Tick(DeltaSecondsThisFrame);
 
-		PreviousFrameTime = CurrentFrameTime;
-	}
+        PreviousFrameTime = CurrentFrameTime;
+    }
 }
 
 void Engine::Tick(float DeltaTime)
 {
-	//std::cout << "Hello World: " << DeltaTime << std::endl;
+    // std::cout << "Hello World: " << DeltaTime << std::endl;
 }
 
 bool Engine::ShouldShutdown()
 {
-	auto Window = VulkanInstance.GetWindow();
+    auto Window = VulkanInstance.GetWindow();
 
-	return glfwWindowShouldClose(Window);
+    return glfwWindowShouldClose(Window);
 }
 
-} // namespace Finally
+}  // namespace Finally::Core

@@ -5,8 +5,8 @@ project(FinallyUtilities CXX)
 add_library(FinallyUtilities)
 
 target_sources(FinallyUtilities
-    PRIVATE
+        PRIVATE
         Source/FileUtilities.cpp
-)
+        )
 
 target_include_directories(FinallyUtilities PUBLIC Include)
