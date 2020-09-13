@@ -4,7 +4,7 @@ project(FinallyRenderer CXX)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 
-add_library(FinallyRenderer SHARED)
+add_library(FinallyRenderer)
 
 target_sources(FinallyRenderer
         PRIVATE

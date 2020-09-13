@@ -3,10 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Utilities/TemplateUtilities.h"
-#include "VulkanPipeline.h"
 #include "VulkanQueue.h"
-#include "VulkanRenderPass.h"
-#include "VulkanShader.h"
 
 #include <iostream>
 #include <memory>
@@ -15,7 +12,13 @@
 namespace Finally::Renderer
 {
 
-const std::vector<const char*> DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+class VulkanFramebuffer;
+class VulkanPipeline;
+class VulkanRenderPass;
+class VulkanShader;
+class VulkanViewport;
+
+const std::vector<const char*> DeviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 enum class QueueFamilyType : uint8_t
 {
@@ -32,37 +35,60 @@ class VulkanDevice
     };
 
 public:
-    VulkanDevice(VkPhysicalDevice PhysicalDevice);
+    VulkanDevice() = delete;
+    explicit VulkanDevice(VkPhysicalDevice PhysicalDevice);
 
-    void CreateShaders();
-    void CreateRenderPass(const VkFormat& SwapchainFormat);
-    void CreatePipeline(const VulkanViewport* Viewport);
+    VulkanDevice(const VulkanDevice&) = delete;
+    VulkanDevice& operator=(const VulkanDevice&) = delete;
 
-    VkDevice          GetHandle() const { return VkDeviceResource.Get(); }
-    VkPhysicalDevice  GetPhysicalDevice() const { return PhysicalDevice; }
-    VulkanRenderPass* GetRenderPass() const { return RenderPass.get(); }
+    VulkanDevice(VulkanDevice&&) = delete;
+    VulkanDevice& operator=(VulkanDevice&&) = delete;
+
+    ~VulkanDevice();
+
+    void Initialize(const VulkanViewport& Viewport);
+
+    [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
+    [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
+    [[nodiscard]] VulkanRenderPass* GetRenderPass() const { return RenderPass.get(); }
+
+    [[nodiscard]] VulkanQueue GetGraphicsQueue() const { return GraphicsQueue; }
+    [[nodiscard]] VulkanQueue GetTransferQueue() const { return TransferQueue; }
+    [[nodiscard]] VulkanQueue GetPresentQueue() const { return PresentQueue; }
+    [[nodiscard]] VulkanQueue GetComputeQueue() const { return ComputeQueue; }
 
 private:
-    std::vector<VkDeviceQueueCreateInfo> CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice) const;
-    VkDeviceQueueCreateInfo              CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
-                                                                       const std::vector<VkQueueFamilyProperties>& QueueFamilies) const;
-    void                                 SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos);
-    void                                 SetupPresentQueue(VkSurfaceKHR Surface);
+    void CreateShaders();
+    void CreateRenderPass(const VkFormat& SwapchainFormat);
+    void CreatePipeline(const VulkanViewport& Viewport);
+    void CreateFramebuffers(const VulkanViewport& Viewport);
+    void CreateCommandPool();
+
+    void SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos);
+    void SetupPresentQueue(VkSurfaceKHR Surface);
+
+    static std::vector<VkDeviceQueueCreateInfo> CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice);
+    [[nodiscard]] static VkDeviceQueueCreateInfo CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
+                                                                               const std::vector<VkQueueFamilyProperties>& QueueFamilies);
 
     UniqueResource<VkDevice, VkDeviceDeleter> VkDeviceResource;
 
     VkPhysicalDevice PhysicalDevice;
 
     VulkanQueue GraphicsQueue;
-    VulkanQueue PresentQueue;
     VulkanQueue TransferQueue;
+    VulkanQueue PresentQueue;
     VulkanQueue ComputeQueue;
 
     std::unique_ptr<VulkanRenderPass> RenderPass;
-    std::unique_ptr<VulkanPipeline>   Pipeline;
+    std::unique_ptr<VulkanPipeline> Pipeline;
 
     std::unique_ptr<VulkanShader> VertexShader;
     std::unique_ptr<VulkanShader> FragmentShader;
+
+    std::vector<std::unique_ptr<VulkanFramebuffer>> Framebuffers;
+
+    std::unique_ptr<class VulkanCommandPool> CommandPool;
 
     friend class VulkanViewport;
 };

@@ -19,32 +19,32 @@ enum class ShaderStage : uint8_t
 {
     Vertex,
     Fragment,
-    MAX
+    MAX [[maybe_unused]]
 };
 
 class VulkanPipeline
 {
 public:
-    VulkanPipeline(VkDevice InDevice, const VulkanViewport* Viewport, const VulkanRenderPass* RenderPass, const VulkanShader* VertexShader,
-                   const VulkanShader* FragmentShader);
+    VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewport& Viewport, const VulkanRenderPass& RenderPass, const VulkanShader& VertexShader,
+                   const VulkanShader& FragmentShader);
 
     ~VulkanPipeline();
 
     [[nodiscard]] VkPipeline GetHandle() const { return PipelineHandle; }
 
 private:
-    VkPipelineLayout PipelineLayoutHandle;
-    VkPipeline       PipelineHandle;
+    VkPipelineLayout PipelineLayoutHandle{};
+    VkPipeline       PipelineHandle{};
 
-    VkDevice Device;
+    const VulkanDevice& Device;
 
 private:
     void CreatePipelineLayout();
 
-    void CreateShaderSteps(const VulkanShader* VertexShader, const VulkanShader* FragShader);
+    void CreateShaderSteps(const VulkanShader& VertexShader, const VulkanShader& FragShader);
     void CreateVertexInputStep();
     void CreateInputAssemblyStep();
-    void CreateViewportState(const VulkanViewport* Viewport);
+    void CreateViewportState(const VulkanViewport& Viewport);
     void CreateRasterizerStep();
     void CreateMultisamplerStep();
     void CreateColorBlendingStep();
@@ -52,19 +52,19 @@ private:
 
     void CreateDynamicState();
 
-    VkPipelineShaderStageCreateInfo        ShaderStages[EnumCount<ShaderStage>()];
-    VkPipelineVertexInputStateCreateInfo   VertexInputInfo;
-    VkPipelineInputAssemblyStateCreateInfo InputAssembly;
-    VkPipelineRasterizationStateCreateInfo Rasterizer;
-    VkPipelineMultisampleStateCreateInfo   Multisampling;
-    VkPipelineColorBlendAttachmentState    ColorBlendAttachment;
-    VkPipelineColorBlendStateCreateInfo    ColorBlending;
+    VkPipelineShaderStageCreateInfo        ShaderStages[EnumCount<ShaderStage>()] = {};
+    VkPipelineVertexInputStateCreateInfo   VertexInputInfo{};
+    VkPipelineInputAssemblyStateCreateInfo InputAssembly{};
+    VkPipelineRasterizationStateCreateInfo Rasterizer{};
+    VkPipelineMultisampleStateCreateInfo   Multisampling{};
+    VkPipelineColorBlendAttachmentState    ColorBlendAttachment{};
+    VkPipelineColorBlendStateCreateInfo    ColorBlending{};
 
-    VkPipelineViewportStateCreateInfo ViewportState;
-    VkViewport                        ViewportData;
-    VkRect2D                          Scissor;
+    VkPipelineViewportStateCreateInfo ViewportState{};
+    VkViewport                        ViewportData{};
+    VkRect2D                          Scissor{};
 
-    VkPipelineDynamicStateCreateInfo DynamicState;
+    VkPipelineDynamicStateCreateInfo DynamicState{};
     std::vector<VkDynamicState>      DynamicStates;
 };
 

@@ -13,7 +13,7 @@ class VulkanDevice;
 class VulkanShader
 {
 public:
-    VulkanShader(VkDevice InDevice, const std::string& FileName);
+    VulkanShader(const VulkanDevice& InDevice, const std::string& FileName);
 
     ~VulkanShader();
 
@@ -22,9 +22,9 @@ public:
 private:
     void CreateShaderModule(const std::vector<char>& ShaderCode);
 
-    VkShaderModule Handle;
+    VkShaderModule Handle{};
 
-    VkDevice Device;
+    const VulkanDevice& Device;
 };
 
 }  // namespace Finally::Renderer

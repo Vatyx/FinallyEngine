@@ -1,7 +1,12 @@
 
 #include "Renderer/Vulkan/VulkanDevice.h"
 
-#include "Utilities/EnumUtilities.h"
+#include "Renderer/Vulkan/VulkanCommandPool.h"
+#include "Renderer/Vulkan/VulkanFramebuffer.h"
+#include "Renderer/Vulkan/VulkanRenderPass.h"
+#include "Renderer/Vulkan/VulkanShader.h"
+#include "Renderer/Vulkan/VulkanPipeline.h"
+#include "Renderer/Vulkan/VulkanViewport.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -11,6 +16,8 @@ namespace Finally::Renderer
 {
 
 using namespace EnumUtilities;
+
+VulkanDevice::~VulkanDevice() = default;
 
 VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(InPhysicalDevice)
 {
@@ -36,22 +43,31 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
     SetupQueues(QueueCreateInfos);
 }
 
+void VulkanDevice::Initialize(const VulkanViewport& Viewport)
+{
+    CreateShaders();
+    CreateRenderPass(Viewport.GetSwapchainFormat());
+    CreatePipeline(Viewport);
+    CreateFramebuffers(Viewport);
+    CreateCommandPool();
+}
+
 void VulkanDevice::CreateRenderPass(const VkFormat& SwapchainFormat)
 {
     RenderPass = std::make_unique<VulkanRenderPass>(GetHandle(), SwapchainFormat);
 }
 
-void VulkanDevice::CreatePipeline(const VulkanViewport* Viewport)
+void VulkanDevice::CreatePipeline(const VulkanViewport& Viewport)
 {
-    Pipeline = std::make_unique<VulkanPipeline>(GetHandle(), Viewport, RenderPass.get(), VertexShader.get(), FragmentShader.get());
+    Pipeline = std::make_unique<VulkanPipeline>(*this, Viewport, *RenderPass, *VertexShader, *FragmentShader);
 }
 
 void VulkanDevice::CreateShaders()
 {
     VertexShader = std::make_unique<VulkanShader>(
-        GetHandle(), "C:\\Users\\Sahil Dhanju\\Documents\\Visual Studio 2019\\Projects\\FinallyEngine\\FinallyEngine\\Shaders\\Vertex.spv");
+        *this, R"(C:\Users\Sahil Dhanju\Documents\Visual Studio 2019\Projects\FinallyEngine\FinallyEngine\Shaders\Vertex.spv)");
     FragmentShader = std::make_unique<VulkanShader>(
-        GetHandle(), "C:\\Users\\Sahil Dhanju\\Documents\\Visual Studio 2019\\Projects\\FinallyEngine\\FinallyEngine\\Shaders\\Frag.spv");
+        *this, R"(C:\Users\Sahil Dhanju\Documents\Visual Studio 2019\Projects\FinallyEngine\FinallyEngine\Shaders\Frag.spv)");
 }
 
 void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos)
@@ -70,7 +86,7 @@ void VulkanDevice::SetupPresentQueue(VkSurfaceKHR Surface)
     PresentQueue = VulkanQueue{ GetHandle(), GraphicsQueue.GetFamilyIndex(), 0 };
 }
 
-std::vector<VkDeviceQueueCreateInfo> VulkanDevice::CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice) const
+std::vector<VkDeviceQueueCreateInfo> VulkanDevice::CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice)
 {
     std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos;
 
@@ -90,7 +106,7 @@ std::vector<VkDeviceQueueCreateInfo> VulkanDevice::CreateQueueCreateInfos(VkPhys
 }
 
 VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
-                                                                    const std::vector<VkQueueFamilyProperties>& QueueFamilies) const
+                                                                    const std::vector<VkQueueFamilyProperties>& QueueFamilies)
 {
     VkDeviceQueueCreateInfo QueueCreateInfo = {};
     QueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -98,7 +114,8 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
     bool SuccessfullyFoundQueueFamily = false;
     for (uint32_t i = 0; i < QueueFamilies.size(); i++)
     {
-        if ((QueueFamilies[i].queueFlags & QueueFlag) && !(QueueFamilies[i].queueFlags & QueueFlagsToIgnore))
+        const bool bDoesQueueMatch = (QueueFamilies[i].queueFlags & QueueFlag) && !(QueueFamilies[i].queueFlags & QueueFlagsToIgnore);
+        if (bDoesQueueMatch)
         {
             QueueCreateInfo.queueFamilyIndex = i;
             SuccessfullyFoundQueueFamily = true;
@@ -113,6 +130,19 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
     QueueCreateInfo.pQueuePriorities = &QueuePriority;
 
     return QueueCreateInfo;
+}
+void VulkanDevice::CreateCommandPool()
+{
+    CommandPool = std::make_unique<VulkanCommandPool>(*this);
+}
+
+void VulkanDevice::CreateFramebuffers(const VulkanViewport& Viewport)
+{
+    for (const auto& ImageView : Viewport.GetSwapchainImageViews())
+    {
+        Framebuffers.emplace_back(std::make_unique<VulkanFramebuffer>(GetHandle(), GetRenderPass()->GetHandle(),
+                                                                      std::vector<VkImageView>{ ImageView }, Viewport.GetExtents()));
+    }
 }
 
 }  // namespace Finally::Renderer

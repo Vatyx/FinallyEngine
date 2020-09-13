@@ -5,18 +5,20 @@
 namespace Finally::Renderer
 {
 
+class VulkanDevice;
+
 class VulkanCommandPool
 {
-    [[nodiscard]] explicit VulkanCommandPool(const class VulkanDevice* Device);
-
+public:
+    [[nodiscard]] explicit VulkanCommandPool(const VulkanDevice& Device);
     ~VulkanCommandPool();
 
     [[nodiscard]] VkCommandPool GetHandle() const { return CommandPool; }
 
 private:
-    VkCommandPool CommandPool;
+    VkCommandPool CommandPool{};
 
-    const VulkanDevice* Device;
+    const VulkanDevice& Device;
 };
 
 }  // namespace Finally::Renderer

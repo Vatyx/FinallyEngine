@@ -15,7 +15,7 @@ public:
 
     ~VulkanRenderPass();
 
-    VkRenderPass GetHandle() const { return Handle; }
+    [[nodiscard]] VkRenderPass GetHandle() const { return Handle; }
 
 private:
     VkRenderPass Handle;

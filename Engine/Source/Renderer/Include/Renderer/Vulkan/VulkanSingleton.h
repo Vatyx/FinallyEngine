@@ -1,11 +1,6 @@
 #pragma once
 
-#pragma optimize("", off)
-
 #include "Utilities/TemplateUtilities.h"
-#include "VulkanDevice.h"
-#include "VulkanFramebuffer.h"
-#include "VulkanViewport.h"
 
 #include <GLFW/glfw3.h>
 #include <vk_mem_alloc.h>
@@ -18,10 +13,12 @@
 namespace Finally::Renderer
 {
 
+class VulkanDevice;
+
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
-const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -36,6 +33,14 @@ class VulkanSingleton
     };
 
 public:
+    VulkanSingleton() = default;
+
+    VulkanSingleton(const VulkanSingleton&) = delete;
+    VulkanSingleton& operator=(const VulkanSingleton&) = delete;
+
+    VulkanSingleton(VulkanSingleton&&) = delete;
+    VulkanSingleton& operator=(VulkanSingleton&&) = delete;
+
     ~VulkanSingleton();
 
     void Initialize();
@@ -52,7 +57,7 @@ private:
     void GetPhysicalDevice();
     void CreateAllocator();
 
-    bool                                     IsDeviceSuitable(VkPhysicalDevice PhysicalDevice);
+    static bool IsDeviceSuitable(VkPhysicalDevice PotentialDevice);
     static std::pair<uint32_t, const char**> GetRequiredInstanceExtensions();
 
     UniqueResource<VkInstance, VkInstanceDeleter> VkInstanceResource;
@@ -61,11 +66,11 @@ private:
 
     VkPhysicalDevice PhysicalDevice{};
 
-    std::unique_ptr<VulkanDevice> Device;
+    std::shared_ptr<VulkanDevice> Device;
 
-    std::unique_ptr<VulkanViewport> Viewport;
+    std::shared_ptr<class VulkanViewport> Viewport;
 
-    std::vector<std::unique_ptr<VulkanFramebuffer>> Framebuffers;
+    std::vector<std::shared_ptr<class VulkanFramebuffer>> Framebuffers;
 
     GLFWwindow* Window{};
 };

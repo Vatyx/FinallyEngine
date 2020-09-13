@@ -1,6 +1,7 @@
 
 #include "Renderer/Vulkan/VulkanPipeline.h"
 
+#include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 #include "Renderer/Vulkan/VulkanShader.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
@@ -11,8 +12,8 @@
 namespace Finally::Renderer
 {
 
-VulkanPipeline::VulkanPipeline(VkDevice InDevice, const VulkanViewport* Viewport, const VulkanRenderPass* RenderPass,
-                               const VulkanShader* VertexShader, const VulkanShader* FragmentShader)
+VulkanPipeline::VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewport& Viewport, const VulkanRenderPass& RenderPass,
+                               const VulkanShader& VertexShader, const VulkanShader& FragmentShader)
     : Device(InDevice)
 {
     CreatePipelineLayout();
@@ -45,20 +46,20 @@ VulkanPipeline::VulkanPipeline(VkDevice InDevice, const VulkanViewport* Viewport
 
     PipelineInfo.layout = PipelineLayoutHandle;
 
-    PipelineInfo.renderPass = RenderPass->GetHandle();
+    PipelineInfo.renderPass = RenderPass.GetHandle();
     PipelineInfo.subpass = 0;
 
     PipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
     PipelineInfo.basePipelineIndex = -1;               // Optional
 
-    if (vkCreateGraphicsPipelines(Device, VK_NULL_HANDLE, 1, &PipelineInfo, nullptr, &PipelineHandle) != VK_SUCCESS)
+    if (vkCreateGraphicsPipelines(Device.GetHandle(), VK_NULL_HANDLE, 1, &PipelineInfo, nullptr, &PipelineHandle) != VK_SUCCESS)
     { throw std::runtime_error("failed to create graphics pipeline!"); }
 }
 
 VulkanPipeline::~VulkanPipeline()
 {
-    vkDestroyPipeline(Device, PipelineHandle, nullptr);
-    vkDestroyPipelineLayout(Device, PipelineLayoutHandle, nullptr);
+    vkDestroyPipeline(Device.GetHandle(), PipelineHandle, nullptr);
+    vkDestroyPipelineLayout(Device.GetHandle(), PipelineLayoutHandle, nullptr);
 }
 
 void VulkanPipeline::CreatePipelineLayout()
@@ -70,24 +71,24 @@ void VulkanPipeline::CreatePipelineLayout()
     PipelineLayoutInfo.pushConstantRangeCount = 0;     // Optional
     PipelineLayoutInfo.pPushConstantRanges = nullptr;  // Optional
 
-    if (vkCreatePipelineLayout(Device, &PipelineLayoutInfo, nullptr, &PipelineLayoutHandle) != VK_SUCCESS)
+    if (vkCreatePipelineLayout(Device.GetHandle(), &PipelineLayoutInfo, nullptr, &PipelineLayoutHandle) != VK_SUCCESS)
     { throw std::runtime_error("failed to create pipeline layout!"); }
 }
 
-void VulkanPipeline::CreateShaderSteps(const VulkanShader* VertexShader, const VulkanShader* FragShader)
+void VulkanPipeline::CreateShaderSteps(const VulkanShader& VertexShader, const VulkanShader& FragShader)
 {
     std::fill(ShaderStages, ShaderStages + EnumCount<ShaderStage>(), VkPipelineShaderStageCreateInfo{});
 
     VkPipelineShaderStageCreateInfo& VertShaderStageInfo = ShaderStages[EnumIndex(ShaderStage::Vertex)];
     VertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     VertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-    VertShaderStageInfo.module = VertexShader->GetHandle();
+    VertShaderStageInfo.module = VertexShader.GetHandle();
     VertShaderStageInfo.pName = "main";
 
     VkPipelineShaderStageCreateInfo& FragShaderStageInfo = ShaderStages[EnumIndex(ShaderStage::Fragment)];
     FragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     FragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    FragShaderStageInfo.module = FragShader->GetHandle();
+    FragShaderStageInfo.module = FragShader.GetHandle();
     FragShaderStageInfo.pName = "main";
 }
 
@@ -109,13 +110,13 @@ void VulkanPipeline::CreateInputAssemblyStep()
     InputAssembly.primitiveRestartEnable = VK_FALSE;
 }
 
-void VulkanPipeline::CreateViewportState(const VulkanViewport* Viewport)
+void VulkanPipeline::CreateViewportState(const VulkanViewport& Viewport)
 {
-    ViewportData = Viewport->CreateVkViewport();
+    ViewportData = Viewport.CreateVkViewport();
 
     Scissor = VkRect2D{};
     Scissor.offset = { 0, 0 };
-    Scissor.extent = Viewport->GetExtents();
+    Scissor.extent = Viewport.GetExtents();
 
     ViewportState = VkPipelineViewportStateCreateInfo{};
     ViewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -186,7 +187,6 @@ void VulkanPipeline::CreateDynamicState()
     DynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     DynamicState.dynamicStateCount = static_cast<uint32_t>(DynamicStates.size());
     DynamicState.pDynamicStates = DynamicStates.data();
-    ;
 }
 
 }  // namespace Finally::Renderer

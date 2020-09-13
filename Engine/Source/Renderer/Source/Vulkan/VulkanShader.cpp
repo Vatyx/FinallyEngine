@@ -1,24 +1,26 @@
 
 #include "Renderer/Vulkan/VulkanShader.h"
+#include "Renderer/Vulkan/VulkanDevice.h"
 
 #include "Utilities/FileUtilities.h"
 
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
 
 namespace Finally::Renderer
 {
 
-VulkanShader::VulkanShader(VkDevice InDevice, const std::string& FileName) : Device(InDevice)
+VulkanShader::VulkanShader(const VulkanDevice& InDevice, const std::string& FileName) : Device(InDevice)
 {
-    assert(Device != nullptr);
-
     std::vector<char> ShaderCode = FileUtilities::ReadFile(FileName);
 
     CreateShaderModule(ShaderCode);
 }
 
-VulkanShader::~VulkanShader() { vkDestroyShaderModule(Device, Handle, nullptr); }
+VulkanShader::~VulkanShader()
+{
+    vkDestroyShaderModule(Device.GetHandle(), Handle, nullptr);
+}
 
 void VulkanShader::CreateShaderModule(const std::vector<char>& ShaderCode)
 {
@@ -27,7 +29,10 @@ void VulkanShader::CreateShaderModule(const std::vector<char>& ShaderCode)
     CreateInfo.codeSize = ShaderCode.size();
     CreateInfo.pCode = reinterpret_cast<const uint32_t*>(ShaderCode.data());
 
-    if (vkCreateShaderModule(Device, &CreateInfo, nullptr, &Handle) != VK_SUCCESS) { throw std::runtime_error("failed to create shader module!"); }
+    if (vkCreateShaderModule(Device.GetHandle(), &CreateInfo, nullptr, &Handle) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create shader module!");
+    }
 }
 
 }  // namespace Finally::Renderer

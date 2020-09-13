@@ -1,8 +1,11 @@
 
 #include "Renderer/Vulkan/VulkanSingleton.h"
+
+#include "Renderer/Vulkan/VulkanDevice.h"
+#include "Renderer/Vulkan/VulkanFramebuffer.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
 
-#include <cstdlib>
+#include <algorithm>
 #include <stdexcept>
 #include <utility>
 
@@ -27,15 +30,7 @@ void VulkanSingleton::Initialize()
 
     Viewport = std::make_unique<VulkanViewport>(Device.get(), GetHandle(), Window);
 
-    Device->CreateShaders();
-    Device->CreateRenderPass(Viewport->GetSwapchainFormat());
-    Device->CreatePipeline(Viewport.get());
-
-    for (const auto& ImageView : Viewport->GetSwapchainImageViews())
-    {
-        Framebuffers.emplace_back(std::make_unique<VulkanFramebuffer>(Device->GetHandle(), Device->GetRenderPass()->GetHandle(),
-                                                                      std::vector<VkImageView>{ ImageView }, Viewport->GetExtents()));
-    }
+    Device->Initialize(*Viewport);
 }
 
 void VulkanSingleton::CreateWindow()
@@ -69,8 +64,8 @@ void VulkanSingleton::CreateInstance()
 
     if (enableValidationLayers)
     {
-        CreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-        CreateInfo.ppEnabledLayerNames = validationLayers.data();
+        CreateInfo.enabledLayerCount = static_cast<uint32_t>(ValidationLayers.size());
+        CreateInfo.ppEnabledLayerNames = ValidationLayers.data();
     }
     else
     {
@@ -78,9 +73,12 @@ void VulkanSingleton::CreateInstance()
     }
 
     VkInstance Instance;
-    VkResult   Result = vkCreateInstance(&CreateInfo, nullptr, &Instance);
+    VkResult Result = vkCreateInstance(&CreateInfo, nullptr, &Instance);
 
-    if (Result != VK_SUCCESS) { throw std::runtime_error("Failed To create Vulkan Instance!"); }
+    if (Result != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed To create Vulkan Instance!");
+    }
 
     VkInstanceResource = UniqueResource<VkInstance, VkInstanceDeleter>{ Instance };
 }
@@ -90,42 +88,44 @@ void VulkanSingleton::GetPhysicalDevice()
     uint32_t DeviceCount = 0;
     vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, nullptr);
 
-    if (DeviceCount == 0) { throw std::runtime_error("failed to find GPUs with Vulkan support!"); }
+    if (DeviceCount == 0)
+    {
+        throw std::runtime_error("failed to find GPUs with Vulkan support!");
+    }
 
     std::vector<VkPhysicalDevice> Devices(DeviceCount);
     vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, Devices.data());
 
-    for (const auto& Device : Devices)
+    for (const auto& PotentialDevice : Devices)
     {
-        if (IsDeviceSuitable(Device))
+        if (IsDeviceSuitable(PotentialDevice))
         {
-            PhysicalDevice = Device;
+            PhysicalDevice = PotentialDevice;
             break;
         }
     }
 
-    if (PhysicalDevice == VK_NULL_HANDLE) { throw std::runtime_error("failed to find a suitable GPU!"); }
+    if (PhysicalDevice == VK_NULL_HANDLE)
+    {
+        throw std::runtime_error("failed to find a suitable GPU!");
+    }
 }
 
-bool VulkanSingleton::IsDeviceSuitable(VkPhysicalDevice Device)
+bool VulkanSingleton::IsDeviceSuitable(VkPhysicalDevice PotentialDevice)
 {
     uint32_t QueueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(Device, &QueueFamilyCount, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(PotentialDevice, &QueueFamilyCount, nullptr);
 
     std::vector<VkQueueFamilyProperties> QueueFamilies(QueueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(Device, &QueueFamilyCount, QueueFamilies.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(PotentialDevice, &QueueFamilyCount, QueueFamilies.data());
 
-    for (const auto& QueueFamily : QueueFamilies)
-    {
-        if (QueueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) { return true; }
-    }
-
-    return false;
+    return std::any_of(QueueFamilies.begin(), QueueFamilies.end(),
+                       [](const auto& QueueFamily) { return QueueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT; });
 }
 
 std::pair<uint32_t, const char**> VulkanSingleton::GetRequiredInstanceExtensions()
 {
-    uint32_t     glfwExtensionCount = 0;
+    uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
 
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);

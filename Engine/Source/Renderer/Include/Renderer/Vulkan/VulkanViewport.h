@@ -30,8 +30,8 @@ public:
 
     [[nodiscard]] VkFormat          GetSwapchainFormat() const { return ImageFormat; }
     [[nodiscard]] VkExtent2D        GetExtents() const { return Extent; }
-    const std::vector<VkImage>&     GetSwapchainImages() { return SwapchainImages; }
-    const std::vector<VkImageView>& GetSwapchainImageViews() { return SwapchainImageViews; }
+    const std::vector<VkImage>&     GetSwapchainImages() const { return SwapchainImages; }
+    const std::vector<VkImageView>& GetSwapchainImageViews() const { return SwapchainImageViews; }
 
 private:
     void CreateSwapchain();
