@@ -12,6 +12,11 @@
 namespace Finally::Renderer
 {
 
+VulkanSingleton::VulkanSingleton()
+{
+    Initialize();
+}
+
 VulkanSingleton::~VulkanSingleton()
 {
     glfwDestroyWindow(Window);

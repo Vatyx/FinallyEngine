@@ -1,8 +1,14 @@
 #pragma once
 
-#include <Renderer/Vulkan/VulkanSingleton.h>
 #include <chrono>
 #include <memory>
+
+class Test;
+
+namespace Finally::Renderer
+{
+    class VulkanSingleton;
+}
 
 namespace Finally::Core
 {
@@ -12,6 +18,15 @@ using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
 class Engine
 {
 public:
+    Engine();
+    ~Engine();
+
+    Engine(Engine&) = delete;
+    Engine& operator=(Engine&) = delete;
+
+    Engine(Engine&&) = delete;
+    Engine& operator=(Engine&&) = delete;
+
     void Start();
 
 private:
@@ -28,7 +43,7 @@ private:
     TimePoint PreviousFrameTime;
     float     DeltaSecondsThisFrame = 0.0f;
 
-    Renderer::VulkanSingleton VulkanInstance;
+    std::unique_ptr<Renderer::VulkanSingleton> VulkanInstance;
 };
 
 }  // namespace Finally::Core

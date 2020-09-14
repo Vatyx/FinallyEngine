@@ -33,17 +33,14 @@ class VulkanSingleton
     };
 
 public:
-    VulkanSingleton() = default;
+    VulkanSingleton();
+    ~VulkanSingleton();
 
     VulkanSingleton(const VulkanSingleton&) = delete;
     VulkanSingleton& operator=(const VulkanSingleton&) = delete;
 
     VulkanSingleton(VulkanSingleton&&) = delete;
     VulkanSingleton& operator=(VulkanSingleton&&) = delete;
-
-    ~VulkanSingleton();
-
-    void Initialize();
 
     GLFWwindow* GetWindow() { return Window; }
 
@@ -52,6 +49,7 @@ public:
     VmaAllocator GetAllocator() { return Allocator; }
 
 private:
+    void Initialize();
     void CreateWindow();
     void CreateInstance();
     void GetPhysicalDevice();
@@ -66,11 +64,9 @@ private:
 
     VkPhysicalDevice PhysicalDevice{};
 
-    std::shared_ptr<VulkanDevice> Device;
+    std::unique_ptr<VulkanDevice> Device;
 
-    std::shared_ptr<class VulkanViewport> Viewport;
-
-    std::vector<std::shared_ptr<class VulkanFramebuffer>> Framebuffers;
+    std::unique_ptr<class VulkanViewport> Viewport;
 
     GLFWwindow* Window{};
 };

@@ -2,12 +2,12 @@
 #include "Core/Engine.h"
 
 #include "Renderer/Vulkan/VulkanSingleton.h"
-#include <GLFW/glfw3.h>
-
-#include <iostream>
 
 namespace Finally::Core
 {
+
+Engine::Engine() = default;
+Engine::~Engine() = default;
 
 void Engine::Start()
 {
@@ -18,7 +18,7 @@ void Engine::Start()
 
 void Engine::Initialize()
 {
-    VulkanInstance.Initialize();
+    VulkanInstance = std::make_unique<Renderer::VulkanSingleton>();
 
     PreviousFrameTime = std::chrono::high_resolution_clock::now();
 }
@@ -46,9 +46,8 @@ void Engine::Tick(float DeltaTime)
 
 bool Engine::ShouldShutdown()
 {
-    auto Window = VulkanInstance.GetWindow();
+    auto Window = VulkanInstance->GetWindow();
 
     return glfwWindowShouldClose(Window);
 }
-
 }  // namespace Finally::Core
