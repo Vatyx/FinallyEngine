@@ -39,7 +39,7 @@ CB& VulkanCommandBuffer::BeginRenderPass(const VulkanRenderPass& RenderPass, con
     RenderPassInfo.renderPass = RenderPass;
     RenderPassInfo.framebuffer = Framebuffer;
     RenderPassInfo.renderArea = RenderArea;
-    RenderPassInfo.clearValueCount = GetSize(ClearValues);
+    RenderPassInfo.clearValueCount = static_cast<uint32_t>(GetSize(ClearValues));
     RenderPassInfo.pClearValues = GetData(ClearValues);
 
     vkCmdBeginRenderPass(Handle, &RenderPassInfo, SubpassContents);

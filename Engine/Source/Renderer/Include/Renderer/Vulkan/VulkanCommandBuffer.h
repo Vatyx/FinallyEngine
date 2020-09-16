@@ -3,6 +3,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
+
 namespace Finally::Renderer
 {
 
@@ -13,7 +15,7 @@ using CB = VulkanCommandBuffer;
 template <typename T>
 using ArrayType = std::vector<T>;
 
-class VulkanCommandBuffer
+class VulkanCommandBuffer : public VulkanResource<VkCommandBuffer>
 {
 public:
     CB& BeginInfo();
@@ -28,9 +30,6 @@ public:
     CB& EndRenderPass();
 
     CB& EndCommandBuffer();
-
-private:
-    VkCommandBuffer Handle;
 };
 
 }  // namespace Finally::Renderer
