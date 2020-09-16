@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <Renderer/Vulkan/Utilities/VulkanResource.h>
 #include <string>
 #include <vector>
 
@@ -10,19 +11,15 @@ namespace Finally::Renderer
 
 class VulkanDevice;
 
-class VulkanShader
+class VulkanShader : public VulkanResource<VkShaderModule>
 {
 public:
     VulkanShader(const VulkanDevice& InDevice, const std::string& FileName);
 
     ~VulkanShader();
 
-    [[nodiscard]] VkShaderModule GetHandle() const { return Handle; }
-
 private:
     void CreateShaderModule(const std::vector<char>& ShaderCode);
-
-    VkShaderModule Handle{};
 
     const VulkanDevice& Device;
 };

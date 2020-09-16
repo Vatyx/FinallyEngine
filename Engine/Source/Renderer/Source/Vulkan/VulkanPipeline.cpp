@@ -52,13 +52,15 @@ VulkanPipeline::VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewpor
     PipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
     PipelineInfo.basePipelineIndex = -1;               // Optional
 
-    if (vkCreateGraphicsPipelines(Device.GetHandle(), VK_NULL_HANDLE, 1, &PipelineInfo, nullptr, &PipelineHandle) != VK_SUCCESS)
-    { throw std::runtime_error("failed to create graphics pipeline!"); }
+    if (vkCreateGraphicsPipelines(Device.GetHandle(), VK_NULL_HANDLE, 1, &PipelineInfo, nullptr, &Handle) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create graphics pipeline!");
+    }
 }
 
 VulkanPipeline::~VulkanPipeline()
 {
-    vkDestroyPipeline(Device.GetHandle(), PipelineHandle, nullptr);
+    vkDestroyPipeline(Device.GetHandle(), Handle, nullptr);
     vkDestroyPipelineLayout(Device.GetHandle(), PipelineLayoutHandle, nullptr);
 }
 
@@ -72,7 +74,9 @@ void VulkanPipeline::CreatePipelineLayout()
     PipelineLayoutInfo.pPushConstantRanges = nullptr;  // Optional
 
     if (vkCreatePipelineLayout(Device.GetHandle(), &PipelineLayoutInfo, nullptr, &PipelineLayoutHandle) != VK_SUCCESS)
-    { throw std::runtime_error("failed to create pipeline layout!"); }
+    {
+        throw std::runtime_error("failed to create pipeline layout!");
+    }
 }
 
 void VulkanPipeline::CreateShaderSteps(const VulkanShader& VertexShader, const VulkanShader& FragShader)

@@ -14,7 +14,7 @@ VulkanCommandPool::VulkanCommandPool(const VulkanDevice& InDevice) : Device(InDe
     PoolInfo.queueFamilyIndex = Device.GetGraphicsQueue().GetFamilyIndex();
     PoolInfo.flags = 0;
 
-    if (vkCreateCommandPool(Device.GetHandle(), &PoolInfo, nullptr, &CommandPool) != VK_SUCCESS)
+    if (vkCreateCommandPool(Device.GetHandle(), &PoolInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create command pool!");
     }
@@ -22,7 +22,7 @@ VulkanCommandPool::VulkanCommandPool(const VulkanDevice& InDevice) : Device(InDe
 
 VulkanCommandPool::~VulkanCommandPool()
 {
-    vkDestroyCommandPool(Device.GetHandle(), CommandPool, nullptr);
+    vkDestroyCommandPool(Device.GetHandle(), Handle, nullptr);
 }
 
 } // namespace Finally::Renderer

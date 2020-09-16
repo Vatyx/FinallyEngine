@@ -8,7 +8,7 @@ VulkanQueue::VulkanQueue(VkDevice Device, uint32_t InQueueFamilyIndex, uint32_t 
     : QueueFamilyIndex(InQueueFamilyIndex),
       QueueIndex(InQueueIndex)
 {
-    vkGetDeviceQueue(Device, QueueFamilyIndex, QueueIndex, &QueueHandle);
+    vkGetDeviceQueue(Device, QueueFamilyIndex, QueueIndex, &Handle);
 }
 
 }  // namespace Finally::Renderer

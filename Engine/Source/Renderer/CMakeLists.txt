@@ -4,10 +4,12 @@ project(FinallyRenderer CXX)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 
-add_library(FinallyRenderer)
+add_library(FinallyRenderer Source/Vulkan/VulkanSemaphore.cpp Include/Renderer/Vulkan/VulkanSemaphore.h)
 
 target_sources(FinallyRenderer
         PRIVATE
+        Include/Renderer/Vulkan/Utilities/VulkanResource.h
+        Source/Vulkan/VulkanCommandBuffer.cpp
         Source/Vulkan/VulkanCommandPool.cpp
         Source/Vulkan/VulkanDevice.cpp
         Source/Vulkan/VulkanFramebuffer.cpp

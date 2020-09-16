@@ -2,24 +2,22 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
+
 namespace Finally::Renderer
 {
 
 class VulkanDevice;
 class VulkanViewport;
 
-class VulkanRenderPass
+class VulkanRenderPass : public VulkanResource<VkRenderPass>
 {
 public:
     VulkanRenderPass(VkDevice InDevice, const VkFormat& SwaphainFormat);
 
     ~VulkanRenderPass();
 
-    [[nodiscard]] VkRenderPass GetHandle() const { return Handle; }
-
 private:
-    VkRenderPass Handle;
-
     VkDevice Device;
 };
 

@@ -3,20 +3,18 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
+
 namespace Finally::Renderer
 {
 
-class VulkanFramebuffer
+class VulkanFramebuffer : public VulkanResource<VkFramebuffer>
 {
 public:
     VulkanFramebuffer(VkDevice InDevice, VkRenderPass RenderPass, const std::vector<VkImageView>& Attachments, VkExtent2D Extents);
     ~VulkanFramebuffer();
 
-    [[nodiscard]] VkFramebuffer GetHandle() const { return Framebuffer; }
-
 private:
-    VkFramebuffer Framebuffer{};
-
     VkDevice Device{};
 };
 

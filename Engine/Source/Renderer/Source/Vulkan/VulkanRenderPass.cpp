@@ -36,9 +36,15 @@ VulkanRenderPass::VulkanRenderPass(VkDevice InDevice, const VkFormat& SwapchainF
     RenderPassInfo.subpassCount = 1;
     RenderPassInfo.pSubpasses = &Subpass;
 
-    if (vkCreateRenderPass(Device, &RenderPassInfo, nullptr, &Handle) != VK_SUCCESS) { throw std::runtime_error("failed to create render pass!"); }
+    if (vkCreateRenderPass(Device, &RenderPassInfo, nullptr, &Handle) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create render pass!");
+    }
 }
 
-VulkanRenderPass::~VulkanRenderPass() { vkDestroyRenderPass(Device, Handle, nullptr); }
+VulkanRenderPass::~VulkanRenderPass()
+{
+    vkDestroyRenderPass(Device, Handle, nullptr);
+}
 
 }  // namespace Finally::Renderer

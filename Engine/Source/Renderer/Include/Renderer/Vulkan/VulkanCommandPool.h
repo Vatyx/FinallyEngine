@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Renderer/Vulkan/Utilities/VulkanResource.h>
 #include <vulkan/vulkan.h>
 
 namespace Finally::Renderer
@@ -7,17 +8,14 @@ namespace Finally::Renderer
 
 class VulkanDevice;
 
-class VulkanCommandPool
+class VulkanCommandPool : public VulkanResource<VkCommandPool>
 {
 public:
     [[nodiscard]] explicit VulkanCommandPool(const VulkanDevice& Device);
+
     ~VulkanCommandPool();
 
-    [[nodiscard]] VkCommandPool GetHandle() const { return CommandPool; }
-
 private:
-    VkCommandPool CommandPool{};
-
     const VulkanDevice& Device;
 };
 

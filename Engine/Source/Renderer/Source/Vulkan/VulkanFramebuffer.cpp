@@ -18,7 +18,7 @@ VulkanFramebuffer::VulkanFramebuffer(VkDevice InDevice, VkRenderPass RenderPass,
     FramebufferInfo.height = Extents.height;
     FramebufferInfo.layers = 1;
 
-    if (vkCreateFramebuffer(Device, &FramebufferInfo, nullptr, &Framebuffer) != VK_SUCCESS)
+    if (vkCreateFramebuffer(Device, &FramebufferInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create framebuffer!");
     }
@@ -26,7 +26,7 @@ VulkanFramebuffer::VulkanFramebuffer(VkDevice InDevice, VkRenderPass RenderPass,
 
 VulkanFramebuffer::~VulkanFramebuffer()
 {
-    vkDestroyFramebuffer(Device, Framebuffer, nullptr);
+    vkDestroyFramebuffer(Device, Handle, nullptr);
 }
 
 }  // namespace Finally::Renderer

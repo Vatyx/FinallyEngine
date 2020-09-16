@@ -49,6 +49,8 @@ public:
     void Initialize(const VulkanViewport& Viewport);
 
     [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
+    operator VkDevice() const { return VkDeviceResource.Get(); }
+
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
     [[nodiscard]] VulkanRenderPass* GetRenderPass() const { return RenderPass.get(); }
 

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
 #include "Utilities/EnumUtilities.h"
+
 #include <vector>
+#include <vulkan/vulkan.h>
 
 namespace Finally::Renderer
 {
@@ -22,7 +23,7 @@ enum class ShaderStage : uint8_t
     MAX [[maybe_unused]]
 };
 
-class VulkanPipeline
+class VulkanPipeline : public VulkanResource<VkPipeline>
 {
 public:
     VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewport& Viewport, const VulkanRenderPass& RenderPass, const VulkanShader& VertexShader,
@@ -30,12 +31,10 @@ public:
 
     ~VulkanPipeline();
 
-    [[nodiscard]] VkPipeline GetHandle() const { return PipelineHandle; }
+    operator VkPipeline() const { return GetHandle(); }
 
 private:
     VkPipelineLayout PipelineLayoutHandle{};
-    VkPipeline       PipelineHandle{};
-
     const VulkanDevice& Device;
 
 private:
@@ -52,20 +51,20 @@ private:
 
     void CreateDynamicState();
 
-    VkPipelineShaderStageCreateInfo        ShaderStages[EnumCount<ShaderStage>()] = {};
-    VkPipelineVertexInputStateCreateInfo   VertexInputInfo{};
+    VkPipelineShaderStageCreateInfo ShaderStages[EnumCount<ShaderStage>()] = {};
+    VkPipelineVertexInputStateCreateInfo VertexInputInfo{};
     VkPipelineInputAssemblyStateCreateInfo InputAssembly{};
     VkPipelineRasterizationStateCreateInfo Rasterizer{};
-    VkPipelineMultisampleStateCreateInfo   Multisampling{};
-    VkPipelineColorBlendAttachmentState    ColorBlendAttachment{};
-    VkPipelineColorBlendStateCreateInfo    ColorBlending{};
+    VkPipelineMultisampleStateCreateInfo Multisampling{};
+    VkPipelineColorBlendAttachmentState ColorBlendAttachment{};
+    VkPipelineColorBlendStateCreateInfo ColorBlending{};
 
     VkPipelineViewportStateCreateInfo ViewportState{};
-    VkViewport                        ViewportData{};
-    VkRect2D                          Scissor{};
+    VkViewport ViewportData{};
+    VkRect2D Scissor{};
 
     VkPipelineDynamicStateCreateInfo DynamicState{};
-    std::vector<VkDynamicState>      DynamicStates;
+    std::vector<VkDynamicState> DynamicStates;
 };
 
 }  // namespace Finally::Renderer
