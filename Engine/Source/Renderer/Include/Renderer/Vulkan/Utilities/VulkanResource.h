@@ -14,4 +14,4 @@ protected:
     T Handle{};
 };
 
-}
+}  // namespace Finally::Renderer

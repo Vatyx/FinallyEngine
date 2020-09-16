@@ -26,4 +26,4 @@ private:
     const VulkanDevice& Device;
 };
 
-}
+}  // namespace Finally::Renderer

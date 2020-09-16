@@ -3,9 +3,9 @@
 
 #include "Renderer/Vulkan/VulkanCommandPool.h"
 #include "Renderer/Vulkan/VulkanFramebuffer.h"
+#include "Renderer/Vulkan/VulkanPipeline.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 #include "Renderer/Vulkan/VulkanShader.h"
-#include "Renderer/Vulkan/VulkanPipeline.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
 
 #include <cassert>
@@ -36,7 +36,9 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
 
     VkDevice Device;
     if (vkCreateDevice(InPhysicalDevice, &CreateInfo, nullptr, &Device) != VK_SUCCESS)
-    { throw std::runtime_error("failed to create logical device!"); }
+    {
+        throw std::runtime_error("failed to create logical device!");
+    }
 
     VkDeviceResource = UniqueResource<VkDevice, VkDeviceDeleter>(Device);
 
@@ -123,7 +125,10 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
         }
     }
 
-    if (!SuccessfullyFoundQueueFamily) { throw std::runtime_error("Unable to find queue family!"); }
+    if (!SuccessfullyFoundQueueFamily)
+    {
+        throw std::runtime_error("Unable to find queue family!");
+    }
 
     QueueCreateInfo.queueCount = 1;
     static const float QueuePriority = 1.0f;

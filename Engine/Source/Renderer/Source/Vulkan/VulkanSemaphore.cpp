@@ -6,8 +6,7 @@
 namespace Finally::Renderer
 {
 
-VulkanSemaphore::VulkanSemaphore(const VulkanDevice& InDevice)
-    : Device(InDevice)
+VulkanSemaphore::VulkanSemaphore(const VulkanDevice& InDevice) : Device(InDevice)
 {
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -15,12 +14,11 @@ VulkanSemaphore::VulkanSemaphore(const VulkanDevice& InDevice)
     if (vkCreateSemaphore(Device, &semaphoreInfo, nullptr, &Handle))
 
         throw std::runtime_error("failed to create semaphores!");
-    }
+}
 
 VulkanSemaphore::~VulkanSemaphore()
 {
-   vkDestroySemaphore(Device, Handle, nullptr);
+    vkDestroySemaphore(Device, Handle, nullptr);
 }
 
-}
-
+}  // namespace Finally::Renderer

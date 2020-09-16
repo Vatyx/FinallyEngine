@@ -12,7 +12,10 @@ namespace Finally::Renderer
 
 VulkanViewport::VulkanViewport(VulkanDevice* InDevice, VkInstance InInstance, GLFWwindow* Window) : Instance(InInstance), Device(InDevice)
 {
-    if (glfwCreateWindowSurface(Instance, Window, nullptr, &Surface) != VK_SUCCESS) { throw std::runtime_error("Failed to create window surface!"); }
+    if (glfwCreateWindowSurface(Instance, Window, nullptr, &Surface) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create window surface!");
+    }
 
     Device->SetupPresentQueue(Surface);
 
@@ -68,7 +71,9 @@ void VulkanViewport::CreateSwapchain()
     CreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
     if (vkCreateSwapchainKHR(Device->GetHandle(), &CreateInfo, nullptr, &Swapchain) != VK_SUCCESS)
-    { throw std::runtime_error("!ailed to create swap chain!"); }
+    {
+        throw std::runtime_error("!ailed to create swap chain!");
+    }
 }
 
 SwapChainSupportDetails VulkanViewport::FillSwapChainSupportDetails(VulkanDevice* Device)
@@ -104,7 +109,10 @@ VkSurfaceFormatKHR VulkanViewport::ChooseSwapSurfaceFormat(std::vector<VkSurface
 {
     for (const auto& Format : Formats)
     {
-        if (Format.format == VK_FORMAT_B8G8R8A8_SRGB && Format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) { return Format; }
+        if (Format.format == VK_FORMAT_B8G8R8A8_SRGB && Format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+        {
+            return Format;
+        }
     }
 
     return Formats[0];
@@ -114,7 +122,10 @@ VkPresentModeKHR VulkanViewport::ChooseSwapPresentMode(std::vector<VkPresentMode
 {
     for (const auto& PresentMode : PresentModes)
     {
-        if (PresentMode == VK_PRESENT_MODE_MAILBOX_KHR) { return PresentMode; }
+        if (PresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+        {
+            return PresentMode;
+        }
     }
 
     return VK_PRESENT_MODE_FIFO_KHR;
@@ -122,7 +133,10 @@ VkPresentModeKHR VulkanViewport::ChooseSwapPresentMode(std::vector<VkPresentMode
 
 VkExtent2D VulkanViewport::ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities)
 {
-    if (Capabilities.currentExtent.width != UINT32_MAX) { return Capabilities.currentExtent; }
+    if (Capabilities.currentExtent.width != UINT32_MAX)
+    {
+        return Capabilities.currentExtent;
+    }
     else
     {
         VkExtent2D ActualExtent = { WIDTH, HEIGHT };
@@ -166,7 +180,9 @@ void VulkanViewport::CreateImageViews()
         CreateInfo.subresourceRange.layerCount = 1;
 
         if (vkCreateImageView(Device->GetHandle(), &CreateInfo, nullptr, &SwapchainImageViews[i]) != VK_SUCCESS)
-        { throw std::runtime_error("Failed to create image views!"); }
+        {
+            throw std::runtime_error("Failed to create image views!");
+        }
     }
 }
 

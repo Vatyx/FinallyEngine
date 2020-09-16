@@ -12,9 +12,9 @@ namespace Finally::Renderer
 class VulkanDevice;
 
 struct SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR        Capabilities;
+    VkSurfaceCapabilitiesKHR Capabilities;
     std::vector<VkSurfaceFormatKHR> Formats;
-    std::vector<VkPresentModeKHR>   PresentModes;
+    std::vector<VkPresentModeKHR> PresentModes;
 };
 
 const uint8_t NumberOfImagesInSwapChain = 3;
@@ -28,9 +28,9 @@ public:
 
     [[nodiscard]] VkViewport CreateVkViewport() const;
 
-    [[nodiscard]] VkFormat          GetSwapchainFormat() const { return ImageFormat; }
-    [[nodiscard]] VkExtent2D        GetExtents() const { return Extent; }
-    [[nodiscard]] const std::vector<VkImage>&     GetSwapchainImages() const { return SwapchainImages; }
+    [[nodiscard]] VkFormat GetSwapchainFormat() const { return ImageFormat; }
+    [[nodiscard]] VkExtent2D GetExtents() const { return Extent; }
+    [[nodiscard]] const std::vector<VkImage>& GetSwapchainImages() const { return SwapchainImages; }
     [[nodiscard]] const std::vector<VkImageView>& GetSwapchainImageViews() const { return SwapchainImageViews; }
 
 private:
@@ -39,20 +39,20 @@ private:
     void CreateImageViews();
 
     SwapChainSupportDetails FillSwapChainSupportDetails(VulkanDevice* Device);
-    VkSurfaceFormatKHR      ChooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR>& Formats);
-    VkPresentModeKHR        ChooseSwapPresentMode(std::vector<VkPresentModeKHR>& PresentModes);
-    VkExtent2D              ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR>& Formats);
+    VkPresentModeKHR ChooseSwapPresentMode(std::vector<VkPresentModeKHR>& PresentModes);
+    VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);
 
-    VkInstance    Instance{};
+    VkInstance Instance{};
     VulkanDevice* Device = nullptr;
 
     VkSurfaceKHR Surface{};
 
-    VkSwapchainKHR           Swapchain{};
-    std::vector<VkImage>     SwapchainImages;
+    VkSwapchainKHR Swapchain{};
+    std::vector<VkImage> SwapchainImages;
     std::vector<VkImageView> SwapchainImageViews;
-    VkFormat                 ImageFormat{};
-    VkExtent2D               Extent{};
+    VkFormat ImageFormat{};
+    VkExtent2D Extent{};
 };
 
 }  // namespace Finally::Renderer

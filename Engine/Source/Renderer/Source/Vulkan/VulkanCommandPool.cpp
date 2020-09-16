@@ -25,4 +25,4 @@ VulkanCommandPool::~VulkanCommandPool()
     vkDestroyCommandPool(Device.GetHandle(), Handle, nullptr);
 }
 
-} // namespace Finally::Renderer
+}  // namespace Finally::Renderer
