@@ -27,5 +27,6 @@ add_module(Core)
 add_module(Renderer)
 add_module(Utilities)
 add_module(Math)
+add_module(Logging)
 
 add_module(ThirdParty)

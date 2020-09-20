@@ -12,7 +12,7 @@ struct Vector
 
     constexpr Vector() noexcept = default;
 
-    template<typename ...Ts>
+    template<typename... Ts>
     constexpr explicit Vector(Ts... Values) noexcept
     {
         size_t i = 0;

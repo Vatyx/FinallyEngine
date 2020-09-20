@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.17)
 project(FinallyRenderer CXX)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
+find_package(glfw3 REQUIRED FATAL_ERROR)
 
 add_library(FinallyRenderer Source/Vulkan/VulkanSemaphore.cpp Include/Renderer/Vulkan/VulkanSemaphore.h Source/Renderer.cpp Include/Renderer/Renderer.h)
 

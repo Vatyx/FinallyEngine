@@ -4,6 +4,8 @@ project(FinallyCore CXX)
 
 add_library(FinallyCore)
 
+find_package(glfw3 CONFIG REQUIRED)
+
 target_sources(FinallyCore PRIVATE
         Source/Engine.cpp
         )
@@ -12,5 +14,6 @@ target_include_directories(FinallyCore PUBLIC Include)
 
 target_link_libraries(FinallyCore
         FinallyRenderer
+        FinallyLogging
         glfw
         )
