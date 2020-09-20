@@ -26,21 +26,21 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-class VulkanSingleton
+class VulkanInstance
 {
     struct VkInstanceDeleter {
         void operator()(VkInstance Instance) const { vkDestroyInstance(Instance, nullptr); }
     };
 
 public:
-    VulkanSingleton();
-    ~VulkanSingleton();
+    VulkanInstance();
+    ~VulkanInstance();
 
-    VulkanSingleton(const VulkanSingleton&) = delete;
-    VulkanSingleton& operator=(const VulkanSingleton&) = delete;
+    VulkanInstance(const VulkanInstance&) = delete;
+    VulkanInstance& operator=(const VulkanInstance&) = delete;
 
-    VulkanSingleton(VulkanSingleton&&) = delete;
-    VulkanSingleton& operator=(VulkanSingleton&&) = delete;
+    VulkanInstance(VulkanInstance&&) = delete;
+    VulkanInstance& operator=(VulkanInstance&&) = delete;
 
     GLFWwindow* GetWindow() { return Window; }
 

@@ -1,5 +1,5 @@
 
-#include "Renderer/Vulkan/VulkanSingleton.h"
+#include "Renderer/Vulkan/VulkanInstance.h"
 
 #include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanFramebuffer.h"
@@ -12,18 +12,18 @@
 namespace Finally::Renderer
 {
 
-VulkanSingleton::VulkanSingleton()
+VulkanInstance::VulkanInstance()
 {
     Initialize();
 }
 
-VulkanSingleton::~VulkanSingleton()
+VulkanInstance::~VulkanInstance()
 {
     glfwDestroyWindow(Window);
     glfwTerminate();
 }
 
-void VulkanSingleton::Initialize()
+void VulkanInstance::Initialize()
 {
     CreateWindow();
     CreateInstance();
@@ -38,7 +38,7 @@ void VulkanSingleton::Initialize()
     Device->Initialize(*Viewport);
 }
 
-void VulkanSingleton::CreateWindow()
+void VulkanInstance::CreateWindow()
 {
     glfwInit();
 
@@ -48,7 +48,7 @@ void VulkanSingleton::CreateWindow()
     Window = glfwCreateWindow(WIDTH, HEIGHT, "Finally Engine", nullptr, nullptr);
 }
 
-void VulkanSingleton::CreateInstance()
+void VulkanInstance::CreateInstance()
 {
     VkApplicationInfo AppInfo = {};
     AppInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -88,7 +88,7 @@ void VulkanSingleton::CreateInstance()
     VkInstanceResource = UniqueResource<VkInstance, VkInstanceDeleter>{ Instance };
 }
 
-void VulkanSingleton::GetPhysicalDevice()
+void VulkanInstance::GetPhysicalDevice()
 {
     uint32_t DeviceCount = 0;
     vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, nullptr);
@@ -116,7 +116,7 @@ void VulkanSingleton::GetPhysicalDevice()
     }
 }
 
-bool VulkanSingleton::IsDeviceSuitable(VkPhysicalDevice PotentialDevice)
+bool VulkanInstance::IsDeviceSuitable(VkPhysicalDevice PotentialDevice)
 {
     uint32_t QueueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(PotentialDevice, &QueueFamilyCount, nullptr);
@@ -128,7 +128,7 @@ bool VulkanSingleton::IsDeviceSuitable(VkPhysicalDevice PotentialDevice)
                        [](const auto& QueueFamily) { return QueueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT; });
 }
 
-std::pair<uint32_t, const char**> VulkanSingleton::GetRequiredInstanceExtensions()
+std::pair<uint32_t, const char**> VulkanInstance::GetRequiredInstanceExtensions()
 {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
@@ -138,7 +138,7 @@ std::pair<uint32_t, const char**> VulkanSingleton::GetRequiredInstanceExtensions
     return std::make_pair(glfwExtensionCount, glfwExtensions);
 }
 
-void VulkanSingleton::CreateAllocator()
+void VulkanInstance::CreateAllocator()
 {
     VmaAllocatorCreateInfo AllocatorInfo = {};
     AllocatorInfo.instance = GetHandle();

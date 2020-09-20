@@ -21,10 +21,10 @@ AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
 BinPackParameters: true
-BreakBeforeBraces: Custom
+BreakBeforeBraces: Allman
 BraceWrapping:
   AfterCaseLabel: true
-  AfterClass: true
+  AfterClass: false
   AfterControlStatement: Always
   AfterEnum: true
   AfterFunction: true

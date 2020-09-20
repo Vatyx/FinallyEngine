@@ -9,9 +9,11 @@
 
 namespace Finally::Renderer
 {
+
 class VulkanDevice;
 
-struct SwapChainSupportDetails {
+struct SwapChainSupportDetails
+{
     VkSurfaceCapabilitiesKHR Capabilities;
     std::vector<VkSurfaceFormatKHR> Formats;
     std::vector<VkPresentModeKHR> PresentModes;
@@ -38,7 +40,7 @@ private:
     void RetrieveSwapchainImages();
     void CreateImageViews();
 
-    SwapChainSupportDetails FillSwapChainSupportDetails(VulkanDevice* Device);
+    SwapChainSupportDetails FillSwapChainSupportDetails(VulkanDevice* Device) const;
     VkSurfaceFormatKHR ChooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR>& Formats);
     VkPresentModeKHR ChooseSwapPresentMode(std::vector<VkPresentModeKHR>& PresentModes);
     VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);

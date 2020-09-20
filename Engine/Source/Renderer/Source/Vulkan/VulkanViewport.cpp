@@ -2,7 +2,7 @@
 #include "Renderer/Vulkan/VulkanViewport.h"
 
 #include "Renderer/Vulkan/VulkanDevice.h"
-#include "Renderer/Vulkan/VulkanSingleton.h"
+#include "Renderer/Vulkan/VulkanInstance.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -76,7 +76,7 @@ void VulkanViewport::CreateSwapchain()
     }
 }
 
-SwapChainSupportDetails VulkanViewport::FillSwapChainSupportDetails(VulkanDevice* Device)
+SwapChainSupportDetails VulkanViewport::FillSwapChainSupportDetails(VulkanDevice* Device) const
 {
     SwapChainSupportDetails Details;
 

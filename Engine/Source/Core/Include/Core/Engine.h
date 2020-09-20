@@ -3,11 +3,13 @@
 #include <chrono>
 #include <memory>
 
+#include "Renderer/Renderer.h"
+
 class Test;
 
 namespace Finally::Renderer
 {
-    class VulkanSingleton;
+    class VulkanInstance;
 }
 
 namespace Finally::Core
@@ -43,7 +45,7 @@ private:
     TimePoint PreviousFrameTime;
     float     DeltaSecondsThisFrame = 0.0f;
 
-    std::unique_ptr<Renderer::VulkanSingleton> VulkanInstance;
+    Renderer::Renderer RendererInstance;
 };
 
 }  // namespace Finally::Core

@@ -1,7 +1,7 @@
 
 #include "Core/Engine.h"
 
-#include "Renderer/Vulkan/VulkanSingleton.h"
+#include "Renderer/Vulkan/VulkanInstance.h"
 
 namespace Finally::Core
 {
@@ -18,8 +18,6 @@ void Engine::Start()
 
 void Engine::Initialize()
 {
-    VulkanInstance = std::make_unique<Renderer::VulkanSingleton>();
-
     PreviousFrameTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -46,7 +44,7 @@ void Engine::Tick(float DeltaTime)
 
 bool Engine::ShouldShutdown()
 {
-    auto Window = VulkanInstance->GetWindow();
+    auto Window = RendererInstance.GetWindow();
 
     return glfwWindowShouldClose(Window);
 }
