@@ -19,6 +19,8 @@ VulkanInstance::VulkanInstance()
 
 VulkanInstance::~VulkanInstance()
 {
+    vmaDestroyAllocator(Allocator);
+
     glfwDestroyWindow(Window);
     glfwTerminate();
 }

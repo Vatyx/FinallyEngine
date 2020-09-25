@@ -60,8 +60,8 @@ VulkanPipeline::VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewpor
 
 VulkanPipeline::~VulkanPipeline()
 {
-    vkDestroyPipeline(Device.GetHandle(), Handle, nullptr);
-    vkDestroyPipelineLayout(Device.GetHandle(), PipelineLayoutHandle, nullptr);
+    vkDestroyPipeline(Device, Handle, nullptr);
+    vkDestroyPipelineLayout(Device, PipelineLayoutHandle, nullptr);
 }
 
 void VulkanPipeline::CreatePipelineLayout()

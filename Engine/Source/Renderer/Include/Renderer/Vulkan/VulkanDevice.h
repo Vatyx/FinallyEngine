@@ -30,7 +30,8 @@ enum class QueueFamilyType : uint8_t
 
 class VulkanDevice
 {
-    struct VkDeviceDeleter {
+    struct VkDeviceDeleter
+    {
         void operator()(VkDevice Device) { vkDestroyDevice(Device, nullptr); }
     };
 
@@ -54,10 +55,10 @@ public:
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
     [[nodiscard]] VulkanRenderPass* GetRenderPass() const { return RenderPass.get(); }
 
-    [[nodiscard]] VulkanQueue GetGraphicsQueue() const { return GraphicsQueue; }
-    [[nodiscard]] VulkanQueue GetTransferQueue() const { return TransferQueue; }
-    [[nodiscard]] VulkanQueue GetPresentQueue() const { return PresentQueue; }
-    [[nodiscard]] VulkanQueue GetComputeQueue() const { return ComputeQueue; }
+    [[nodiscard]] const VulkanQueue& GetGraphicsQueue() const { return GraphicsQueue; }
+    [[nodiscard]] const VulkanQueue& GetTransferQueue() const { return TransferQueue; }
+    [[nodiscard]] const VulkanQueue& GetPresentQueue() const { return PresentQueue; }
+    [[nodiscard]] const VulkanQueue& GetComputeQueue() const { return ComputeQueue; }
 
 private:
     void CreateShaders();
