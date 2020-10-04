@@ -12,7 +12,7 @@ struct Vector
 
     constexpr Vector() noexcept = default;
 
-    template<typename... Ts>
+    template <typename... Ts>
     constexpr explicit Vector(Ts... Values) noexcept
     {
         size_t i = 0;
@@ -42,8 +42,8 @@ struct Vector3
     constexpr Vector3(T InX, T InY, T InZ) noexcept : X(InX), Y(InY), Z(InZ) {}
 };
 
-//template <Numerical T>
-//struct Vector2
+// template <Numerical T>
+// struct Vector2
 //{
 //    union
 //    {
@@ -65,8 +65,8 @@ struct Vector3
 //};
 //
 //
-//template <Numerical T>
-//struct Vector4
+// template <Numerical T>
+// struct Vector4
 //{
 //    union
 //    {

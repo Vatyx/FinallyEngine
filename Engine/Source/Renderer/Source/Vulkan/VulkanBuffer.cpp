@@ -7,8 +7,7 @@
 namespace Finally::Renderer
 {
 
-VulkanBuffer::VulkanBuffer(VmaAllocator InAllocator, VkDeviceSize Size, VkBufferUsageFlags Usage, VkSharingMode SharingMode)
-    : Allocator(InAllocator)
+VulkanBuffer::VulkanBuffer(VmaAllocator InAllocator, VkDeviceSize Size, VkBufferUsageFlags Usage, VkSharingMode SharingMode) : Allocator(InAllocator)
 {
     VkBufferCreateInfo BufferInfo{};
     BufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -30,4 +29,4 @@ VulkanBuffer::~VulkanBuffer()
     vmaDestroyBuffer(Allocator, Handle, Allocation);
 }
 
-}
+}  // namespace Finally::Renderer

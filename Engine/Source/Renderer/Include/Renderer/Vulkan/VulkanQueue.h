@@ -17,7 +17,8 @@ public:
     VulkanQueue() = default;
     VulkanQueue(VkDevice Device, uint32_t InQueueFamilyIndex, uint32_t InQueueIndex);
 
-    void Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineStageFlags* WaitStages, const VulkanCommandBuffer& VulkanCommandBuffer, const VulkanSemaphore& SignalSemaphore, const class VulkanFence* Fence);
+    void Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineStageFlags* WaitStages, const VulkanCommandBuffer& VulkanCommandBuffer,
+                const VulkanSemaphore& SignalSemaphore, const class VulkanFence* Fence);
     void Submit(const std::vector<VkSubmitInfo>& SubmitInfo, const class VulkanFence* Fence);
 
     [[nodiscard]] uint32_t GetFamilyIndex() const { return QueueFamilyIndex; }

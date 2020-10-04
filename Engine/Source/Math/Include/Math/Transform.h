@@ -13,4 +13,4 @@ struct Transform
     FVector3 Size;
 };
 
-}
+}  // namespace Finally

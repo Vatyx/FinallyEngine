@@ -6,8 +6,7 @@
 namespace Finally::Renderer
 {
 
-VulkanFence::VulkanFence(const VulkanDevice& InDevice)
-    : Device(InDevice)
+VulkanFence::VulkanFence(const VulkanDevice& InDevice) : Device(InDevice)
 {
     VkFenceCreateInfo FenceInfo{};
     FenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -20,4 +19,4 @@ VulkanFence::~VulkanFence()
     vkDestroyFence(Device, Handle, nullptr);
 }
 
-}
+}  // namespace Finally::Renderer

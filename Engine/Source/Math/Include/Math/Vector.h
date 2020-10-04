@@ -24,4 +24,4 @@ static_assert(std::is_standard_layout_v<IVector2>, "IVector2 is not standard lay
 static_assert(std::is_standard_layout_v<IVector3>, "IVector3 is not standard layout");
 static_assert(std::is_standard_layout_v<IVector4>, "IVector4 is not standard layout");
 
-}
+}  // namespace Finally

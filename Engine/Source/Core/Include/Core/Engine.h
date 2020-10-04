@@ -3,24 +3,20 @@
 #include <chrono>
 #include <memory>
 
-#include "Renderer/Renderer.h"
-
 class Test;
 
 namespace Finally::Renderer
 {
-    class VulkanInstance;
+class Renderer;
 }
 
 namespace Finally::Core
 {
 
-using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-
 class Engine
 {
 public:
-    Engine();
+    [[nodiscard]] explicit Engine(Renderer::Renderer& inRenderer);
     ~Engine();
 
     Engine(Engine&) = delete;
@@ -29,23 +25,13 @@ public:
     Engine(Engine&&) = delete;
     Engine& operator=(Engine&&) = delete;
 
-    void Start();
+    void Tick(float DeltaTime);
 
 private:
     void Initialize();
 
-    void EngineLoop();
-
-    void Tick(float DeltaTime);
-
-    bool ShouldShutdown();
-
 private:
-    // Time
-    TimePoint PreviousFrameTime;
-    float     DeltaSecondsThisFrame = 0.0f;
-
-    Renderer::Renderer RendererInstance;
+    Renderer::Renderer& renderer;
 };
 
 }  // namespace Finally::Core

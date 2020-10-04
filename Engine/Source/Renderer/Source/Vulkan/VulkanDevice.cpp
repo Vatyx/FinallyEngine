@@ -45,14 +45,14 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
     SetupQueues(QueueCreateInfos);
 }
 
-void VulkanDevice::Initialize(const VulkanViewport& Viewport)
-{
-    CreateShaders();
-    CreateRenderPass(Viewport.GetSwapchainFormat());
-    CreatePipeline(Viewport);
-    CreateFramebuffers(Viewport);
-    CreateCommandPool();
-}
+// void VulkanDevice::Initialize(const VulkanViewport& Viewport)
+//{
+//    CreateShaders();
+//    CreateRenderPass(Viewport.GetSwapchainFormat());
+//    CreatePipeline(Viewport);
+//    CreateFramebuffers(Viewport);
+//    CreateCommandPool();
+//}
 
 void VulkanDevice::CreateRenderPass(const VkFormat& SwapchainFormat)
 {
@@ -77,14 +77,6 @@ void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& Queue
     GraphicsQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)].queueFamilyIndex, 0 };
     TransferQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Transfer)].queueFamilyIndex, 0 };
     ComputeQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Compute)].queueFamilyIndex, 0 };
-}
-
-void VulkanDevice::SetupPresentQueue(VkSurfaceKHR Surface)
-{
-    VkBool32 PresentSupport = false;
-    vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, GraphicsQueue.GetFamilyIndex(), Surface, &PresentSupport);
-    assert(PresentSupport);
-
     PresentQueue = VulkanQueue{ GetHandle(), GraphicsQueue.GetFamilyIndex(), 0 };
 }
 

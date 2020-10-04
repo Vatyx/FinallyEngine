@@ -12,13 +12,12 @@ struct Matrix
 
     constexpr Matrix() = default;
 
-    template<typename... Ts>
+    template <typename... Ts>
     constexpr explicit Matrix(Ts... Values) noexcept
     {
         size_t i = 0;
         ((Data[i++] = Values), ...);
     }
-
 };
 
-}
+}  // namespace Finally

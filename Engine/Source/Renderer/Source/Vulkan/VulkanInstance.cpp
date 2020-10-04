@@ -14,40 +14,24 @@ namespace Finally::Renderer
 
 VulkanInstance::VulkanInstance()
 {
+    glfwInit();
     Initialize();
 }
 
 VulkanInstance::~VulkanInstance()
 {
     vmaDestroyAllocator(Allocator);
-
-    glfwDestroyWindow(Window);
     glfwTerminate();
 }
 
 void VulkanInstance::Initialize()
 {
-    CreateWindow();
     CreateInstance();
-    GetPhysicalDevice();
+    CreateReferenceToPhysicalDevice();
 
     Device = std::make_unique<VulkanDevice>(PhysicalDevice);
 
     CreateAllocator();
-
-    Viewport = std::make_unique<VulkanViewport>(Device.get(), GetHandle(), Window);
-
-    Device->Initialize(*Viewport);
-}
-
-void VulkanInstance::CreateWindow()
-{
-    glfwInit();
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    Window = glfwCreateWindow(WIDTH, HEIGHT, "Finally Engine", nullptr, nullptr);
 }
 
 void VulkanInstance::CreateInstance()
@@ -90,7 +74,7 @@ void VulkanInstance::CreateInstance()
     VkInstanceResource = UniqueResource<VkInstance, VkInstanceDeleter>{ Instance };
 }
 
-void VulkanInstance::GetPhysicalDevice()
+void VulkanInstance::CreateReferenceToPhysicalDevice()
 {
     uint32_t DeviceCount = 0;
     vkEnumeratePhysicalDevices(VkInstanceResource.Get(), &DeviceCount, nullptr);

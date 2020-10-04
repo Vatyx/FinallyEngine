@@ -68,7 +68,6 @@ private:
     void CreateCommandPool();
 
     void SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos);
-    void SetupPresentQueue(VkSurfaceKHR Surface);
 
     static std::vector<VkDeviceQueueCreateInfo> CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice);
     [[nodiscard]] static VkDeviceQueueCreateInfo CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,

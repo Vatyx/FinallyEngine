@@ -28,7 +28,8 @@ const bool enableValidationLayers = true;
 
 class VulkanInstance
 {
-    struct VkInstanceDeleter {
+    struct VkInstanceDeleter
+    {
         void operator()(VkInstance Instance) const { vkDestroyInstance(Instance, nullptr); }
     };
 
@@ -42,17 +43,19 @@ public:
     VulkanInstance(VulkanInstance&&) = delete;
     VulkanInstance& operator=(VulkanInstance&&) = delete;
 
-    GLFWwindow* GetWindow() { return Window; }
+    operator VkInstance() const { return VkInstanceResource.Get(); }
 
     VkInstance GetHandle() { return VkInstanceResource.Get(); }
+
+    [[nodiscard]] const VulkanDevice& GetDevice() const { return *Device; }
+    [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
 
     VmaAllocator GetAllocator() { return Allocator; }
 
 private:
     void Initialize();
-    void CreateWindow();
     void CreateInstance();
-    void GetPhysicalDevice();
+    void CreateReferenceToPhysicalDevice();
     void CreateAllocator();
 
     static bool IsDeviceSuitable(VkPhysicalDevice PotentialDevice);
@@ -65,10 +68,6 @@ private:
     VkPhysicalDevice PhysicalDevice{};
 
     std::unique_ptr<VulkanDevice> Device;
-
-    std::unique_ptr<class VulkanViewport> Viewport;
-
-    GLFWwindow* Window{};
 };
 
 }  // namespace Finally::Renderer

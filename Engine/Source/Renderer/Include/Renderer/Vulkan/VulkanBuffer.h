@@ -2,8 +2,8 @@
 
 #include "Renderer/Vulkan/Utilities/VulkanResource.h"
 
-#include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
+#include <vulkan/vulkan.h>
 
 namespace Finally::Renderer
 {
@@ -21,4 +21,4 @@ private:
     VmaAllocation Allocation{};
 };
 
-}
+}  // namespace Finally::Renderer

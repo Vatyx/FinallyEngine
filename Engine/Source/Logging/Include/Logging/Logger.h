@@ -29,4 +29,4 @@ inline void Critical(FormatString& Message, Args&&... Arguments)
     spdlog::critical(Message, std::forward<Args>(Arguments)...);
 }
 
-}  // namespace Finally::Core
+}  // namespace Finally::Log

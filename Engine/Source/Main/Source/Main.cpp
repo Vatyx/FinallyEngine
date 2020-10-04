@@ -1,9 +1,14 @@
+#include <GLFW/glfw3.h>
 
-#include <Core/Engine.h>
+#include "Editor/Editor.h"
 
 int main()
 {
-    Finally::Core::Engine{}.Start();
+    glfwInit();
+
+    Finally::Editor::Editor{}.Start();
+
+    glfwTerminate();
 
     return 0;
 }

@@ -1,16 +1,16 @@
 #pragma once
 
-// clang-format off
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
-// clang-format on
 
 #include <vector>
+
+struct GLFWwindow;
 
 namespace Finally::Renderer
 {
 
 class VulkanDevice;
+class VulkanInstance;
 
 struct SwapChainSupportDetails
 {
@@ -24,8 +24,7 @@ const uint8_t NumberOfImagesInSwapChain = 3;
 class VulkanViewport
 {
 public:
-    VulkanViewport(VulkanDevice* InDevice, VkInstance InInstance, GLFWwindow* Window);
-
+    VulkanViewport(const VulkanInstance& inInstance, GLFWwindow* window);
     ~VulkanViewport();
 
     [[nodiscard]] VkViewport CreateVkViewport() const;
@@ -36,21 +35,22 @@ public:
     [[nodiscard]] const std::vector<VkImageView>& GetSwapchainImageViews() const { return SwapchainImageViews; }
 
 private:
+    void ValidatePhysicalDeviceSurfaceSupport() const;
     void CreateSwapchain();
     void RetrieveSwapchainImages();
     void CreateImageViews();
 
-    SwapChainSupportDetails FillSwapChainSupportDetails(VulkanDevice* Device) const;
+    [[nodiscard]] SwapChainSupportDetails CreateSwapchainSupportDetails() const;
     VkSurfaceFormatKHR ChooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR>& Formats);
     VkPresentModeKHR ChooseSwapPresentMode(std::vector<VkPresentModeKHR>& PresentModes);
     VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);
 
-    VkInstance Instance{};
-    VulkanDevice* Device = nullptr;
+    const VulkanInstance& instance;
+    const VulkanDevice& device;
 
     VkSurfaceKHR Surface{};
-
     VkSwapchainKHR Swapchain{};
+
     std::vector<VkImage> SwapchainImages;
     std::vector<VkImageView> SwapchainImageViews;
     VkFormat ImageFormat{};

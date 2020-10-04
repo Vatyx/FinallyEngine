@@ -2,20 +2,21 @@
 
 #include <memory>
 
-struct GLFWwindow;
-
 namespace Finally::Renderer
 {
+
+class VulkanInstance;
 
 class Renderer
 {
 public:
     Renderer();
+    ~Renderer();
 
-    [[nodiscard]] GLFWwindow* GetWindow() const;
+    [[nodiscard]] const VulkanInstance& GetVulkanInstance() const { return *Instance; }
 
 private:
-    std::unique_ptr<class VulkanInstance> Instance;
+    std::unique_ptr<VulkanInstance> Instance;
 };
 
-}
+}  // namespace Finally::Renderer

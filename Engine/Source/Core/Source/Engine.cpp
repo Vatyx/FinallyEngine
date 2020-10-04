@@ -1,51 +1,15 @@
 
 #include "Core/Engine.h"
 
-#include "Renderer/Vulkan/VulkanInstance.h"
-
 namespace Finally::Core
 {
 
-Engine::Engine() = default;
+Engine::Engine(Renderer::Renderer& inRenderer) : renderer(inRenderer) {}
+
 Engine::~Engine() = default;
 
-void Engine::Start()
-{
-    Initialize();
+void Engine::Initialize() {}
 
-    EngineLoop();
-}
+void Engine::Tick(float DeltaTime) {}
 
-void Engine::Initialize()
-{
-    PreviousFrameTime = std::chrono::high_resolution_clock::now();
-}
-
-void Engine::EngineLoop()
-{
-    while (!ShouldShutdown())
-    {
-        glfwPollEvents();
-
-        auto CurrentFrameTime = std::chrono::high_resolution_clock::now();
-
-        DeltaSecondsThisFrame = std::chrono::duration<float, std::chrono::seconds::period>(CurrentFrameTime - PreviousFrameTime).count();
-
-        Tick(DeltaSecondsThisFrame);
-
-        PreviousFrameTime = CurrentFrameTime;
-    }
-}
-
-void Engine::Tick(float DeltaTime)
-{
-    // std::cout << "Hello World: " << DeltaTime << std::endl;
-}
-
-bool Engine::ShouldShutdown()
-{
-    auto Window = RendererInstance.GetWindow();
-
-    return glfwWindowShouldClose(Window);
-}
 }  // namespace Finally::Core

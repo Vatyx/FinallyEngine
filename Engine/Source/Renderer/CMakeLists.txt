@@ -9,12 +9,14 @@ add_library(FinallyRenderer)
 
 target_sources(FinallyRenderer
         PRIVATE
-        Include/Renderer/Vulkan/Utilities/VulkanResource.h
         Source/Renderer.cpp
+        Source/Viewport.cpp
+
         Source/Vulkan/VulkanBuffer.cpp
         Source/Vulkan/VulkanCommandBuffer.cpp
         Source/Vulkan/VulkanCommandPool.cpp
         Source/Vulkan/VulkanDevice.cpp
+        Source/Vulkan/VulkanDescriptors.cpp
         Source/Vulkan/VulkanFence.cpp
         Source/Vulkan/VulkanFramebuffer.cpp
         Source/Vulkan/VulkanInstance.cpp
@@ -25,6 +27,8 @@ target_sources(FinallyRenderer
         Source/Vulkan/VulkanSemaphore.cpp
         Source/Vulkan/VulkanShader.cpp
         Source/Vulkan/VulkanViewport.cpp
+
+        Include/Renderer/Vulkan/Utilities/VulkanResource.h
         )
 
 target_include_directories(FinallyRenderer PUBLIC Include)

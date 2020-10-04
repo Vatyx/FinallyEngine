@@ -17,13 +17,15 @@ protected:
 };
 
 template <typename T, typename Deleter>
-struct UniqueResource {
+struct UniqueResource
+{
     constexpr UniqueResource() = default;
     constexpr explicit UniqueResource(T InResource) : Resource(std::move(InResource)) {}
 
     template <typename... Args>
     constexpr explicit UniqueResource(Args&&... args) : Resource(std::forward<Args>(args)...)
-    {}
+    {
+    }
 
     constexpr UniqueResource(UniqueResource& other) = delete;
     constexpr UniqueResource& operator=(UniqueResource& rhs) = delete;
@@ -31,7 +33,10 @@ struct UniqueResource {
     constexpr UniqueResource(UniqueResource&& Other) noexcept : Resource(std::exchange(Other.Resource, T{})) {}
     constexpr UniqueResource& operator=(UniqueResource&& Other) noexcept
     {
-        if (Resource) { Deleter{}(Resource); }
+        if (Resource)
+        {
+            Deleter{}(Resource);
+        }
 
         Resource = std::exchange(Other.Resource, T{});
 
@@ -40,7 +45,10 @@ struct UniqueResource {
 
     ~UniqueResource()
     {
-        if (Resource) { Deleter{}(Resource); }
+        if (Resource)
+        {
+            Deleter{}(Resource);
+        }
     }
 
     T Get() const { return Resource; }

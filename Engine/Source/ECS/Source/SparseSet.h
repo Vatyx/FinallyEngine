@@ -24,7 +24,6 @@ template <typename T>
 class SparseSet
 {
 public:
-
     SparseSet() = default;
 
     SparseSet(const SparseSet&) = default;

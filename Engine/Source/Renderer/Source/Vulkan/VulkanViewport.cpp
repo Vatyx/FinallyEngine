@@ -5,19 +5,20 @@
 #include "Renderer/Vulkan/VulkanInstance.h"
 
 #include <algorithm>
+#include <cassert>
 #include <stdexcept>
 
 namespace Finally::Renderer
 {
 
-VulkanViewport::VulkanViewport(VulkanDevice* InDevice, VkInstance InInstance, GLFWwindow* Window) : Instance(InInstance), Device(InDevice)
+VulkanViewport::VulkanViewport(const VulkanInstance& inInstance, GLFWwindow* window) : instance(inInstance), device(instance.GetDevice())
 {
-    if (glfwCreateWindowSurface(Instance, Window, nullptr, &Surface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(instance, window, nullptr, &Surface) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to create window surface!");
     }
 
-    Device->SetupPresentQueue(Surface);
+    ValidatePhysicalDeviceSurfaceSupport();
 
     CreateSwapchain();
     RetrieveSwapchainImages();
@@ -28,11 +29,18 @@ VulkanViewport::~VulkanViewport()
 {
     for (auto& ImageView : SwapchainImageViews)
     {
-        vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+        vkDestroyImageView(device, ImageView, nullptr);
     }
 
-    vkDestroySwapchainKHR(Device->GetHandle(), Swapchain, nullptr);
-    vkDestroySurfaceKHR(Instance, Surface, nullptr);
+    vkDestroySwapchainKHR(device, Swapchain, nullptr);
+    vkDestroySurfaceKHR(instance, Surface, nullptr);
+}
+
+void VulkanViewport::ValidatePhysicalDeviceSurfaceSupport() const
+{
+    VkBool32 PresentSupport = false;
+    vkGetPhysicalDeviceSurfaceSupportKHR(instance.GetPhysicalDevice(), device.GetPresentQueue().GetFamilyIndex(), Surface, &PresentSupport);
+    assert(PresentSupport);
 }
 
 VkViewport VulkanViewport::CreateVkViewport() const
@@ -50,7 +58,7 @@ VkViewport VulkanViewport::CreateVkViewport() const
 
 void VulkanViewport::CreateSwapchain()
 {
-    SwapChainSupportDetails Details = FillSwapChainSupportDetails(Device);
+    SwapChainSupportDetails Details = CreateSwapchainSupportDetails();
 
     VkSurfaceFormatKHR SurfaceFormat = ChooseSwapSurfaceFormat(Details.Formats);
     ImageFormat = SurfaceFormat.format;
@@ -70,17 +78,17 @@ void VulkanViewport::CreateSwapchain()
     CreateInfo.preTransform = Details.Capabilities.currentTransform;
     CreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
-    if (vkCreateSwapchainKHR(Device->GetHandle(), &CreateInfo, nullptr, &Swapchain) != VK_SUCCESS)
+    if (vkCreateSwapchainKHR(device, &CreateInfo, nullptr, &Swapchain) != VK_SUCCESS)
     {
         throw std::runtime_error("!ailed to create swap chain!");
     }
 }
 
-SwapChainSupportDetails VulkanViewport::FillSwapChainSupportDetails(VulkanDevice* Device) const
+SwapChainSupportDetails VulkanViewport::CreateSwapchainSupportDetails() const
 {
     SwapChainSupportDetails Details;
 
-    VkPhysicalDevice PhysicalDevice = Device->GetPhysicalDevice();
+    VkPhysicalDevice PhysicalDevice = device.GetPhysicalDevice();
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, Surface, &Details.Capabilities);
 
@@ -151,9 +159,9 @@ VkExtent2D VulkanViewport::ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilitie
 void VulkanViewport::RetrieveSwapchainImages()
 {
     uint32_t ImageCount = 0;
-    vkGetSwapchainImagesKHR(Device->GetHandle(), Swapchain, &ImageCount, nullptr);
+    vkGetSwapchainImagesKHR(device, Swapchain, &ImageCount, nullptr);
     SwapchainImages.resize(ImageCount);
-    vkGetSwapchainImagesKHR(Device->GetHandle(), Swapchain, &ImageCount, SwapchainImages.data());
+    vkGetSwapchainImagesKHR(device, Swapchain, &ImageCount, SwapchainImages.data());
 }
 
 void VulkanViewport::CreateImageViews()
@@ -179,7 +187,7 @@ void VulkanViewport::CreateImageViews()
         CreateInfo.subresourceRange.baseArrayLayer = 0;
         CreateInfo.subresourceRange.layerCount = 1;
 
-        if (vkCreateImageView(Device->GetHandle(), &CreateInfo, nullptr, &SwapchainImageViews[i]) != VK_SUCCESS)
+        if (vkCreateImageView(device, &CreateInfo, nullptr, &SwapchainImageViews[i]) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to create image views!");
         }

@@ -8,4 +8,6 @@ target_sources(FinallyMain
         PRIVATE
         Source/Main.cpp)
 
-target_link_libraries(FinallyMain FinallyCore)
+target_link_libraries(FinallyMain
+        FinallyEditor
+        )

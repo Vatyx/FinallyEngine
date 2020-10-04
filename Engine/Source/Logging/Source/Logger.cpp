@@ -4,4 +4,4 @@
 namespace Finally
 {
 
-}  // namespace Finally::Core
+}  // namespace Finally
