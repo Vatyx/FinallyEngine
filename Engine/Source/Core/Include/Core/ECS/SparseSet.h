@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace Finally::ECS
+namespace Finally::Core
 {
 
 const size_t StartingCapacity = 40;

@@ -1,6 +1,6 @@
-#include "SparseSet.h"
+#include "Core/ECS/SparseSet.h"
 
-namespace Finally::ECS
+namespace Finally::Core
 {
 
 template <typename T>

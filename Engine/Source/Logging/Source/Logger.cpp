@@ -1,7 +1,7 @@
 
 #include "Logging/Logger.h"
 
-namespace Finally
+namespace Finally::Logger
 {
 
 }  // namespace Finally

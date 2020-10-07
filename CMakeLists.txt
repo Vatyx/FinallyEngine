@@ -24,7 +24,6 @@ endif()
 
 add_module(AssetManager)
 add_module(Core)
-add_module(ECS)
 add_module(Editor)
 add_module(Main)
 add_module(Math)

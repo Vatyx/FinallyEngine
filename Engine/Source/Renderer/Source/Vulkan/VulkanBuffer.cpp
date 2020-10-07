@@ -20,7 +20,7 @@ VulkanBuffer::VulkanBuffer(VmaAllocator InAllocator, VkDeviceSize Size, VkBuffer
 
     if (vmaCreateBuffer(Allocator, &BufferInfo, &AllocInfo, &Handle, &Allocation, nullptr) != VK_SUCCESS)
     {
-        Log::Error("Failed to allocate buffer!");
+        Logger::Error(LogDefault, "Failed to allocate buffer!");
     }
 }
 
