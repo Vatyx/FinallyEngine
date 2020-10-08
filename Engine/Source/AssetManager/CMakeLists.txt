@@ -17,5 +17,6 @@ target_include_directories(FinallyAssetManager PUBLIC Include)
 
 target_link_libraries(FinallyAssetManager
         FinallyLogging
+        FinallyUtilities
         assimp::assimp
         )

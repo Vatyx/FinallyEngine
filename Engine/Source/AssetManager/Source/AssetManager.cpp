@@ -9,8 +9,6 @@ namespace Finally::AssetManager
 
 void AssetManager::ProcessDirectory(const Path& path)
 {
-    Logger::Info(LogAssetManager, "test test");
-
     if (!fs::is_directory(path))
     {
         return;
@@ -31,14 +29,11 @@ void AssetManager::ProcessDirectory(const Path& path)
 
 void AssetManager::ProcessFile(const Path& path)
 {
-    if (path.extension() != "fbx")
+    const auto It = assetFactories.find(path.extension().string());
+    if (It != assetFactories.end())
     {
-        return;
+        It->second(*this, path);
     }
-
-    Assimp::Importer importer;
-
-//    const aiScene* scene = importer.ReadFile(path, aiProcess_CalcTangentSpace);
 }
 
 }

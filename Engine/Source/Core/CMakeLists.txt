@@ -6,17 +6,21 @@ add_library(FinallyCore)
 
 find_package(glfw3 CONFIG REQUIRED)
 
-target_sources(FinallyCore PRIVATE
+target_sources(FinallyCore
+        PRIVATE
         Source/Engine.cpp
         Source/Window.cpp
 
         Source/ECS/SparseSet.cpp
+
+        Include/Core/Assets/Types/Mesh.h
         )
 
 target_include_directories(FinallyCore PUBLIC Include)
 
 target_link_libraries(FinallyCore
         FinallyAssetManager
+        FinallyMath
         FinallyRenderer
         FinallyLogging
         glfw

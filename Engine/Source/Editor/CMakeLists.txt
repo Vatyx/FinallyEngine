@@ -16,6 +16,5 @@ target_link_libraries(FinallyEditor
         FinallyCore
         FinallyLogging
         FinallyRenderer
-
         imgui
         )

@@ -2,8 +2,8 @@
 
 #include "AssetManager/Asset.h"
 #include "AssetManager/AssetFactory.h"
-
 #include "Logging/Logger.h"
+#include "Utilities/ConceptUtilities.h"
 
 #include <filesystem>
 #include <unordered_map>
@@ -16,10 +16,7 @@ namespace fs = std::filesystem;
 using AssetHandle = uint64_t;
 using Path = fs::path;
 
-template <class Class, class BaseClass>
-concept IsBaseOf = std::is_base_of<BaseClass, Class>::value;
-
-DeclareLogCategory(LogAssetManager, "AssetManager")
+DeclareLogCategory(LogAssetManager, "AssetManager");
 
 class AssetManager
 {
@@ -31,45 +28,26 @@ public:
     AssetManager& operator=(AssetManager&&) = default;
 
     template <typename T> requires IsBaseOf<T, AssetFactory>
-    void RegisterAssetFactory()
-    {
-        for (std::string_view extension : T::GetSupportedExtensions())
-        {
-            if (assetFactories.contains(extension))
-            {
-                Logger::Error(LogAssetManager, "File extension {} has already been registered!", extension);
-                continue;
-            }
-
-            assetFactories.emplace(extension, &T::LoadAsset);
-        }
-    }
-
-    void ProcessDirectory(const Path& path);
-
-    void ProcessFile(const Path& path);
+    void RegisterAssetFactory();
 
 private:
-    friend AssetFactory;
+    void ProcessDirectory(const Path& path);
+    void ProcessFile(const Path& path);
 
-    template <typename T> requires IsBaseOf<T, Asset>
-    void CreateAsset(T&& newAsset, std::string AssetName)
-    {
-        AssetHandle newHandle = GetNextNewAssetHandle();
-
-        assetNameToHandle.emplace(std::move(AssetName), newHandle);
-        assets.emplace(newHandle, std::make_shared<T>(std::forward(newAsset)));
-    }
+    template <typename T>
+    void CreateAsset(T&& newAsset, std::string_view AssetName);
 
     AssetHandle GetNextNewAssetHandle() { return nextAssetHandle++; }
 
 private:
-    std::unordered_map<std::string, decltype(AssetFactory::LoadAsset)> assetFactories;
+    std::unordered_map<std::string, std::function<decltype(AssetFactory::LoadAsset)>> assetFactories;
 
-    std::unordered_map<AssetHandle, std::shared_ptr<Asset>> assets;
+    std::unordered_map<AssetHandle, Asset> assets;
     std::unordered_map<std::string, AssetHandle> assetNameToHandle;
 
     AssetHandle nextAssetHandle = 1;
 };
 
-}
+}  // namespace Finally::AssetManager
+
+#include "AssetManager/AssetManager.inl"

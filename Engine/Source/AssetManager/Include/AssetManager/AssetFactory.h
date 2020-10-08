@@ -12,7 +12,7 @@ class AssetFactory
 public:
     [[nodiscard]] static std::vector<std::string_view> GetSupportedFileExtensions() { return {}; };
 
-    static void LoadAsset(const fs::path& AssetPath) {};
+    static void LoadAsset(const class AssetManager& AssetManager, const fs::path& AssetPath) {};
 };
 
 }

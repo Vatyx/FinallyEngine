@@ -57,22 +57,4 @@ private:
     T Resource{};
 };
 
-// struct VkDeviceWrapper
-//{
-//	VkDeviceWrapper() = default;
-//	VkDeviceWrapper(VkDevice InDevice) : Device(InDevice) {}
-//
-//	~VkDeviceWrapper() { if (Device != VK_NULL_HANDLE) { vkDestroyDevice(Device, nullptr); } }
-//
-//	VkDeviceWrapper(const VkDeviceWrapper&) = delete;
-//	VkDeviceWrapper(const VkDeviceWrapper&) = delete;
-//	VkDeviceWrapper(VkDeviceWrapper&& Source)
-//	{
-//		Device = Source.Device;
-//		Source.Device = VK_NULL_HANDLE;
-//	}
-//
-//	VkDevice Device = VK_NULL_HANDLE;
-//};
-
 }  // namespace Finally
