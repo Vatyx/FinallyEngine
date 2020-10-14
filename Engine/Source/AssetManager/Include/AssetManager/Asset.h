@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utilities/ConceptUtilities.h"
+
 #include <cassert>
 #include <memory>
 #include <typeindex>
@@ -7,12 +9,21 @@
 namespace Finally::AssetManager
 {
 
+// Basically made std::any but oh well, at least I know how it works now.
 struct Asset
 {
-    template <typename T>
-    explicit Asset(T&& InAssetData) : assetType(typeid(T))
+    template <RvalueRef T>
+    explicit Asset(T&& assetData) : mAssetType(typeid(T))
     {
-        assetData = std::make_unique<T>(InAssetData);
+        mAssetData = new T(std::move(assetData));
+        mAssetDestructor = DestroyAssetData<T>;
+    }
+
+    ~Asset()
+    {
+        assert(mAssetDestructor);
+        mAssetDestructor(mAssetData);
+        mAssetData = nullptr;
     }
 
     Asset(const Asset&) = delete;
@@ -24,24 +35,33 @@ struct Asset
     template <typename T>
     T* Get()
     {
-        assert(assetType == typeid(T));
-        return reinterpret_cast<T&>(*assetData);
+        assert(mAssetType == typeid(T));
+        return *reinterpret_cast<T*>(mAssetData);
     }
 
     template <typename T>
     T* GetUnsafe()
     {
-        if (assetType == typeid(T))
+        if (mAssetType == typeid(T))
         {
-            return reinterpret_cast<T*>(assetData.get());
+            return reinterpret_cast<T*>(mAssetData);
         }
 
         return nullptr;
     }
 
 private:
-    const std::type_index assetType;
-    std::unique_ptr<void> assetData;
+    using DtorFunc = void(*)(void*) noexcept;
+
+    template <typename T>
+    static void DestroyAssetData(void* assetData) noexcept
+    {
+        delete static_cast<T*>(assetData);
+    }
+
+    void* mAssetData = nullptr;
+    DtorFunc mAssetDestructor = nullptr;
+    const std::type_index mAssetType;
 };
 
 }  // namespace Finally::AssetManager

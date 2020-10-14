@@ -1,11 +1,15 @@
 #pragma once
 
+#include <string>
+
+#include "AssetManager/Asset.h"
+
 namespace Finally::Core
 {
 
 struct Shader
 {
-    std::string byteCode;
+    std::string mByteCode;
 };
 
 

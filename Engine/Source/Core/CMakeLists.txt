@@ -13,6 +13,8 @@ target_sources(FinallyCore
 
         Source/ECS/SparseSet.cpp
 
+        Source/Assets/Factories/ShaderAssetFactory.cpp
+
         Include/Core/Assets/Types/Mesh.h
         )
 
@@ -23,5 +25,6 @@ target_link_libraries(FinallyCore
         FinallyMath
         FinallyRenderer
         FinallyLogging
+        FinallyUtilities
         glfw
         )

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 #include <vector>
 
 namespace Finally::FileUtilities
 {
 
-std::vector<char> ReadFile(const std::string& FileName);
+std::string ReadFile(const std::filesystem::path& fileName);
 
 }  // namespace Finally::FileUtilities

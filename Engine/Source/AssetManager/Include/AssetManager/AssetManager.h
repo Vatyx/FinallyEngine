@@ -30,12 +30,12 @@ public:
     template <typename T> requires IsBaseOf<T, AssetFactory>
     void RegisterAssetFactory();
 
+    template <RvalueRef T>
+    void CreateAsset(T&& newAsset, std::string_view AssetName);
+
 private:
     void ProcessDirectory(const Path& path);
     void ProcessFile(const Path& path);
-
-    template <typename T>
-    void CreateAsset(T&& newAsset, std::string_view AssetName);
 
     AssetHandle GetNextNewAssetHandle() { return nextAssetHandle++; }
 
@@ -46,6 +46,8 @@ private:
     std::unordered_map<std::string, AssetHandle> assetNameToHandle;
 
     AssetHandle nextAssetHandle = 1;
+
+    friend class AssetFactory;
 };
 
 }  // namespace Finally::AssetManager

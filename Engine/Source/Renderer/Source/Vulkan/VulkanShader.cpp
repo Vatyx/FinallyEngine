@@ -12,9 +12,9 @@ namespace Finally::Renderer
 
 VulkanShader::VulkanShader(const VulkanDevice& InDevice, const std::string& FileName) : Device(InDevice)
 {
-    std::vector<char> ShaderCode = FileUtilities::ReadFile(FileName);
+//    std::vector<char> ShaderCode = FileUtilities::ReadFile(FileName);
 
-    CreateShaderModule(ShaderCode);
+//    CreateShaderModule(ShaderCode);
 }
 
 VulkanShader::~VulkanShader()

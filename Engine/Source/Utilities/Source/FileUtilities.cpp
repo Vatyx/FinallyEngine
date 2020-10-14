@@ -7,24 +7,25 @@
 namespace Finally::FileUtilities
 {
 
-std::vector<char> ReadFile(const std::string& FileName)
+std::string ReadFile(const std::filesystem::path& fileName)
 {
-    std::ifstream File(FileName, std::ios::ate | std::ios::binary);
+    std::ifstream file(fileName, std::ios::ate | std::ios::binary);
 
-    if (!File.is_open())
+    if (!file.is_open())
     {
         throw std::runtime_error("Failed to open file!");
     }
 
-    size_t FileSize = (size_t)File.tellg();
-    std::vector<char> Buffer(FileSize);
+    size_t fileSize = (size_t)file.tellg();
+    std::string buffer;
+    buffer.resize(fileSize);
 
-    File.seekg(0);
-    File.read(Buffer.data(), FileSize);
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
 
-    File.close();
+    file.close();
 
-    return Buffer;
+    return buffer;
 }
 
 }  // namespace Finally::FileUtilities

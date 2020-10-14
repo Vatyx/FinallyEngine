@@ -7,8 +7,8 @@
 namespace Finally::AssetManager
 {
 
-template <typename T> requires IsBaseOf<T, AssetFactory>
-void AssetManager::RegisterAssetFactory()
+template <typename T>
+requires IsBaseOf<T, AssetFactory> void AssetManager::RegisterAssetFactory()
 {
     for (std::string_view extension : T::GetSupportedExtensions())
     {
@@ -22,15 +22,15 @@ void AssetManager::RegisterAssetFactory()
     }
 }
 
-template <typename T>
+template <RvalueRef T>
 void AssetManager::CreateAsset(T&& newAsset, std::string_view AssetName)
 {
     AssetHandle newHandle = GetNextNewAssetHandle();
 
     assetNameToHandle.emplace(AssetName, newHandle);
-    assets.emplace(newHandle, Asset{newAsset});
+    assets.emplace(newHandle, Asset{ std::move(newAsset) });
 
-    Logger::Info(LogAssetManager, "Successfully imported asset {}", AssetName);
+    Logger::Info(LogAssetManager, "Successfully imported asset {}", AssetName.data());
 }
 
-}
+}  // namespace Finally::AssetManager
