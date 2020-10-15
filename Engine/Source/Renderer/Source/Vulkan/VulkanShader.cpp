@@ -10,26 +10,25 @@
 namespace Finally::Renderer
 {
 
-VulkanShader::VulkanShader(const VulkanDevice& InDevice, const std::string& FileName) : Device(InDevice)
+VulkanShader::VulkanShader(const VulkanDevice& device, std::string_view code)
+    : mDevice(device)
 {
-//    std::vector<char> ShaderCode = FileUtilities::ReadFile(FileName);
-
-//    CreateShaderModule(ShaderCode);
+    CreateShaderModule(code);
 }
 
 VulkanShader::~VulkanShader()
 {
-    vkDestroyShaderModule(Device.GetHandle(), Handle, nullptr);
+    vkDestroyShaderModule(mDevice.GetHandle(), Handle, nullptr);
 }
 
-void VulkanShader::CreateShaderModule(const std::vector<char>& ShaderCode)
+void VulkanShader::CreateShaderModule(std::string_view code)
 {
-    VkShaderModuleCreateInfo CreateInfo{};
-    CreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    CreateInfo.codeSize = ShaderCode.size();
-    CreateInfo.pCode = reinterpret_cast<const uint32_t*>(ShaderCode.data());
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = code.size();
+    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-    if (vkCreateShaderModule(Device.GetHandle(), &CreateInfo, nullptr, &Handle) != VK_SUCCESS)
+    if (vkCreateShaderModule(mDevice.GetHandle(), &createInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create shader module!");
     }

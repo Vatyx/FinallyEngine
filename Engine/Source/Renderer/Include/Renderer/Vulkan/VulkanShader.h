@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
+
 #include <vulkan/vulkan.h>
 
-#include <Renderer/Vulkan/Utilities/VulkanResource.h>
-#include <string>
+#include <string_view>
 #include <vector>
 
 namespace Finally::Renderer
@@ -14,14 +15,15 @@ class VulkanDevice;
 class VulkanShader : public VulkanResource<VkShaderModule>
 {
 public:
-    VulkanShader(const VulkanDevice& InDevice, const std::string& FileName);
+    VulkanShader() = delete;
+    VulkanShader(const VulkanDevice& device, std::string_view code);
 
     ~VulkanShader();
 
 private:
-    void CreateShaderModule(const std::vector<char>& ShaderCode);
+    void CreateShaderModule(std::string_view code);
 
-    const VulkanDevice& Device;
+    const VulkanDevice& mDevice;
 };
 
 }  // namespace Finally::Renderer

@@ -4,12 +4,14 @@ project(FinallyRenderer CXX)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 REQUIRED FATAL_ERROR)
+find_package(shaderc REQUIRED FATAL_ERROR)
 
 add_library(FinallyRenderer)
 
 target_sources(FinallyRenderer
         PRIVATE
         Source/Renderer.cpp
+        Source/ShaderManager.cpp
         Source/Viewport.cpp
 
         Source/Vulkan/VulkanBuffer.cpp

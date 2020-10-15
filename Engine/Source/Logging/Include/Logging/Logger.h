@@ -27,28 +27,28 @@ template <typename FormatString, typename... Args>
 using LoggingFunction = void (spdlog::logger::*)(const FormatString&, const Args&...);
 
 template <const char* Name, typename FormatString, typename... Args>
-inline void Info(LogCategory<Name> Category, FormatString& Message, Args&&... Arguments)
+inline void Info(LogCategory<Name> Category, FormatString&& Message, Args&&... Arguments)
 {
     constexpr LoggingFunction<FormatString, Args...> loggingFunction = &spdlog::logger::info;
     Details::InternalLog<loggingFunction>(Category, Message, std::forward<Args>(Arguments)...);
 }
 
 template <const char* Name, typename FormatString, typename... Args>
-inline void Warn(LogCategory<Name> Category, FormatString& Message, Args&&... Arguments)
+inline void Warn(LogCategory<Name> Category, FormatString&& Message, Args&&... Arguments)
 {
     constexpr LoggingFunction<FormatString, Args...> loggingFunction = &spdlog::logger::warn;
     Details::InternalLog<loggingFunction>(Category, Message, std::forward<Args>(Arguments)...);
 }
 
 template <const char* Name, typename FormatString, typename... Args>
-inline void Error(LogCategory<Name> Category, FormatString& Message, Args&&... Arguments)
+inline void Error(LogCategory<Name> Category, FormatString&& Message, Args&&... Arguments)
 {
     constexpr LoggingFunction<FormatString, Args...> loggingFunction = &spdlog::logger::error;
     Details::InternalLog<loggingFunction>(Category, Message, std::forward<Args>(Arguments)...);
 }
 
 template <const char* Name, typename FormatString, typename... Args>
-inline void Critical(LogCategory<Name> Category, FormatString& Message, Args&&... Arguments)
+inline void Critical(LogCategory<Name> Category, FormatString&& Message, Args&&... Arguments)
 {
     constexpr LoggingFunction<FormatString, Args...> loggingFunction = &spdlog::logger::critical;
     Details::InternalLog<loggingFunction>(Category, Message, std::forward<Args>(Arguments)...);
@@ -57,7 +57,7 @@ inline void Critical(LogCategory<Name> Category, FormatString& Message, Args&&..
 namespace Details
 {
     template <auto LoggingFunction, const char* Name, typename FormatString, typename... Args>
-    inline void InternalLog(LogCategory<Name> category, FormatString& message, Args&&... args)
+    inline void InternalLog(LogCategory<Name> category, FormatString&& message, Args&&... args)
     {
         std::shared_ptr<spdlog::logger> loggerRef = spdlog::get(category.categoryName);
         if (loggerRef == nullptr)
@@ -68,7 +68,7 @@ namespace Details
             spdlog::register_logger(loggerRef);
         }
 
-        (loggerRef.get()->*LoggingFunction)(message, std::forward<Args>(args)...);
+        (loggerRef.get()->*LoggingFunction)(std::forward<FormatString>(message), std::forward<Args>(args)...);
     }
 }  // namespace Details
 
