@@ -4,7 +4,6 @@ project(FinallyRenderer CXX)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 REQUIRED FATAL_ERROR)
-find_package(shaderc REQUIRED FATAL_ERROR)
 
 add_library(FinallyRenderer)
 
@@ -40,6 +39,7 @@ target_link_libraries(FinallyRenderer
         FinallyMath
         FinallyLogging
         glfw
+        shaderc
         Vulkan::Vulkan
         VulkanMemoryAllocator
         )

@@ -7,8 +7,8 @@
 #include <spdlog/spdlog.h>
 
 #define DeclareLogCategory(category, catDisplayName)                                                                                                 \
-    extern const char catStr[] = "#catStr";                                                                                                          \
-    const auto category = Finally::Logger::LogCategory<catStr>{};
+    const char category ## CatStr[] = "#catDisplayName";                                                                                \
+    const auto category = Finally::Logger::LogCategory<category##CatStr>{};
 
 namespace Finally::Logger
 {

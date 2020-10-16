@@ -35,7 +35,6 @@ std::vector<uint32_t> ShaderManager::CompileShader(std::string_view code, Shader
     shaderc::CompileOptions options{};
     options.SetWarningsAsErrors();
     options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_1);
-    options.SetTargetSpirv(shaderc_spirv_version_1_3);
 
     shaderc::Compiler compiler{};
     shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(code.data(), code.size(), shaderType,shaderName.data(), options);
