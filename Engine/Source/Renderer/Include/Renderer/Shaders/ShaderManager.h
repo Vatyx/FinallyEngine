@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer/Vulkan/VulkanShader.h"
-
 #include "Logging/Logger.h"
+#include "Renderer/Shaders/ShaderTypes.h"
+#include "Renderer/Vulkan/VulkanShader.h"
 
 #include <cstdint>
 #include <unordered_map>
@@ -11,17 +11,6 @@ namespace Finally::Renderer
 {
 
 DeclareLogCategory(LogShaderManager, ShaderManager);
-
-enum class ShaderType : uint8_t
-{
-    Vertex,
-    Fragment,
-    Compute,
-    Geometry,
-    TeslationControl,
-    TeslationEvaluation,
-    MAX
-};
 
 struct ShaderHandle
 {
@@ -46,4 +35,4 @@ private:
     std::unordered_map<ShaderHandle, VulkanShader> ShaderResources;
 };
 
-}
+}  // namespace Finally::Renderer
