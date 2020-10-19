@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
-
 #include <spdlog/common.h>
 #include <spdlog/sinks/wincolor_sink.h>
 #include <spdlog/spdlog.h>
 
+#include <memory>
+
 #define DeclareLogCategory(category, catDisplayName)                                                                                                 \
-    const char category ## CatStr[] = "#catDisplayName";                                                                                \
+    const char category##CatStr[] = "#catDisplayName";                                                                                               \
     const auto category = Finally::Logger::LogCategory<category##CatStr>{};
 
 namespace Finally::Logger

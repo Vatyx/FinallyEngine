@@ -2,10 +2,11 @@
 
 #include "AssetManager/Asset.h"
 #include "AssetManager/AssetFactory.h"
-#include "Logging/Logger.h"
+//#include "Logging/Logger.h"
 #include "Utilities/ConceptUtilities.h"
 
 #include <filesystem>
+#include <functional>
 #include <unordered_map>
 
 namespace Finally::AssetManager
@@ -16,7 +17,7 @@ namespace fs = std::filesystem;
 using AssetHandle = uint64_t;
 using Path = fs::path;
 
-DeclareLogCategory(LogAssetManager, "AssetManager");
+//DeclareLogCategory(LogAssetManager, "AssetManager");
 
 class AssetManager
 {
@@ -33,8 +34,9 @@ public:
     template <RvalueRef T>
     void CreateAsset(T&& newAsset, std::string_view AssetName);
 
-private:
     void ProcessDirectory(const Path& path);
+
+private:
     void ProcessFile(const Path& path);
 
     AssetHandle GetNextNewAssetHandle() { return nextAssetHandle++; }

@@ -1,42 +1,43 @@
-
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 
-#include "Renderer/Vulkan/VulkanViewport.h"
+#include "Renderer/Vulkan/VulkanDevice.h"
 
 #include <stdexcept>
 
 namespace Finally::Renderer
 {
 
-VulkanRenderPass::VulkanRenderPass(VkDevice InDevice, const VkFormat& SwapchainFormat) : Device(InDevice)
+VulkanRenderPass::VulkanRenderPass(const VulkanDevice& device, const VkFormat& swapchainFormat)
 {
-    VkAttachmentDescription ColorAttachment{};
-    ColorAttachment.format = SwapchainFormat;
-    ColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    ColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    ColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    ColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    ColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    ColorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    ColorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    mDevice = &device;
 
-    VkAttachmentReference ColorAttachmentRef{};
-    ColorAttachmentRef.attachment = 0;
-    ColorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    VkAttachmentDescription colorAttachment{};
+    colorAttachment.format = swapchainFormat;
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-    VkSubpassDescription Subpass{};
-    Subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    Subpass.colorAttachmentCount = 1;
-    Subpass.pColorAttachments = &ColorAttachmentRef;
+    VkAttachmentReference colorAttachmentRef{};
+    colorAttachmentRef.attachment = 0;
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkRenderPassCreateInfo RenderPassInfo{};
-    RenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    RenderPassInfo.attachmentCount = 1;
-    RenderPassInfo.pAttachments = &ColorAttachment;
-    RenderPassInfo.subpassCount = 1;
-    RenderPassInfo.pSubpasses = &Subpass;
+    VkSubpassDescription subpass{};
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = 1;
+    subpass.pColorAttachments = &colorAttachmentRef;
 
-    if (vkCreateRenderPass(Device, &RenderPassInfo, nullptr, &Handle) != VK_SUCCESS)
+    VkRenderPassCreateInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassInfo.attachmentCount = 1;
+    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.subpassCount = 1;
+    renderPassInfo.pSubpasses = &subpass;
+
+    if (vkCreateRenderPass(*mDevice, &renderPassInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create render pass!");
     }
@@ -44,7 +45,10 @@ VulkanRenderPass::VulkanRenderPass(VkDevice InDevice, const VkFormat& SwapchainF
 
 VulkanRenderPass::~VulkanRenderPass()
 {
-    vkDestroyRenderPass(Device, Handle, nullptr);
+    if (mDevice != nullptr)
+    {
+        vkDestroyRenderPass(*mDevice, Handle, nullptr);
+    }
 }
 
 }  // namespace Finally::Renderer

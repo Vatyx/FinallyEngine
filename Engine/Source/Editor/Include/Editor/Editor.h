@@ -15,6 +15,11 @@ namespace Finally::Renderer
 class Renderer;
 }
 
+namespace Finally::AssetManager
+{
+class AssetManager;
+}
+
 namespace Finally::Editor
 {
 
@@ -34,16 +39,18 @@ public:
     void Start();
 
 private:
+    void Initialize();
     void Tick(float DeltaTime);
     bool ShouldShutDown();
 
-    std::unique_ptr<Renderer::Renderer> renderer;
-    std::unique_ptr<Core::Engine> engine;
-    std::unique_ptr<Core::Window> editorWindow;
+    std::unique_ptr<Core::Engine> mEngine;
+    std::unique_ptr<AssetManager::AssetManager> mAssetManager;
+    std::unique_ptr<Renderer::Renderer> mRenderer;
+    std::unique_ptr<Core::Window> mEditorWindow;
 
     // Time
-    TimePoint PreviousFrameTime;
-    float DeltaSecondsThisFrame = 0.0f;
+    TimePoint mPreviousFrameTime;
+    float mDeltaSecondsThisFrame = 0.0f;
 };
 
 }  // namespace Finally::Editor

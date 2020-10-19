@@ -20,8 +20,13 @@ namespace Finally::Editor
 //    info.Queue = instance.GetDevice().GetGraphicsQueue();
 //    info.PipelineCache = VK_NULL_HANDLE;
 //}
+
+//void EditorUI::Tick() {}
 //
-//EditorUI::Tick() {}
+//EditorUI::EditorUI(const Renderer::Renderer& renderer, const AssetManager::AssetManager& assetManager)
+//    : mAssetManager(assetManager)
+//{
 
-}
+//}
 
+}  // namespace Finally::Editor

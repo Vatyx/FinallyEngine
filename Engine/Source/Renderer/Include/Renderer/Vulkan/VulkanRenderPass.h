@@ -8,17 +8,16 @@ namespace Finally::Renderer
 {
 
 class VulkanDevice;
-class VulkanViewport;
 
 class VulkanRenderPass : public VulkanResource<VkRenderPass>
 {
 public:
-    VulkanRenderPass(VkDevice InDevice, const VkFormat& SwaphainFormat);
-
+    [[nodiscard]] VulkanRenderPass() = default;
+    [[nodiscard]] VulkanRenderPass(const VulkanDevice& device, const VkFormat& swapchainFormat);
     ~VulkanRenderPass();
 
-private:
-    VkDevice Device;
+    VulkanRenderPass(VulkanRenderPass&&) = default;
+    VulkanRenderPass& operator=(VulkanRenderPass&&) = default;
 };
 
 }  // namespace Finally::Renderer

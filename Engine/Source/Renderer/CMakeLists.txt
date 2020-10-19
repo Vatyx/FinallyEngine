@@ -9,6 +9,7 @@ add_library(FinallyRenderer)
 
 target_sources(FinallyRenderer
         PRIVATE
+        Source/imgui/VulkanImgui.cpp
         Source/Renderer.cpp
         Source/Shaders/ShaderManager.cpp
         Source/Viewport.cpp
@@ -20,6 +21,7 @@ target_sources(FinallyRenderer
         Source/Vulkan/VulkanDescriptors.cpp
         Source/Vulkan/VulkanFence.cpp
         Source/Vulkan/VulkanFramebuffer.cpp
+        Source/Vulkan/VulkanImage.cpp
         Source/Vulkan/VulkanInstance.cpp
         Source/Vulkan/VulkanMemoryAllocator.cpp
         Source/Vulkan/VulkanPipeline.cpp
@@ -28,7 +30,6 @@ target_sources(FinallyRenderer
         Source/Vulkan/VulkanSemaphore.cpp
         Source/Vulkan/VulkanShader.cpp
         Source/Vulkan/VulkanViewport.cpp
-
         Include/Renderer/Vulkan/Utilities/VulkanResource.h
         )
 
@@ -38,6 +39,8 @@ target_link_libraries(FinallyRenderer
         FinallyUtilities
         FinallyMath
         FinallyLogging
+
+        imgui
         glfw
         shaderc
         Vulkan::Vulkan

@@ -26,30 +26,29 @@ enum class ShaderStage : uint8_t
 class VulkanPipeline : public VulkanResource<VkPipeline>
 {
 public:
-    VulkanPipeline(const VulkanDevice& InDevice, const VulkanViewport& Viewport, const VulkanRenderPass& RenderPass, const VulkanShader& VertexShader,
-                   const VulkanShader& FragmentShader);
-
+    [[nodiscard]] VulkanPipeline() = default;
+    [[nodiscard]] VulkanPipeline(const VulkanDevice& device, const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
+                   const VulkanShader& fragmentShader);
     ~VulkanPipeline();
 
-    operator VkPipeline() const { return GetHandle(); }
-
-private:
-    VkPipelineLayout PipelineLayoutHandle{};
-    const VulkanDevice& Device;
+    VulkanPipeline(VulkanPipeline&&) = default;
+    VulkanPipeline& operator=(VulkanPipeline&&) = default;
 
 private:
     void CreatePipelineLayout();
 
-    void CreateShaderSteps(const VulkanShader& VertexShader, const VulkanShader& FragShader);
+    void CreateShaderSteps(const VulkanShader& vertexShader, const VulkanShader& fragShader);
     void CreateVertexInputStep();
     void CreateInputAssemblyStep();
-    void CreateViewportState(const VulkanViewport& Viewport);
+    void CreateViewportState();
     void CreateRasterizerStep();
     void CreateMultisamplerStep();
     void CreateColorBlendingStep();
     void CreateDepthStencilStep();
 
     void CreateDynamicState();
+
+    VkPipelineLayout PipelineLayoutHandle{};
 
     VkPipelineShaderStageCreateInfo ShaderStages[EnumCount<ShaderStage>()] = {};
     VkPipelineVertexInputStateCreateInfo VertexInputInfo{};
@@ -58,10 +57,7 @@ private:
     VkPipelineMultisampleStateCreateInfo Multisampling{};
     VkPipelineColorBlendAttachmentState ColorBlendAttachment{};
     VkPipelineColorBlendStateCreateInfo ColorBlending{};
-
     VkPipelineViewportStateCreateInfo ViewportState{};
-    VkViewport ViewportData{};
-    VkRect2D Scissor{};
 
     VkPipelineDynamicStateCreateInfo DynamicState{};
     std::vector<VkDynamicState> DynamicStates;

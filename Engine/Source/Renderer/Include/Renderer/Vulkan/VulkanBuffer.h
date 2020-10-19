@@ -17,8 +17,8 @@ public:
     ~VulkanBuffer();
 
 private:
-    VmaAllocator Allocator;
-    VmaAllocation Allocation{};
+    VmaAllocator Allocator = VK_NULL_HANDLE;
+    VmaAllocation Allocation = VK_NULL_HANDLE;
 };
 
 }  // namespace Finally::Renderer

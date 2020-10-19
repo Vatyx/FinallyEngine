@@ -54,24 +54,6 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
 //    CreateCommandPool();
 //}
 
-void VulkanDevice::CreateRenderPass(const VkFormat& SwapchainFormat)
-{
-    RenderPass = std::make_unique<VulkanRenderPass>(GetHandle(), SwapchainFormat);
-}
-
-void VulkanDevice::CreatePipeline(const VulkanViewport& Viewport)
-{
-    Pipeline = std::make_unique<VulkanPipeline>(*this, Viewport, *RenderPass, *VertexShader, *FragmentShader);
-}
-
-void VulkanDevice::CreateShaders()
-{
-    VertexShader = std::make_unique<VulkanShader>(
-        *this, R"(C:\Users\Sahil Dhanju\Documents\Visual Studio 2019\Projects\FinallyEngine\FinallyEngine\Shaders\Vertex.spv)");
-    FragmentShader = std::make_unique<VulkanShader>(
-        *this, R"(C:\Users\Sahil Dhanju\Documents\Visual Studio 2019\Projects\FinallyEngine\FinallyEngine\Shaders\Frag.spv)");
-}
-
 void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos)
 {
     GraphicsQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)].queueFamilyIndex, 0 };
@@ -135,11 +117,26 @@ void VulkanDevice::CreateCommandPool()
 
 void VulkanDevice::CreateFramebuffers(const VulkanViewport& Viewport)
 {
-    for (const auto& ImageView : Viewport.GetSwapchainImageViews())
-    {
-        Framebuffers.emplace_back(std::make_unique<VulkanFramebuffer>(GetHandle(), GetRenderPass()->GetHandle(),
-                                                                      std::vector<VkImageView>{ ImageView }, Viewport.GetExtents()));
-    }
+    //    for (const auto& ImageView : Viewport.GetSwapchainImageViews())
+    //    {
+    //        Framebuffers.emplace_back(std::make_unique<VulkanFramebuffer>(GetHandle(), GetRenderPass()->GetHandle(),
+    //                                                                      std::vector<VkImageView>{ ImageView }, Viewport.GetExtents()));
+    //    }
+}
+
+VulkanDescriptorPool VulkanDevice::CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes)
+{
+    return VulkanDescriptorPool{ *this, descriptorPoolSizes, numSizes };
+}
+
+VulkanRenderPass VulkanDevice::CreateRenderPass(const VkFormat& SwapchainFormat)
+{
+    return VulkanRenderPass{ *this, SwapchainFormat };
+}
+
+VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader)
+{
+    return VulkanPipeline{ *this, renderPass, vertexShader, fragmentShader };
 }
 
 }  // namespace Finally::Renderer

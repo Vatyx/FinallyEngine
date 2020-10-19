@@ -7,6 +7,8 @@
 namespace Finally::Renderer
 {
 
+class VulkanDevice;
+
 class VulkanDescriptorSetLayout : public VulkanResource<VkDescriptorSetLayout>
 {
 public:
@@ -22,12 +24,12 @@ private:
 class VulkanDescriptorPool : public VulkanResource<VkDescriptorPool>
 {
 public:
-    [[nodiscard]] explicit VulkanDescriptorPool(const VulkanDevice& InDevice, uint32_t DescriptorCount);
-
+    [[nodiscard]] VulkanDescriptorPool() = default;
+    [[nodiscard]] explicit VulkanDescriptorPool(const VulkanDevice& device, const VkDescriptorPoolSize* poolSizes, size_t poolSizesCount);
     ~VulkanDescriptorPool();
 
-private:
-    const VulkanDevice& Device;
+    VulkanDescriptorPool(VulkanDescriptorPool&&) = default;
+    VulkanDescriptorPool& operator=(VulkanDescriptorPool&&) = default;
 };
 
 // class VulkanDescriptorSet : public VulkanResource<VkDescriptorSet>

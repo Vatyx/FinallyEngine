@@ -38,7 +38,7 @@ BraceWrapping:
   SplitEmptyRecord: true
 BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeColon
 ColumnLimit: 150
 CompactNamespaces: false

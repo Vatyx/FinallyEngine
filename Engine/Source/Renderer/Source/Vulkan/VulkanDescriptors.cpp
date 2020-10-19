@@ -2,7 +2,6 @@
 
 #include "Renderer/Vulkan/VulkanDevice.h"
 
-#include <algorithm>
 #include <stdexcept>
 
 namespace Finally::Renderer
@@ -35,19 +34,17 @@ VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
     vkDestroyDescriptorSetLayout(Device, Handle, nullptr);
 }
 
-VulkanDescriptorPool::VulkanDescriptorPool(const VulkanDevice& InDevice, uint32_t DescriptorCount) : Device(InDevice)
+VulkanDescriptorPool::VulkanDescriptorPool(const class VulkanDevice& device, const VkDescriptorPoolSize* poolSizes, size_t poolSizesCount)
 {
-    VkDescriptorPoolSize PoolSize{};
-    PoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    PoolSize.descriptorCount = DescriptorCount;
+    mDevice = &device;
 
-    VkDescriptorPoolCreateInfo PoolInfo{};
-    PoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    PoolInfo.poolSizeCount = 1;
-    PoolInfo.pPoolSizes = &PoolSize;
-    PoolInfo.maxSets = DescriptorCount;
+    VkDescriptorPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = poolSizes;
+    poolInfo.maxSets = poolSizesCount;
 
-    if (vkCreateDescriptorPool(Device, &PoolInfo, nullptr, &Handle) != VK_SUCCESS)
+    if (vkCreateDescriptorPool(*mDevice, &poolInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to create descriptor pool!");
     }
@@ -55,7 +52,10 @@ VulkanDescriptorPool::VulkanDescriptorPool(const VulkanDevice& InDevice, uint32_
 
 VulkanDescriptorPool::~VulkanDescriptorPool()
 {
-    vkDestroyDescriptorPool(Device, Handle, nullptr);
+    if (mDevice != nullptr)
+    {
+        vkDestroyDescriptorPool(*mDevice, Handle, nullptr);
+    }
 }
 
 // VulkanDescriptorSet::VulkanDescriptorSet(const VulkanDevice& InDevice, const VulkanDescriptorPool& DescriptorPool, uint32_t DescriptorSetCount,

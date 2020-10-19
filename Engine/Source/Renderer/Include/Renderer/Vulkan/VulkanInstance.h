@@ -48,6 +48,7 @@ public:
     VkInstance GetHandle() { return VkInstanceResource.Get(); }
 
     [[nodiscard]] const VulkanDevice& GetDevice() const { return *Device; }
+    [[nodiscard]] VulkanDevice& GetDevice() { return *Device; }
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
 
     VmaAllocator GetAllocator() { return Allocator; }

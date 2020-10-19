@@ -2,8 +2,9 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Renderer/Vulkan/VulkanDescriptors.h"
+#include "Renderer/Vulkan/VulkanQueue.h"
 #include "Utilities/TemplateUtilities.h"
-#include "VulkanQueue.h"
 
 #include <iostream>
 #include <memory>
@@ -47,23 +48,23 @@ public:
 
     ~VulkanDevice();
 
-    void Initialize(const VulkanViewport& Viewport);
+//    void Initialize(const VulkanViewport& Viewport);
 
     [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
     operator VkDevice() const { return VkDeviceResource.Get(); }
 
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
-    [[nodiscard]] VulkanRenderPass* GetRenderPass() const { return RenderPass.get(); }
 
     [[nodiscard]] const VulkanQueue& GetGraphicsQueue() const { return GraphicsQueue; }
     [[nodiscard]] const VulkanQueue& GetTransferQueue() const { return TransferQueue; }
     [[nodiscard]] const VulkanQueue& GetPresentQueue() const { return PresentQueue; }
     [[nodiscard]] const VulkanQueue& GetComputeQueue() const { return ComputeQueue; }
 
+    VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes);
+    VulkanRenderPass CreateRenderPass(const VkFormat& SwapchainFormat);
+    VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader);
+
 private:
-    void CreateShaders();
-    void CreateRenderPass(const VkFormat& SwapchainFormat);
-    void CreatePipeline(const VulkanViewport& Viewport);
     void CreateFramebuffers(const VulkanViewport& Viewport);
     void CreateCommandPool();
 
@@ -82,11 +83,7 @@ private:
     VulkanQueue PresentQueue;
     VulkanQueue ComputeQueue;
 
-    std::unique_ptr<VulkanRenderPass> RenderPass;
     std::unique_ptr<VulkanPipeline> Pipeline;
-
-    std::unique_ptr<VulkanShader> VertexShader;
-    std::unique_ptr<VulkanShader> FragmentShader;
 
     std::vector<std::unique_ptr<VulkanFramebuffer>> Framebuffers;
 

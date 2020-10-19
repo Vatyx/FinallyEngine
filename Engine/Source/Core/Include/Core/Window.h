@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include <cstdint>
 #include <memory>
 #include <string_view>
+
+#include <GLFW/glfw3.h>
 
 namespace Finally::Renderer
 {

@@ -6,17 +6,12 @@
 namespace Finally::Renderer
 {
 
-class VulkanDevice;
-
 class VulkanCommandPool : public VulkanResource<VkCommandPool>
 {
 public:
-    [[nodiscard]] explicit VulkanCommandPool(const VulkanDevice& Device);
-
+    [[nodiscard]] VulkanCommandPool() = default;
+    [[nodiscard]] explicit VulkanCommandPool(const class VulkanDevice& device);
     ~VulkanCommandPool();
-
-private:
-    const VulkanDevice& Device;
 };
 
 }  // namespace Finally::Renderer

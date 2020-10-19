@@ -1,9 +1,3 @@
-#pragma once
-
-#include "AssetManager/Asset.h"
-
-#include <string>
-
 namespace Finally::AssetManager
 {
 
@@ -14,7 +8,7 @@ requires IsBaseOf<T, AssetFactory> void AssetManager::RegisterAssetFactory()
     {
         if (assetFactories.contains(extension))
         {
-            Logger::Error(LogAssetManager, "File extension {} has already been registered!", extension);
+//            Logger::Error(LogAssetManager, "File extension {} has already been registered!", extension);
             continue;
         }
 
@@ -30,7 +24,7 @@ void AssetManager::CreateAsset(T&& newAsset, std::string_view AssetName)
     assetNameToHandle.emplace(AssetName, newHandle);
     assets.emplace(newHandle, Asset{ std::move(newAsset) });
 
-    Logger::Info(LogAssetManager, "Successfully imported asset {}", AssetName.data());
+//    Logger::Info(LogAssetManager, "Successfully imported asset {}", AssetName.data());
 }
 
 }  // namespace Finally::AssetManager
