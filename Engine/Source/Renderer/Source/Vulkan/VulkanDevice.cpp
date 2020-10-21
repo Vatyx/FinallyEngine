@@ -45,15 +45,6 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
     SetupQueues(QueueCreateInfos);
 }
 
-// void VulkanDevice::Initialize(const VulkanViewport& Viewport)
-//{
-//    CreateShaders();
-//    CreateRenderPass(Viewport.GetSwapchainFormat());
-//    CreatePipeline(Viewport);
-//    CreateFramebuffers(Viewport);
-//    CreateCommandPool();
-//}
-
 void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos)
 {
     GraphicsQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)].queueFamilyIndex, 0 };
@@ -110,33 +101,30 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
 
     return QueueCreateInfo;
 }
-void VulkanDevice::CreateCommandPool()
-{
-    CommandPool = std::make_unique<VulkanCommandPool>(*this);
-}
 
-void VulkanDevice::CreateFramebuffers(const VulkanViewport& Viewport)
-{
-    //    for (const auto& ImageView : Viewport.GetSwapchainImageViews())
-    //    {
-    //        Framebuffers.emplace_back(std::make_unique<VulkanFramebuffer>(GetHandle(), GetRenderPass()->GetHandle(),
-    //                                                                      std::vector<VkImageView>{ ImageView }, Viewport.GetExtents()));
-    //    }
-}
-
-VulkanDescriptorPool VulkanDevice::CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes)
+VulkanDescriptorPool VulkanDevice::CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes) const
 {
     return VulkanDescriptorPool{ *this, descriptorPoolSizes, numSizes };
 }
 
-VulkanRenderPass VulkanDevice::CreateRenderPass(const VkFormat& SwapchainFormat)
+VulkanRenderPass VulkanDevice::CreateRenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions) const
 {
-    return VulkanRenderPass{ *this, SwapchainFormat };
+    return VulkanRenderPass{ *this, attachmentDescriptions };
 }
 
-VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader)
+VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader) const
 {
     return VulkanPipeline{ *this, renderPass, vertexShader, fragmentShader };
+}
+
+VulkanCommandPool VulkanDevice::CreateCommandPool() const
+{
+    return VulkanCommandPool{*this};
+}
+
+VulkanFramebuffer VulkanDevice::CreateFramebuffer(const VulkanRenderPass& renderPass, std::vector<VkImageView>& imageViews, VkExtent2D extents) const
+{
+    return VulkanFramebuffer{*this, renderPass, imageViews, extents};
 }
 
 }  // namespace Finally::Renderer

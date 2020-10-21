@@ -15,7 +15,7 @@ VulkanQueue::VulkanQueue(VkDevice Device, uint32_t InQueueFamilyIndex, uint32_t 
 }
 
 void VulkanQueue::Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineStageFlags* WaitStage, const VulkanCommandBuffer& VulkanCommandBuffer,
-                         const VulkanSemaphore& SignalSemaphore, const VulkanFence* Fence)
+                         const VulkanSemaphore& SignalSemaphore, const VulkanFence* Fence) const
 {
     VkSubmitInfo SubmitInfo{};
     SubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -37,7 +37,7 @@ void VulkanQueue::Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineS
     vkQueueSubmit(Handle, 1, &SubmitInfo, Fence != nullptr ? *Fence : VK_NULL_HANDLE);
 }
 
-void VulkanQueue::Submit(const std::vector<VkSubmitInfo>& SubmitInfo, const VulkanFence* Fence)
+void VulkanQueue::Submit(const std::vector<VkSubmitInfo>& SubmitInfo, const VulkanFence* Fence) const
 {
     vkQueueSubmit(Handle, SubmitInfo.size(), SubmitInfo.data(), Fence != nullptr ? *Fence : VK_NULL_HANDLE);
 }

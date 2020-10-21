@@ -30,4 +30,21 @@ VulkanCommandPool::~VulkanCommandPool()
     }
 }
 
+VulkanCommandBuffer VulkanCommandPool::AllocateCommandBuffer()
+{
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = Handle;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = 1;
+
+    VkCommandBuffer handle;
+    if (vkAllocateCommandBuffers(*mDevice, &allocInfo, &handle) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to allocate command buffers!");
+    }
+
+    return VulkanCommandBuffer{ handle };
+}
+
 }  // namespace Finally::Renderer

@@ -10,11 +10,18 @@ namespace Finally::Renderer
 
 class VulkanDevice;
 
+enum class ImageType : uint8_t
+{
+    Color,
+    DepthAndStencil,
+    MAX
+};
+
 class VulkanImageView : public VulkanResource<VkImageView>
 {
 public:
     VulkanImageView() = default;
-    [[nodiscard]] VulkanImageView(const VulkanDevice& device, const class VulkanImage& image);
+    [[nodiscard]] VulkanImageView(const VulkanDevice& device, const class VulkanImage& image, ImageType type);
     ~VulkanImageView();
 
     VulkanImageView(VulkanImageView&&) = default;
@@ -24,8 +31,9 @@ public:
 class VulkanImage : public VulkanResource<VkImage>
 {
 public:
-    VulkanImage() = delete;
-    [[nodiscard]] VulkanImage(VmaAllocator allocator, const VulkanDevice& device, VkFormat format, uint32_t width, uint32_t height, VkImageUsageFlagBits usage);
+    [[nodiscard]] VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, uint32_t width, uint32_t height,
+                              bool isSampler = false);
+    [[nodiscard]] VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format);
     ~VulkanImage();
 
     VulkanImage(VulkanImage&& other) noexcept;

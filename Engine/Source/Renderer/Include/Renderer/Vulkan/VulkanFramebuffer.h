@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Renderer/Vulkan/Utilities/VulkanResource.h"
+
 #include <vector>
 #include <vulkan/vulkan.h>
-
-#include "Renderer/Vulkan/Utilities/VulkanResource.h"
 
 namespace Finally::Renderer
 {
@@ -11,11 +11,11 @@ namespace Finally::Renderer
 class VulkanFramebuffer : public VulkanResource<VkFramebuffer>
 {
 public:
-    VulkanFramebuffer(VkDevice InDevice, VkRenderPass RenderPass, const std::vector<VkImageView>& Attachments, VkExtent2D Extents);
+    [[nodiscard]] VulkanFramebuffer(const class VulkanDevice& device, const class VulkanRenderPass& RenderPass, const std::vector<VkImageView>& Attachments, VkExtent2D Extents);
     ~VulkanFramebuffer();
 
-private:
-    VkDevice Device{};
+    VulkanFramebuffer(VulkanFramebuffer&&) = default;
+    VulkanFramebuffer& operator=(VulkanFramebuffer&&) = default;
 };
 
 }  // namespace Finally::Renderer

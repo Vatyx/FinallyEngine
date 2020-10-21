@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Core/Window.h"
+#include "Renderer/Renderer.h"
 
 #include <chrono>
 
 namespace Finally::Core
 {
 class Engine;
-class Window;
 }  // namespace Finally::Core
 
 namespace Finally::Renderer
@@ -33,8 +33,8 @@ public:
 
     Editor(const Editor&) = delete;
     Editor& operator=(const Editor&) = delete;
-    Editor(Editor&&) = default;
-    Editor& operator=(Editor&&) = default;
+    Editor(Editor&&) = delete;
+    Editor& operator=(Editor&&) = delete;
 
     void Start();
 
@@ -45,8 +45,8 @@ private:
 
     std::unique_ptr<Core::Engine> mEngine;
     std::unique_ptr<AssetManager::AssetManager> mAssetManager;
-    std::unique_ptr<Renderer::Renderer> mRenderer;
-    std::unique_ptr<Core::Window> mEditorWindow;
+    Renderer::Renderer mRenderer;
+    Core::Window mEditorWindow;
 
     // Time
     TimePoint mPreviousFrameTime;

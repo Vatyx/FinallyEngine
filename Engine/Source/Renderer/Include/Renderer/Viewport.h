@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Renderer/Vulkan/VulkanViewport.h>
 #include <memory>
 #include <vulkan/vulkan.h>
 
@@ -11,8 +12,9 @@ namespace Finally::Renderer
 class Viewport
 {
 public:
-    [[nodiscard]] Viewport(const class Renderer& renderer, GLFWwindow* window);
-    ~Viewport();
+    Viewport() = default;
+    Viewport(const class Renderer& renderer, GLFWwindow* window);
+    ~Viewport() = default;
 
     Viewport(const Viewport&) = delete;
     Viewport& operator=(const Viewport&) = delete;
@@ -20,8 +22,11 @@ public:
     Viewport(Viewport&&) = default;
     Viewport& operator=(Viewport&&) = default;
 
+    [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
+
 private:
-    std::unique_ptr<class VulkanViewport> viewport;
+    uint32_t mImageCount = 3;
+    VulkanViewport mViewport;
 };
 
 }  // namespace Finally::Renderer

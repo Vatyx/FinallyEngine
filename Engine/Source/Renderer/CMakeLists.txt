@@ -9,7 +9,9 @@ add_library(FinallyRenderer)
 
 target_sources(FinallyRenderer
         PRIVATE
-        Source/imgui/VulkanImgui.cpp
+        Source/CommandBuffer.cpp
+        Source/imgui/ImguiRenderer.cpp
+        Source/imgui/ImguiVulkanRenderer.cpp
         Source/Renderer.cpp
         Source/Shaders/ShaderManager.cpp
         Source/Viewport.cpp

@@ -1,30 +1,23 @@
 #include "Editor/Editor.h"
 
 #include "AssetManager/AssetManager.h"
-#include "Core/Engine.h"
 #include "Core/Assets/Factories/ShaderAssetFactory.h"
-#include "Renderer/Renderer.h"
+#include "Core/Engine.h"
 
 namespace Finally::Editor
 {
 
 Editor::Editor()
+    : mEditorWindow{ mRenderer, 800, 800, "Finally Engine - Editor" }
 {
-    mRenderer = std::make_unique<Renderer::Renderer>();
-
-//    mAssetManager = std::make_unique<AssetManager::AssetManager>();
-
-//    mEngine = std::make_unique<Core::Engine>(*mRenderer);
-
-    mEditorWindow = std::make_unique<Core::Window>(*mRenderer, 800, 800, "Finally Engine - Editor");
+    mAssetManager = std::make_unique<AssetManager::AssetManager>();
+    mEngine = std::make_unique<Core::Engine>(mRenderer);
 }
 
 Editor::~Editor() = default;
 
-void Editor::Initialize() {
-//    mAssetManager->RegisterAssetFactory<Core::ShaderAssetFactory>();
-//
-//    mAssetManager->ProcessDirectory("");
+void Editor::Initialize()
+{
 }
 
 void Editor::Start()
@@ -47,12 +40,12 @@ void Editor::Start()
 
 void Editor::Tick(float DeltaTime)
 {
-//    mEngine->Tick(DeltaTime);
+    //    mEngine->Tick(DeltaTime);
 }
 
 bool Editor::ShouldShutDown()
 {
-    return mEditorWindow->HasWindowBeenClosed();
+    return mEditorWindow.HasWindowBeenClosed();
 }
 
 }  // namespace Finally::Editor

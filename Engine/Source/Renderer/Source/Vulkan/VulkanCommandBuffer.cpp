@@ -19,6 +19,11 @@ size_t GetSize(const ArrayType<T>& Array)
     return Array.size();
 }
 
+VulkanCommandBuffer::VulkanCommandBuffer(VkCommandBuffer handle)
+{
+    Handle = handle;
+}
+
 CB& VulkanCommandBuffer::BeginInfo()
 {
     VkCommandBufferBeginInfo BeginInfo{};

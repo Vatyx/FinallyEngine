@@ -12,19 +12,19 @@ Window::Window(const class Renderer::Renderer& renderer, uint32_t width, uint32_
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    windowHandle = glfwCreateWindow(width, height, windowName.data(), nullptr, nullptr);
-    renderingViewport = std::make_unique<Renderer::Viewport>(renderer, windowHandle);
+    mWindowHandle = glfwCreateWindow(width, height, windowName.data(), nullptr, nullptr);
+    mRenderingViewport = Renderer::Viewport{renderer, mWindowHandle};
 }
 
 Window::~Window()
 {
-    glfwDestroyWindow(windowHandle);
-    windowHandle = nullptr;
+    glfwDestroyWindow(mWindowHandle);
+    mWindowHandle = nullptr;
 }
 
 bool Window::HasWindowBeenClosed() const
 {
-    return glfwWindowShouldClose(windowHandle);
+    return glfwWindowShouldClose(mWindowHandle);
 }
 
 Window::Window(Window&& other) noexcept
@@ -34,7 +34,7 @@ Window::Window(Window&& other) noexcept
 
 Window& Window::operator=(Window&& other) noexcept
 {
-    windowHandle = std::exchange(other.windowHandle, nullptr);
+    mWindowHandle = std::exchange(other.mWindowHandle, nullptr);
     return *this;
 }
 

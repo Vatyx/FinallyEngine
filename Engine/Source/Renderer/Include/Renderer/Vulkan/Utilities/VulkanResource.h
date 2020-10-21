@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 namespace Finally::Renderer
 {
 
@@ -18,10 +20,8 @@ public:
 
     VulkanResource& operator=(VulkanResource&& Resource) noexcept
     {
-        Handle = Resource.Handle;
-        mDevice = Resource.mDevice;
-        Resource.Handle = {};
-        Resource.mDevice = {};
+        Handle = std::exchange(Resource.Handle, {});
+        mDevice = std::exchange(Resource.mDevice, nullptr);
         return *this;
     }
 

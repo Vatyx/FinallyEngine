@@ -1,16 +1,13 @@
 #include "Renderer/Viewport.h"
 
 #include "Renderer/Renderer.h"
-#include "Renderer/Vulkan/VulkanViewport.h"
 
 namespace Finally::Renderer
 {
 
-Viewport::~Viewport() = default;
-
 Viewport::Viewport(const Renderer& renderer, GLFWwindow* window)
+    : mViewport(renderer.GetVulkanInstance(), window, mImageCount)
 {
-    viewport = std::make_unique<VulkanViewport>(renderer.GetVulkanInstance(), window);
 }
 
 }  // namespace Finally::Renderer

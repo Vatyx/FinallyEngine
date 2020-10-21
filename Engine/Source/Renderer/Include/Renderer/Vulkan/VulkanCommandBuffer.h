@@ -18,6 +18,14 @@ using ArrayType = std::vector<T>;
 class VulkanCommandBuffer : public VulkanResource<VkCommandBuffer>
 {
 public:
+    VulkanCommandBuffer() = default;
+    explicit VulkanCommandBuffer(VkCommandBuffer handle);
+
+    VulkanCommandBuffer(const VulkanCommandBuffer&) = delete;
+    VulkanCommandBuffer& operator=(const VulkanCommandBuffer&) = delete;
+    VulkanCommandBuffer(VulkanCommandBuffer&&) noexcept = default;
+    VulkanCommandBuffer& operator=(VulkanCommandBuffer&& other) noexcept = default;
+
     CB& BeginInfo();
 
     CB& BeginRenderPass(const class VulkanRenderPass& RenderPass, const class VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,

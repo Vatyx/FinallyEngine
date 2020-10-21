@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Renderer/Vulkan/Utilities/VulkanResource.h>
+#include "Renderer/Vulkan/VulkanCommandBuffer.h"
+
 #include <vulkan/vulkan.h>
 
 namespace Finally::Renderer
@@ -12,6 +14,11 @@ public:
     [[nodiscard]] VulkanCommandPool() = default;
     [[nodiscard]] explicit VulkanCommandPool(const class VulkanDevice& device);
     ~VulkanCommandPool();
+
+    VulkanCommandPool(VulkanCommandPool&&) = default;
+    VulkanCommandPool& operator=(VulkanCommandPool&&) = default;
+
+    VulkanCommandBuffer AllocateCommandBuffer();
 };
 
 }  // namespace Finally::Renderer

@@ -5,6 +5,8 @@
 #include "Renderer/Vulkan/VulkanDescriptors.h"
 #include "Renderer/Vulkan/VulkanQueue.h"
 #include "Utilities/TemplateUtilities.h"
+#include "VulkanCommandPool.h"
+#include "VulkanRenderPass.h"
 
 #include <iostream>
 #include <memory>
@@ -48,8 +50,6 @@ public:
 
     ~VulkanDevice();
 
-//    void Initialize(const VulkanViewport& Viewport);
-
     [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
     operator VkDevice() const { return VkDeviceResource.Get(); }
 
@@ -60,16 +60,14 @@ public:
     [[nodiscard]] const VulkanQueue& GetPresentQueue() const { return PresentQueue; }
     [[nodiscard]] const VulkanQueue& GetComputeQueue() const { return ComputeQueue; }
 
-    VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes);
-    VulkanRenderPass CreateRenderPass(const VkFormat& SwapchainFormat);
-    VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader);
+    [[nodiscard]] VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes) const;
+    [[nodiscard]] VulkanRenderPass CreateRenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions) const;
+    [[nodiscard]] VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader) const;
+    [[nodiscard]] VulkanCommandPool CreateCommandPool() const;
+    [[nodiscard]] VulkanFramebuffer CreateFramebuffer(const VulkanRenderPass& renderPass, std::vector<VkImageView>& imageViews, VkExtent2D extents) const;
 
 private:
-    void CreateFramebuffers(const VulkanViewport& Viewport);
-    void CreateCommandPool();
-
     void SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos);
-
     static std::vector<VkDeviceQueueCreateInfo> CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice);
     [[nodiscard]] static VkDeviceQueueCreateInfo CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
                                                                                const std::vector<VkQueueFamilyProperties>& QueueFamilies);
@@ -82,12 +80,6 @@ private:
     VulkanQueue TransferQueue;
     VulkanQueue PresentQueue;
     VulkanQueue ComputeQueue;
-
-    std::unique_ptr<VulkanPipeline> Pipeline;
-
-    std::vector<std::unique_ptr<VulkanFramebuffer>> Framebuffers;
-
-    std::unique_ptr<class VulkanCommandPool> CommandPool;
 
     friend class VulkanViewport;
 };
