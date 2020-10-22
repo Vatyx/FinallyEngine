@@ -51,20 +51,15 @@ public:
     [[nodiscard]] VulkanDevice& GetDevice() { return *Device; }
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
 
-    VmaAllocator GetAllocator() { return Allocator; }
-
 private:
     void Initialize();
     void CreateInstance();
     void CreateReferenceToPhysicalDevice();
-    void CreateAllocator();
 
     static bool IsDeviceSuitable(VkPhysicalDevice PotentialDevice);
     static std::pair<uint32_t, const char**> GetRequiredInstanceExtensions();
 
     UniqueResource<VkInstance, VkInstanceDeleter> VkInstanceResource;
-
-    VmaAllocator Allocator{};
 
     VkPhysicalDevice PhysicalDevice{};
 

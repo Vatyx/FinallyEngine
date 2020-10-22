@@ -1,8 +1,8 @@
-
 #include "Renderer/Vulkan/VulkanDevice.h"
 
 #include "Renderer/Vulkan/VulkanCommandPool.h"
 #include "Renderer/Vulkan/VulkanFramebuffer.h"
+#include "Renderer/Vulkan/VulkanInstance.h"
 #include "Renderer/Vulkan/VulkanPipeline.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 #include "Renderer/Vulkan/VulkanShader.h"
@@ -17,14 +17,13 @@ namespace Finally::Renderer
 
 using namespace EnumUtilities;
 
-VulkanDevice::~VulkanDevice() = default;
-
-VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(InPhysicalDevice)
+VulkanDevice::VulkanDevice(const VulkanInstance& instance)  // VkPhysicalDevice InPhysicalDevice)
+    : PhysicalDevice(instance.GetPhysicalDevice())
 {
     VkDeviceCreateInfo CreateInfo{};
     CreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    const auto QueueCreateInfos = CreateQueueCreateInfos(InPhysicalDevice);
+    const auto QueueCreateInfos = CreateQueueCreateInfos(PhysicalDevice);
     CreateInfo.pQueueCreateInfos = QueueCreateInfos.data();
     CreateInfo.queueCreateInfoCount = static_cast<uint32_t>(QueueCreateInfos.size());
 
@@ -35,14 +34,31 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice InPhysicalDevice) : PhysicalDevice(I
     CreateInfo.pEnabledFeatures = &DeviceFeatures;
 
     VkDevice Device;
-    if (vkCreateDevice(InPhysicalDevice, &CreateInfo, nullptr, &Device) != VK_SUCCESS)
+    if (vkCreateDevice(PhysicalDevice, &CreateInfo, nullptr, &Device) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create logical device!");
     }
 
     VkDeviceResource = UniqueResource<VkDevice, VkDeviceDeleter>(Device);
 
+    CreateAllocator(instance);
+
     SetupQueues(QueueCreateInfos);
+}
+
+VulkanDevice::~VulkanDevice()
+{
+    vmaDestroyAllocator(mAllocator);
+}
+
+void VulkanDevice::CreateAllocator(const VulkanInstance& instance)
+{
+    VmaAllocatorCreateInfo allocatorInfo = {};
+    allocatorInfo.instance = instance;
+    allocatorInfo.physicalDevice = PhysicalDevice;
+    allocatorInfo.device = *this;
+
+    vmaCreateAllocator(&allocatorInfo, &mAllocator);
 }
 
 void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos)
@@ -64,10 +80,12 @@ std::vector<VkDeviceQueueCreateInfo> VulkanDevice::CreateQueueCreateInfos(VkPhys
     vkGetPhysicalDeviceQueueFamilyProperties(PhysicalDevice, &QueueFamilyCount, QueueFamilies.data());
 
     QueueCreateInfos.resize(EnumCount<QueueFamilyType>());
-    QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)] = CreateQueueCreateInfoFromFlag(VK_QUEUE_GRAPHICS_BIT, 0, QueueFamilies);
+    QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)] =
+        CreateQueueCreateInfoFromFlag(VK_QUEUE_GRAPHICS_BIT, 0, QueueFamilies);
     QueueCreateInfos[EnumIndex(QueueFamilyType::Transfer)] =
         CreateQueueCreateInfoFromFlag(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT, QueueFamilies);
-    QueueCreateInfos[EnumIndex(QueueFamilyType::Compute)] = CreateQueueCreateInfoFromFlag(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT, QueueFamilies);
+    QueueCreateInfos[EnumIndex(QueueFamilyType::Compute)] =
+        CreateQueueCreateInfoFromFlag(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT, QueueFamilies);
 
     return QueueCreateInfos;
 }
@@ -81,7 +99,8 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
     bool SuccessfullyFoundQueueFamily = false;
     for (uint32_t i = 0; i < QueueFamilies.size(); i++)
     {
-        const bool bDoesQueueMatch = (QueueFamilies[i].queueFlags & QueueFlag) && !(QueueFamilies[i].queueFlags & QueueFlagsToIgnore);
+        const bool bDoesQueueMatch =
+            (QueueFamilies[i].queueFlags & QueueFlag) && !(QueueFamilies[i].queueFlags & QueueFlagsToIgnore);
         if (bDoesQueueMatch)
         {
             QueueCreateInfo.queueFamilyIndex = i;
@@ -112,19 +131,26 @@ VulkanRenderPass VulkanDevice::CreateRenderPass(const std::vector<AttachmentDesc
     return VulkanRenderPass{ *this, attachmentDescriptions };
 }
 
-VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader) const
+VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
+                                            const VulkanShader& fragmentShader) const
 {
     return VulkanPipeline{ *this, renderPass, vertexShader, fragmentShader };
 }
 
 VulkanCommandPool VulkanDevice::CreateCommandPool() const
 {
-    return VulkanCommandPool{*this};
+    return VulkanCommandPool{ *this };
 }
 
-VulkanFramebuffer VulkanDevice::CreateFramebuffer(const VulkanRenderPass& renderPass, std::vector<VkImageView>& imageViews, VkExtent2D extents) const
+VulkanImage VulkanDevice::CreateImage(ImageType type, VkFormat format, VkExtent2D extent, bool isSampler) const
 {
-    return VulkanFramebuffer{*this, renderPass, imageViews, extents};
+    return VulkanImage(mAllocator, *this, type, format, extent, isSampler);
+}
+
+VulkanFramebuffer VulkanDevice::CreateFramebuffer(const VulkanRenderPass& renderPass,
+                                                  const std::vector<const VulkanImageView*>& attachments, VkExtent2D extent) const
+{
+    return VulkanFramebuffer(*this, renderPass, attachments, extent);
 }
 
 }  // namespace Finally::Renderer

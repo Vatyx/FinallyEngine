@@ -8,6 +8,7 @@ namespace Finally::Renderer
 {
 
 class VulkanInstance;
+class VulkanDevice;
 
 class Renderer
 {
@@ -20,15 +21,16 @@ public:
     Renderer(Renderer&&) = default;
     Renderer& operator=(Renderer&&) = default;
 
-    CommandBuffer CreateCommandBuffer();
     void SubmitCommandBuffer(const CommandBuffer& commandBuffer);
     void Present(class Viewport* viewport);
 
+    [[nodiscard]] CommandBuffer CreateCommandBuffer() const;
+
     [[nodiscard]] const VulkanInstance& GetVulkanInstance() const { return *mInstance; }
+    [[nodiscard]] const VulkanDevice& GetDevice() const;
 
 private:
     std::unique_ptr<VulkanInstance> mInstance;
-    class VulkanDevice* mDevice;
 
     VulkanCommandPool mCommandPool;
 };

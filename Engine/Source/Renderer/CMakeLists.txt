@@ -13,6 +13,7 @@ target_sources(FinallyRenderer
         Source/imgui/ImguiRenderer.cpp
         Source/imgui/ImguiVulkanRenderer.cpp
         Source/Renderer.cpp
+        Source/RenderTarget.cpp
         Source/Shaders/ShaderManager.cpp
         Source/Viewport.cpp
 

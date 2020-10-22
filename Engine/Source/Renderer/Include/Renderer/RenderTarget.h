@@ -3,11 +3,14 @@
 #include "Renderer/Vulkan/VulkanFramebuffer.h"
 #include "Renderer/Vulkan/VulkanImage.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
+#include "Renderer/Vulkan/VulkanSemaphore.h"
 
 #include <vector>
 
 namespace Finally::Renderer
 {
+
+class Renderer;
 
 enum class RenderTargetType : uint8_t
 {
@@ -19,12 +22,13 @@ enum class RenderTargetType : uint8_t
 class RenderTarget
 {
 public:
-    RenderTarget() = default;
+    RenderTarget(const Renderer& renderer, const VulkanImage& presentationImage);
 
 private:
+    std::vector<VulkanImage> mAttachments;
     VulkanRenderPass mRenderPass;
     VulkanFramebuffer mFramebuffer;
-    std::vector<VulkanImage> mAttachments;
+    VulkanSemaphore mSemaphoreRenderingFinished;
 };
 
-}
+}  // namespace Finally::Renderer

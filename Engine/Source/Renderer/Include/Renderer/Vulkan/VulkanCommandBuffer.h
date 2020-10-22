@@ -29,7 +29,7 @@ public:
     CB& BeginInfo();
 
     CB& BeginRenderPass(const class VulkanRenderPass& RenderPass, const class VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
-                        const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents);
+                        const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents = VK_SUBPASS_CONTENTS_INLINE);
 
     CB& BindPipeline(VkPipelineBindPoint PipelineBindPoint, const class VulkanPipeline& Pipeline);
 

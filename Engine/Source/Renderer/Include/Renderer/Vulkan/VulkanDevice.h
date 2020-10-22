@@ -2,15 +2,16 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Renderer/Vulkan/VulkanCommandPool.h"
 #include "Renderer/Vulkan/VulkanDescriptors.h"
 #include "Renderer/Vulkan/VulkanQueue.h"
+#include "Renderer/Vulkan/VulkanRenderPass.h"
 #include "Utilities/TemplateUtilities.h"
-#include "VulkanCommandPool.h"
-#include "VulkanRenderPass.h"
 
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <vk_mem_alloc.h>
 
 namespace Finally::Renderer
 {
@@ -31,6 +32,8 @@ enum class QueueFamilyType : uint8_t
     MAX
 };
 
+class VulkanInstance;
+
 class VulkanDevice
 {
     struct VkDeviceDeleter
@@ -40,15 +43,13 @@ class VulkanDevice
 
 public:
     VulkanDevice() = delete;
-    explicit VulkanDevice(VkPhysicalDevice PhysicalDevice);
+    explicit VulkanDevice(const VulkanInstance& instance);
+    ~VulkanDevice();
 
     VulkanDevice(const VulkanDevice&) = delete;
     VulkanDevice& operator=(const VulkanDevice&) = delete;
-
     VulkanDevice(VulkanDevice&&) = delete;
     VulkanDevice& operator=(VulkanDevice&&) = delete;
-
-    ~VulkanDevice();
 
     [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
     operator VkDevice() const { return VkDeviceResource.Get(); }
@@ -60,28 +61,35 @@ public:
     [[nodiscard]] const VulkanQueue& GetPresentQueue() const { return PresentQueue; }
     [[nodiscard]] const VulkanQueue& GetComputeQueue() const { return ComputeQueue; }
 
-    [[nodiscard]] VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes) const;
+    [[nodiscard]] VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes,
+                                                            size_t numSizes) const;
     [[nodiscard]] VulkanRenderPass CreateRenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions) const;
-    [[nodiscard]] VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader, const VulkanShader& fragmentShader) const;
+    [[nodiscard]] VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
+                                                const VulkanShader& fragmentShader) const;
     [[nodiscard]] VulkanCommandPool CreateCommandPool() const;
-    [[nodiscard]] VulkanFramebuffer CreateFramebuffer(const VulkanRenderPass& renderPass, std::vector<VkImageView>& imageViews, VkExtent2D extents) const;
+    [[nodiscard]] VulkanImage CreateImage(ImageType type, VkFormat format, VkExtent2D extent, bool isSampler = true) const;
+    [[nodiscard]] VulkanFramebuffer CreateFramebuffer(const VulkanRenderPass& renderPass,
+                                                      const std::vector<const VulkanImageView*>& attachments,
+                                                      VkExtent2D extent) const;
 
 private:
+    void CreateAllocator(const VulkanInstance& instance);
+
     void SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos);
     static std::vector<VkDeviceQueueCreateInfo> CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice);
-    [[nodiscard]] static VkDeviceQueueCreateInfo CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
-                                                                               const std::vector<VkQueueFamilyProperties>& QueueFamilies);
+    [[nodiscard]] static VkDeviceQueueCreateInfo
+    CreateQueueCreateInfoFromFlag(VkQueueFlagBits QueueFlag, int QueueFlagsToIgnore,
+                                  const std::vector<VkQueueFamilyProperties>& QueueFamilies);
 
     UniqueResource<VkDevice, VkDeviceDeleter> VkDeviceResource;
+    VkPhysicalDevice PhysicalDevice{};
 
-    VkPhysicalDevice PhysicalDevice;
+    VmaAllocator mAllocator{};
 
     VulkanQueue GraphicsQueue;
     VulkanQueue TransferQueue;
     VulkanQueue PresentQueue;
     VulkanQueue ComputeQueue;
-
-    friend class VulkanViewport;
 };
 
 }  // namespace Finally::Renderer

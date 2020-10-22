@@ -31,19 +31,25 @@ public:
 class VulkanImage : public VulkanResource<VkImage>
 {
 public:
-    [[nodiscard]] VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, uint32_t width, uint32_t height,
-                              bool isSampler = false);
+    [[nodiscard]] VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, VkExtent2D extent,
+                              bool isSampler = true);
     [[nodiscard]] VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format);
     ~VulkanImage();
 
     VulkanImage(VulkanImage&& other) noexcept;
     VulkanImage& operator=(VulkanImage&& other) noexcept;
 
-    [[nodiscard]] const VulkanImageView& GetDefaultView() const { return mDefaultView; }
+    [[nodiscard]] VulkanImage CloneNonOwningImage() const;
+
     [[nodiscard]] VkFormat GetFormat() const { return mFormat; }
+    [[nodiscard]] ImageType GetType() const { return mType; }
+    [[nodiscard]] VkExtent2D GetExtent() const { return mExtent; }
+    [[nodiscard]] const VulkanImageView& GetDefaultView() const { return mDefaultView; }
 
 private:
     VkFormat mFormat{};
+    ImageType mType = ImageType::MAX;
+    VkExtent2D mExtent{};
     VulkanImageView mDefaultView{};
 
     VmaAllocator mAllocator = VK_NULL_HANDLE;

@@ -12,13 +12,14 @@ class VulkanDevice;
 class VulkanFence : public VulkanResource<VkFence>
 {
 public:
-    VulkanFence() = delete;
-    explicit VulkanFence(const VulkanDevice& Device);
-
+    VulkanFence() = default;
+    explicit VulkanFence(const VulkanDevice& Device, bool startSignaled = true);
     ~VulkanFence();
 
-private:
-    const VulkanDevice& Device;
+    VulkanFence(const VulkanFence&) = delete;
+    VulkanFence& operator=(const VulkanFence&) = delete;
+    VulkanFence(VulkanFence&&) = default;
+    VulkanFence& operator=(VulkanFence&&) = default;
 };
 
 }  // namespace Finally::Renderer

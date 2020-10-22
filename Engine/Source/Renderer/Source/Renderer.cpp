@@ -8,14 +8,14 @@ namespace Finally::Renderer
 {
 
 Renderer::Renderer()
+    : mInstance{std::make_unique<VulkanInstance>()}
 {
-    mInstance = std::make_unique<VulkanInstance>();
-    mDevice = &mInstance->GetDevice();
-
-    mCommandPool = mDevice->CreateCommandPool();
+    mCommandPool = GetDevice().CreateCommandPool();
 }
 
-CommandBuffer Renderer::CreateCommandBuffer()
+Renderer::~Renderer() = default;
+
+CommandBuffer Renderer::CreateCommandBuffer() const
 {
     return CommandBuffer{ mCommandPool.AllocateCommandBuffer() };
 }
@@ -26,6 +26,9 @@ void Renderer::SubmitCommandBuffer(const CommandBuffer& commandBuffer)
 
 void Renderer::Present(class Viewport* viewport) {}
 
-Renderer::~Renderer() = default;
+const VulkanDevice& Renderer::GetDevice() const
+{
+    return mInstance->GetDevice();
+}
 
 }  // namespace Finally::Renderer

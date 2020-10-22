@@ -20,7 +20,6 @@ VulkanInstance::VulkanInstance()
 
 VulkanInstance::~VulkanInstance()
 {
-    vmaDestroyAllocator(Allocator);
     glfwTerminate();
 }
 
@@ -29,9 +28,7 @@ void VulkanInstance::Initialize()
     CreateInstance();
     CreateReferenceToPhysicalDevice();
 
-    Device = std::make_unique<VulkanDevice>(PhysicalDevice);
-
-    CreateAllocator();
+    Device = std::make_unique<VulkanDevice>(*this);
 }
 
 void VulkanInstance::CreateInstance()
@@ -122,16 +119,6 @@ std::pair<uint32_t, const char**> VulkanInstance::GetRequiredInstanceExtensions(
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
     return std::make_pair(glfwExtensionCount, glfwExtensions);
-}
-
-void VulkanInstance::CreateAllocator()
-{
-    VmaAllocatorCreateInfo AllocatorInfo = {};
-    AllocatorInfo.instance = GetHandle();
-    AllocatorInfo.physicalDevice = PhysicalDevice;
-    AllocatorInfo.device = Device->GetHandle();
-
-    vmaCreateAllocator(&AllocatorInfo, &Allocator);
 }
 
 }  // namespace Finally::Renderer

@@ -6,17 +6,23 @@
 namespace Finally::Renderer
 {
 
-VulkanFence::VulkanFence(const VulkanDevice& InDevice) : Device(InDevice)
+VulkanFence::VulkanFence(const VulkanDevice& device, bool startSignaled)
 {
+    mDevice = &device;
+
     VkFenceCreateInfo FenceInfo{};
     FenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    FenceInfo.flags = startSignaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
-    vkCreateFence(Device, &FenceInfo, nullptr, &Handle);
+    vkCreateFence(*mDevice, &FenceInfo, nullptr, &Handle);
 }
 
 VulkanFence::~VulkanFence()
 {
-    vkDestroyFence(Device, Handle, nullptr);
+    if (mDevice != nullptr)
+    {
+        vkDestroyFence(*mDevice, Handle, nullptr);
+    }
 }
 
 }  // namespace Finally::Renderer

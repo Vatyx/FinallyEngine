@@ -12,18 +12,14 @@ class VulkanDevice;
 class VulkanSemaphore : public VulkanResource<VkSemaphore>
 {
 public:
-    [[nodiscard]] explicit VulkanSemaphore(const VulkanDevice& Device);
+    VulkanSemaphore() = default;
+    explicit VulkanSemaphore(const VulkanDevice& device);
+    ~VulkanSemaphore();
 
     VulkanSemaphore(const VulkanSemaphore&) = delete;
     VulkanSemaphore& operator=(const VulkanSemaphore&) = delete;
-
     VulkanSemaphore(VulkanSemaphore&&) = default;
-    VulkanSemaphore& operator=(VulkanSemaphore&&) = delete;
-
-    ~VulkanSemaphore();
-
-private:
-    const VulkanDevice& Device;
+    VulkanSemaphore& operator=(VulkanSemaphore&&) = default;
 };
 
 }  // namespace Finally::Renderer

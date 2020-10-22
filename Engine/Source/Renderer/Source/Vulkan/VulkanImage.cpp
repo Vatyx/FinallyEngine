@@ -72,17 +72,18 @@ VulkanImageView::~VulkanImageView()
     }
 }
 
-VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, uint32_t width,
-                         uint32_t height, bool isSampler)
+VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, VkExtent2D extent, bool isSampler)
     : mFormat{ format }
+    , mType{ type }
+    , mExtent{ extent }
     , mAllocator{ allocator }
 {
     VkImageCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     createInfo.imageType = VK_IMAGE_TYPE_2D;
     createInfo.format = format;
-    createInfo.extent.width = width;
-    createInfo.extent.height = height;
+    createInfo.extent.width = extent.width;
+    createInfo.extent.height = extent.height;
     createInfo.extent.depth = 1;
     createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 
@@ -106,10 +107,11 @@ VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, Ima
 }
 
 VulkanImage::VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format)
-    : mFormat{format}
+    : mFormat{ format }
+    , mType{ type }
 {
     Handle = nonOwningImage;
-    mDefaultView = VulkanImageView{device, *this, type };
+    mDefaultView = VulkanImageView{ device, *this, type };
 }
 
 VulkanImage::~VulkanImage()
@@ -127,16 +129,21 @@ VulkanImage::VulkanImage(VulkanImage&& other) noexcept
 
 VulkanImage& VulkanImage::operator=(VulkanImage&& other) noexcept
 {
-    mAllocator = std::exchange(other.mAllocator, static_cast<VmaAllocator>(VK_NULL_HANDLE));
-    mAllocation = std::exchange(other.mAllocation, static_cast<VmaAllocation>(VK_NULL_HANDLE));
     mFormat = other.mFormat;
+    mType = other.mType;
+    mExtent = other.mExtent;
     mDefaultView = std::move(other.mDefaultView);
+    mAllocator = std::exchange(other.mAllocator, {});
+    mAllocation = std::exchange(other.mAllocation, {});
 
-    other.mAllocator = VK_NULL_HANDLE;
-    other.mAllocation = VK_NULL_HANDLE;
     VulkanResource<VkImage>::operator=(std::move(other));
 
     return *this;
+}
+
+VulkanImage VulkanImage::CloneNonOwningImage() const
+{
+    return VulkanImage{ *mDevice, Handle, mType, mFormat };
 }
 
 }  // namespace Finally::Renderer

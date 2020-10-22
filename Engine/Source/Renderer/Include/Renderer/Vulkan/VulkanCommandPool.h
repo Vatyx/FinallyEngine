@@ -18,7 +18,7 @@ public:
     VulkanCommandPool(VulkanCommandPool&&) = default;
     VulkanCommandPool& operator=(VulkanCommandPool&&) = default;
 
-    VulkanCommandBuffer AllocateCommandBuffer();
+    [[nodiscard]] VulkanCommandBuffer AllocateCommandBuffer() const;
 };
 
 }  // namespace Finally::Renderer
