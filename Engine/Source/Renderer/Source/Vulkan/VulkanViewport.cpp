@@ -3,6 +3,7 @@
 
 #include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanInstance.h"
+#include "Renderer/Vulkan/VulkanSemaphore.h"
 
 #include <algorithm>
 #include <cassert>
@@ -193,6 +194,19 @@ void VulkanViewport::RetrieveSwapchainImages()
     {
         mSwapchainImages.emplace_back(*mDevice, image, ImageType::Color, mImageFormat);
     }
+}
+
+uint32_t VulkanViewport::AcquireNextImage(VulkanSemaphore& semaphore)
+{
+    if (mDevice == nullptr)
+    {
+        return 0;
+    }
+
+    uint32_t imageIndex;
+    vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, &imageIndex);
+
+    return imageIndex;
 }
 
 }  // namespace Finally::Renderer

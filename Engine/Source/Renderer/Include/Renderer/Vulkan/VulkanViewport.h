@@ -39,6 +39,8 @@ public:
     [[nodiscard]] uint32_t GetImageCount() const { return mImageCount; }
     [[nodiscard]] const std::vector<VulkanImage>& GetSwapchainImages() const { return mSwapchainImages; }
 
+    [[nodiscard]] uint32_t AcquireNextImage(class VulkanSemaphore& semaphore);
+
 private:
     void ValidatePhysicalDeviceSurfaceSupport() const;
     void CreateSwapchain();

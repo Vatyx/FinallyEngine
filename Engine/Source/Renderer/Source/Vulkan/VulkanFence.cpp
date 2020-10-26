@@ -25,4 +25,12 @@ VulkanFence::~VulkanFence()
     }
 }
 
+void VulkanFence::Wait()
+{
+    if (mDevice != nullptr)
+    {
+        vkWaitForFences(*mDevice, 1, &Handle, VK_TRUE, UINT64_MAX);
+    }
+}
+
 }  // namespace Finally::Renderer

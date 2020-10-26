@@ -20,6 +20,8 @@ public:
     VulkanFence& operator=(const VulkanFence&) = delete;
     VulkanFence(VulkanFence&&) = default;
     VulkanFence& operator=(VulkanFence&&) = default;
+
+    void Wait();
 };
 
 }  // namespace Finally::Renderer

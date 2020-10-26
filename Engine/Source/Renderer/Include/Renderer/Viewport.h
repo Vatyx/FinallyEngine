@@ -32,6 +32,8 @@ public:
 
     [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
 
+    [[nodiscard]] RenderTarget& AcquirePresentationRenderTarget();
+
 private:
     uint32_t mImageCount = SwapchainImageCount;
     uint32_t mCurrentFrame = 0;
