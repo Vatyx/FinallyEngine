@@ -4,6 +4,7 @@
 #include "Renderer/Vulkan/VulkanPipeline.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 
+struct GLFWwindow;
 struct ImDrawData;
 
 namespace Finally::Renderer
@@ -14,7 +15,7 @@ class VulkanCommandBuffer;
 class ImguiVulkanRenderer
 {
 public:
-    ImguiVulkanRenderer(const class VulkanInstance& instance, const class VulkanViewport& viewport);
+    ImguiVulkanRenderer(const class VulkanInstance& instance, const class VulkanViewport& viewport, GLFWwindow* window);
     ~ImguiVulkanRenderer();
 
     ImguiVulkanRenderer(const ImguiVulkanRenderer&) = delete;
@@ -23,6 +24,8 @@ public:
     ImguiVulkanRenderer& operator=(ImguiVulkanRenderer&&) noexcept = default;
 
     void RecordDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer);
+
+    void NewFrame();
 
 private:
     void UploadFonts(const VulkanDevice& device);

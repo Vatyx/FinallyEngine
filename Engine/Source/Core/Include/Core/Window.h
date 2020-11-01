@@ -6,7 +6,7 @@
 #include <memory>
 #include <string_view>
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace Finally::Renderer
 {
@@ -29,8 +29,13 @@ public:
     Window(Window&& other) noexcept;
     Window& operator=(Window&& other) noexcept;
 
+    void PollEvents();
+
+    [[nodiscard]] const Renderer::Viewport& GetViewport() const { return mRenderingViewport; }
     [[nodiscard]] Renderer::Viewport& GetViewport() { return mRenderingViewport; }
+
     [[nodiscard]] bool HasWindowBeenClosed() const;
+    [[nodiscard]] GLFWwindow* GetWindowHandle() const { return mWindowHandle; }
 
 private:
     GLFWwindow* mWindowHandle = nullptr;

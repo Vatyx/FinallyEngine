@@ -1,5 +1,6 @@
 #include "Editor/EditorUI.h"
 
+#include "Core/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanInstance.h"
@@ -9,15 +10,15 @@
 namespace Finally::Editor
 {
 
-EditorUI::EditorUI(const Renderer::Renderer& renderer, const Renderer::Viewport& viewport)
-    : mImguiRenderer(renderer, viewport)
+EditorUI::EditorUI(const Renderer::Renderer& renderer, const Core::Window& window)
+    : mImguiRenderer(renderer, window.GetViewport(), window.GetWindowHandle())
 {
     ImGui::StyleColorsDark();
 }
 
 void EditorUI::Draw(Renderer::CommandBuffer& commandBuffer)
 {
-    ImGui::NewFrame();
+    mImguiRenderer.NewFrame();
 
     bool show = true;
     ImGui::ShowDemoWindow(&show);
@@ -25,6 +26,7 @@ void EditorUI::Draw(Renderer::CommandBuffer& commandBuffer)
     ImGui::Render();
 
     mImguiRenderer.RecordDrawData(ImGui::GetDrawData(), commandBuffer);
+
 }
 
 }  // namespace Finally::Editor

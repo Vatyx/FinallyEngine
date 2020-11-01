@@ -34,7 +34,7 @@ std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> Viewport::AcquirePrese
     return { mRenderTargets[nextImage], mImageAvailableSemaphores[mCurrentFrame], mInFlightFences[mCurrentFrame] };
 }
 
-void Viewport::WaitForCurrentFrame()
+void Viewport::WaitForCurrentFrame() const
 {
     mInFlightFences[mCurrentFrame].Wait();
     mInFlightFences[mCurrentFrame].Reset();

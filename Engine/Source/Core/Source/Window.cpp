@@ -1,6 +1,6 @@
 #include "Core/Window.h"
 
-#include "Renderer/Viewport.h"
+#include <GLFW/glfw3.h>
 
 #include <string_view>
 
@@ -36,6 +36,11 @@ Window& Window::operator=(Window&& other) noexcept
 {
     mWindowHandle = std::exchange(other.mWindowHandle, nullptr);
     return *this;
+}
+
+void Window::PollEvents()
+{
+    glfwPollEvents();
 }
 
 }  // namespace Finally::Core

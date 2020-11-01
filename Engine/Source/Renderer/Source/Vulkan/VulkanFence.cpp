@@ -25,7 +25,7 @@ VulkanFence::~VulkanFence()
     }
 }
 
-void VulkanFence::Wait()
+void VulkanFence::Wait() const
 {
     if (mDevice != nullptr)
     {
@@ -33,7 +33,7 @@ void VulkanFence::Wait()
     }
 }
 
-void VulkanFence::Reset()
+void VulkanFence::Reset() const
 {
     if (mDevice != nullptr)
     {

@@ -21,8 +21,8 @@ public:
     VulkanFence(VulkanFence&&) = default;
     VulkanFence& operator=(VulkanFence&&) = default;
 
-    void Wait();
-    void Reset();
+    void Wait() const;
+    void Reset() const;
 };
 
 }  // namespace Finally::Renderer

@@ -8,7 +8,7 @@ namespace Finally::Editor
 Editor::Editor()
     : mEngine{ mRenderer }
     , mEditorWindow{ mRenderer, 800, 800, "Finally Engine - Editor" }
-    , mEditorUI{ mRenderer, mEditorWindow.GetViewport() }
+    , mEditorUI{ mRenderer, mEditorWindow }
 {
 }
 
@@ -22,7 +22,7 @@ void Editor::Start()
 
     while (!ShouldShutDown())
     {
-        glfwPollEvents();
+        mEditorWindow.PollEvents();
 
         auto currentFrameTime = std::chrono::high_resolution_clock::now();
 

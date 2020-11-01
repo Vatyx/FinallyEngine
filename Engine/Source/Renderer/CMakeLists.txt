@@ -30,9 +30,11 @@ target_sources(FinallyRenderer
         Source/Vulkan/VulkanPipeline.cpp
         Source/Vulkan/VulkanQueue.cpp
         Source/Vulkan/VulkanRenderPass.cpp
+        Source/Vulkan/VulkanSampler.cpp
         Source/Vulkan/VulkanSemaphore.cpp
         Source/Vulkan/VulkanShader.cpp
         Source/Vulkan/VulkanViewport.cpp
+
         Include/Renderer/Vulkan/Utilities/VulkanResource.h
         )
 

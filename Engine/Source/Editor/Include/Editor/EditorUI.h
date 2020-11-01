@@ -9,9 +9,9 @@ class Renderer;
 class Viewport;
 }
 
-namespace Finally::AssetManager
+namespace Finally::Core
 {
-class AssetManager;
+class Window;
 }
 
 namespace Finally::Editor
@@ -20,7 +20,7 @@ namespace Finally::Editor
 class EditorUI
 {
 public:
-    EditorUI(const Renderer::Renderer& renderer, const Renderer::Viewport& viewport);
+    EditorUI(const Renderer::Renderer& renderer, const Core::Window& Window);
     ~EditorUI() = default;
 
     EditorUI(const EditorUI&) = delete;

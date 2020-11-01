@@ -8,6 +8,7 @@
 #include "Renderer/Vulkan/VulkanShader.h"
 #include "Renderer/Shaders/ShaderManager.h"
 
+#include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
 namespace Finally::Renderer
@@ -25,7 +26,7 @@ const VkDescriptorPoolSize pool_sizes[] = { { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 }
                                             { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
                                             { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 } };
 
-ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const VulkanViewport& viewport)
+ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const VulkanViewport& viewport, GLFWwindow* window)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -55,14 +56,16 @@ ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const V
     info.PipelineCache = VK_NULL_HANDLE;
 
     ImGui_ImplVulkan_Init(&info, mRenderPass);
+    ImGui_ImplGlfw_InitForVulkan(window, true);
 
     UploadFonts(device);
 }
 
 ImguiVulkanRenderer::~ImguiVulkanRenderer()
 {
-    ImGui::DestroyContext();
     ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void ImguiVulkanRenderer::RecordDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer)
@@ -83,6 +86,12 @@ void ImguiVulkanRenderer::UploadFonts(const VulkanDevice& device)
     device.WaitUntilIdle();
 
     ImGui_ImplVulkan_DestroyFontUploadObjects();
+}
+
+void ImguiVulkanRenderer::NewFrame()
+{
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
 }
 
 }  // namespace Finally::Renderer

@@ -31,7 +31,7 @@ public:
     Viewport& operator=(Viewport&&) = default;
 
     [[nodiscard]] std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> AcquirePresentationRenderTarget();
-    void WaitForCurrentFrame();
+    void WaitForCurrentFrame() const;
 
     [[nodiscard]] uint32_t GetCurrentFrameIndex() const { return mCurrentFrame; }
     [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }

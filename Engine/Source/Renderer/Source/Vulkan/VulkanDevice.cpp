@@ -31,6 +31,8 @@ VulkanDevice::VulkanDevice(const VulkanInstance& instance)  // VkPhysicalDevice 
     CreateInfo.ppEnabledExtensionNames = DeviceExtensions.data();
 
     VkPhysicalDeviceFeatures DeviceFeatures = {};
+    DeviceFeatures.samplerAnisotropy = VK_TRUE;
+
     CreateInfo.pEnabledFeatures = &DeviceFeatures;
 
     VkDevice Device;
