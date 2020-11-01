@@ -24,11 +24,11 @@ VulkanCommandBuffer::VulkanCommandBuffer(VkCommandBuffer handle)
     Handle = handle;
 }
 
-CB& VulkanCommandBuffer::BeginInfo()
+CB& VulkanCommandBuffer::BeginInfo(VkBufferUsageFlags flags)
 {
     VkCommandBufferBeginInfo BeginInfo{};
     BeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    BeginInfo.flags = 0;
+    BeginInfo.flags = flags;
     BeginInfo.pInheritanceInfo = nullptr;
 
     vkBeginCommandBuffer(Handle, &BeginInfo);

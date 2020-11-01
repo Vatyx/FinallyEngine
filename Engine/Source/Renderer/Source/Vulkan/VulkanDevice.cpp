@@ -121,6 +121,11 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
     return QueueCreateInfo;
 }
 
+void VulkanDevice::WaitUntilIdle() const
+{
+   vkDeviceWaitIdle(GetHandle());
+}
+
 VulkanDescriptorPool VulkanDevice::CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes) const
 {
     return VulkanDescriptorPool{ *this, descriptorPoolSizes, numSizes };

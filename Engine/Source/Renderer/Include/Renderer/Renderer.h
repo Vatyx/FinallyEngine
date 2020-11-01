@@ -24,6 +24,8 @@ public:
     void SubmitCommandBuffer(const CommandBuffer& commandBuffer);
     void Present(class Viewport* viewport);
 
+    void WaitUntilIdle();
+
     [[nodiscard]] CommandBuffer CreateCommandBuffer() const;
 
     [[nodiscard]] const VulkanInstance& GetVulkanInstance() const { return *mInstance; }

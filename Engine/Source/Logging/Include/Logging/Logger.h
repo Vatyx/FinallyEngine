@@ -1,7 +1,10 @@
 #pragma once
 
 #include <spdlog/common.h>
+#pragma warning (push)
+#pragma warning (disable : 4005)
 #include <spdlog/sinks/wincolor_sink.h>
+#pragma warning (pop)
 #include <spdlog/spdlog.h>
 
 #include <memory>

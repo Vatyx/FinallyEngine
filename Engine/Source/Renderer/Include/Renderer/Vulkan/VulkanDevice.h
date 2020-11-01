@@ -54,6 +54,8 @@ public:
     [[nodiscard]] VkDevice GetHandle() const { return VkDeviceResource.Get(); }
     operator VkDevice() const { return VkDeviceResource.Get(); }
 
+    void WaitUntilIdle() const;
+
     [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return PhysicalDevice; }
 
     [[nodiscard]] const VulkanQueue& GetGraphicsQueue() const { return GraphicsQueue; }

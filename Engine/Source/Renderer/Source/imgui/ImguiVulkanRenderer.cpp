@@ -1,9 +1,12 @@
 #include "Renderer/imgui/ImguiVulkanRenderer.h"
 
+#include "ImguiVulkanShaders.h"
+#include "Renderer/Vulkan/VulkanCommandBuffer.h"
 #include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanInstance.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
 #include "Renderer/Vulkan/VulkanShader.h"
+#include "Renderer/Shaders/ShaderManager.h"
 
 #include <imgui_impl_vulkan.h>
 
@@ -24,6 +27,9 @@ const VkDescriptorPoolSize pool_sizes[] = { { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 }
 
 ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const VulkanViewport& viewport)
 {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
     const VulkanDevice& device = instance.GetDevice();
     uint32_t imageCount = viewport.GetImageCount();
     VkFormat swapchainFormat = viewport.GetSwapchainFormat();
@@ -34,8 +40,8 @@ ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const V
                                               .initialLayout = AttachmentLayout::Undefined,
                                               .finalLayout = AttachmentLayout::Present } });
 
-    VulkanShader vertex{};
-    VulkanShader fragment{};
+    VulkanShader vertex{device, ShaderManager::CompileShader(vert_shader, ShaderType::Vertex, "imgui_vertex")};
+    VulkanShader fragment{device, ShaderManager::CompileShader(frag_shader, ShaderType::Fragment, "imgui_fragment")};
     mPipeline = device.CreatePipeline(mRenderPass, vertex, fragment);
 
     ImGui_ImplVulkan_InitInfo info{};
@@ -49,16 +55,34 @@ ImguiVulkanRenderer::ImguiVulkanRenderer(const VulkanInstance& instance, const V
     info.PipelineCache = VK_NULL_HANDLE;
 
     ImGui_ImplVulkan_Init(&info, mRenderPass);
+
+    UploadFonts(device);
 }
 
 ImguiVulkanRenderer::~ImguiVulkanRenderer()
 {
+    ImGui::DestroyContext();
     ImGui_ImplVulkan_Shutdown();
 }
 
-void ImguiVulkanRenderer::RenderDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer)
+void ImguiVulkanRenderer::RecordDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer)
 {
     ImGui_ImplVulkan_RenderDrawData(drawData, commandBuffer, mPipeline);
+}
+
+void ImguiVulkanRenderer::UploadFonts(const VulkanDevice& device)
+{
+    VulkanCommandPool commandPool = device.CreateCommandPool();
+    VulkanCommandBuffer commandBuffer = commandPool.AllocateCommandBuffer();
+
+    commandBuffer.BeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+    ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+    commandBuffer.EndCommandBuffer();
+
+    device.GetGraphicsQueue().Submit(commandBuffer);
+    device.WaitUntilIdle();
+
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
 }  // namespace Finally::Renderer

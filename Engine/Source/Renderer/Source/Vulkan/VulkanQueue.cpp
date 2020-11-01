@@ -8,21 +8,25 @@ namespace Finally::Renderer
 {
 
 VulkanQueue::VulkanQueue(VkDevice Device, uint32_t InQueueFamilyIndex, uint32_t InQueueIndex)
-    : QueueFamilyIndex(InQueueFamilyIndex),
-      QueueIndex(InQueueIndex)
+    : QueueFamilyIndex(InQueueFamilyIndex)
+    , QueueIndex(InQueueIndex)
 {
     vkGetDeviceQueue(Device, QueueFamilyIndex, QueueIndex, &Handle);
 }
 
-void VulkanQueue::Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineStageFlags* WaitStage, const VulkanCommandBuffer& VulkanCommandBuffer,
-                         const VulkanSemaphore& SignalSemaphore, const VulkanFence* Fence) const
+void VulkanQueue::Submit(const VulkanCommandBuffer& VulkanCommandBuffer, const VulkanFence* Fence,
+                         const VulkanSemaphore* WaitSemaphore, const VulkanSemaphore* SignalSemaphore,
+                         const VkPipelineStageFlags* WaitStage) const
 {
     VkSubmitInfo SubmitInfo{};
     SubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-    VkSemaphore WaitSemaphores[] = { WaitSemaphore };
-    SubmitInfo.waitSemaphoreCount = 1;
-    SubmitInfo.pWaitSemaphores = WaitSemaphores;
+    if (WaitSemaphore != nullptr)
+    {
+        VkSemaphore WaitSemaphores[] = { *WaitSemaphore };
+        SubmitInfo.waitSemaphoreCount = 1;
+        SubmitInfo.pWaitSemaphores = WaitSemaphores;
+    }
 
     SubmitInfo.pWaitDstStageMask = WaitStage;
 
@@ -30,9 +34,12 @@ void VulkanQueue::Submit(const VulkanSemaphore& WaitSemaphore, const VkPipelineS
     SubmitInfo.commandBufferCount = 1;
     SubmitInfo.pCommandBuffers = CommandBuffers;
 
-    VkSemaphore SignalSemaphores[] = { SignalSemaphore };
-    SubmitInfo.signalSemaphoreCount = 1;
-    SubmitInfo.pSignalSemaphores = SignalSemaphores;
+    if (SignalSemaphore != nullptr)
+    {
+        VkSemaphore SignalSemaphores[] = { *SignalSemaphore };
+        SubmitInfo.signalSemaphoreCount = 1;
+        SubmitInfo.pSignalSemaphores = SignalSemaphores;
+    }
 
     vkQueueSubmit(Handle, 1, &SubmitInfo, Fence != nullptr ? *Fence : VK_NULL_HANDLE);
 }

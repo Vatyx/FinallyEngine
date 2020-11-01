@@ -33,4 +33,12 @@ void VulkanFence::Wait()
     }
 }
 
+void VulkanFence::Reset()
+{
+    if (mDevice != nullptr)
+    {
+        vkResetFences(*mDevice, 1, &Handle);
+    }
+}
+
 }  // namespace Finally::Renderer

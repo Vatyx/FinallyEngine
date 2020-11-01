@@ -26,7 +26,7 @@ public:
     VulkanCommandBuffer(VulkanCommandBuffer&&) noexcept = default;
     VulkanCommandBuffer& operator=(VulkanCommandBuffer&& other) noexcept = default;
 
-    CB& BeginInfo();
+    CB& BeginInfo(VkCommandBufferUsageFlags flags = 0);
 
     CB& BeginRenderPass(const class VulkanRenderPass& RenderPass, const class VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
                         const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents = VK_SUBPASS_CONTENTS_INLINE);

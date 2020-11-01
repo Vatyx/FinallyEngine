@@ -33,6 +33,7 @@ public:
     [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
 
     [[nodiscard]] RenderTarget& AcquirePresentationRenderTarget();
+    void Present(RenderTarget& renderTarget);
 
 private:
     uint32_t mImageCount = SwapchainImageCount;

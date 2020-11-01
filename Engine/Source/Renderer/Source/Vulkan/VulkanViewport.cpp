@@ -32,12 +32,12 @@ VulkanViewport::~VulkanViewport()
 {
     if (mDevice != nullptr)
     {
-        vkDestroySwapchainKHR(*mDevice, mSwapchain,nullptr);
+        vkDestroySwapchainKHR(*mDevice, mSwapchain, nullptr);
     }
 
     if (mInstance != nullptr)
     {
-        vkDestroySurfaceKHR(*mInstance, mSurface,nullptr);
+        vkDestroySurfaceKHR(*mInstance, mSurface, nullptr);
     }
 }
 
@@ -62,8 +62,14 @@ VulkanViewport& VulkanViewport::operator=(VulkanViewport&& other) noexcept
 
 void VulkanViewport::ValidatePhysicalDeviceSurfaceSupport() const
 {
+    if (mInstance == nullptr || mDevice == nullptr)
+    {
+        return;
+    }
+
     VkBool32 PresentSupport = false;
-    vkGetPhysicalDeviceSurfaceSupportKHR(mInstance->GetPhysicalDevice(), mDevice->GetPresentQueue().GetFamilyIndex(), mSurface, &PresentSupport);
+    vkGetPhysicalDeviceSurfaceSupportKHR(mInstance->GetPhysicalDevice(), mDevice->GetPresentQueue().GetFamilyIndex(), mSurface,
+                                         &PresentSupport);
     assert(PresentSupport);
 }
 
@@ -176,8 +182,10 @@ VkExtent2D VulkanViewport::ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilitie
     {
         VkExtent2D ActualExtent = { WIDTH, HEIGHT };
 
-        ActualExtent.width = std::max(Capabilities.minImageExtent.width, std::min(Capabilities.maxImageExtent.width, ActualExtent.width));
-        ActualExtent.height = std::max(Capabilities.minImageExtent.height, std::min(Capabilities.maxImageExtent.height, ActualExtent.height));
+        ActualExtent.width =
+            std::max(Capabilities.minImageExtent.width, std::min(Capabilities.maxImageExtent.width, ActualExtent.width));
+        ActualExtent.height =
+            std::max(Capabilities.minImageExtent.height, std::min(Capabilities.maxImageExtent.height, ActualExtent.height));
 
         return ActualExtent;
     }
@@ -187,7 +195,7 @@ void VulkanViewport::RetrieveSwapchainImages()
 {
     uint32_t imageCount = 0;
     vkGetSwapchainImagesKHR(*mDevice, mSwapchain, &imageCount, nullptr);
-    std::vector<VkImage> images{imageCount};
+    std::vector<VkImage> images{ imageCount };
     vkGetSwapchainImagesKHR(*mDevice, mSwapchain, &imageCount, images.data());
 
     for (VkImage image : images)
@@ -196,7 +204,7 @@ void VulkanViewport::RetrieveSwapchainImages()
     }
 }
 
-uint32_t VulkanViewport::AcquireNextImage(VulkanSemaphore& semaphore)
+uint32_t VulkanViewport::AcquireNextImage(const VulkanSemaphore& waitSemaphore) const
 {
     if (mDevice == nullptr)
     {
@@ -204,9 +212,27 @@ uint32_t VulkanViewport::AcquireNextImage(VulkanSemaphore& semaphore)
     }
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, &imageIndex);
+    vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, waitSemaphore, VK_NULL_HANDLE, &imageIndex);
 
     return imageIndex;
+}
+
+void VulkanViewport::Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const
+{
+    VkPresentInfoKHR presentInfo{};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+    presentInfo.waitSemaphoreCount = 1;
+    VkSemaphore semaphoreHandle[] = { waitSemaphore.GetHandle() };
+    presentInfo.pWaitSemaphores = semaphoreHandle;
+
+    VkSwapchainKHR swapChains[] = { mSwapchain };
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = swapChains;
+
+    presentInfo.pImageIndices = &imageIndex;
+
+    vkQueuePresentKHR(mDevice->GetPresentQueue(), &presentInfo);
 }
 
 }  // namespace Finally::Renderer

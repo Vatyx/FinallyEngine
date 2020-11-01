@@ -9,24 +9,22 @@
 namespace Finally::Editor
 {
 
-//EditorUI::EditorUI(const Renderer::Renderer& renderer)
-//{
-//    const Renderer::VulkanInstance& instance = renderer.GetVulkanInstance();
-//
-//    ImGui_ImplVulkan_InitInfo info{};
-//    info.Instance = instance;
-//    info.PhysicalDevice = instance.GetPhysicalDevice();
-//    info.Device = instance.GetDevice();
-//    info.Queue = instance.GetDevice().GetGraphicsQueue();
-//    info.PipelineCache = VK_NULL_HANDLE;
-//}
+EditorUI::EditorUI(const Renderer::Renderer& renderer, const Renderer::Viewport& viewport)
+    : mImguiRenderer(renderer, viewport)
+{
+    ImGui::StyleColorsDark();
+}
 
-//void EditorUI::Tick() {}
-//
-//EditorUI::EditorUI(const Renderer::Renderer& renderer, const AssetManager::AssetManager& assetManager)
-//    : mAssetManager(assetManager)
-//{
+void EditorUI::Draw(Renderer::CommandBuffer& commandBuffer)
+{
+    ImGui::NewFrame();
 
-//}
+    bool show = true;
+    ImGui::ShowDemoWindow(&show);
+
+    ImGui::Render();
+
+    mImguiRenderer.RecordDrawData(ImGui::GetDrawData(), commandBuffer);
+}
 
 }  // namespace Finally::Editor

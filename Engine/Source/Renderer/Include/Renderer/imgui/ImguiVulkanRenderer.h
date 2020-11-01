@@ -9,6 +9,8 @@ struct ImDrawData;
 namespace Finally::Renderer
 {
 
+class VulkanCommandBuffer;
+
 class ImguiVulkanRenderer
 {
 public:
@@ -20,9 +22,11 @@ public:
     ImguiVulkanRenderer(ImguiVulkanRenderer&&) noexcept = default;
     ImguiVulkanRenderer& operator=(ImguiVulkanRenderer&&) noexcept = default;
 
-    void RenderDrawData(ImDrawData* drawData, const class VulkanCommandBuffer& commandBuffer);
+    void RecordDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer);
 
 private:
+    void UploadFonts(const VulkanDevice& device);
+
     VulkanDescriptorPool mDescriptorPool;
     VulkanRenderPass mRenderPass;
     VulkanPipeline mPipeline;

@@ -22,6 +22,7 @@ CommandBuffer Renderer::CreateCommandBuffer() const
 
 void Renderer::SubmitCommandBuffer(const CommandBuffer& commandBuffer)
 {
+
 }
 
 void Renderer::Present(class Viewport* viewport) {}
@@ -29,6 +30,11 @@ void Renderer::Present(class Viewport* viewport) {}
 const VulkanDevice& Renderer::GetDevice() const
 {
     return mInstance->GetDevice();
+}
+
+void Renderer::WaitUntilIdle()
+{
+    GetDevice().WaitUntilIdle();
 }
 
 }  // namespace Finally::Renderer

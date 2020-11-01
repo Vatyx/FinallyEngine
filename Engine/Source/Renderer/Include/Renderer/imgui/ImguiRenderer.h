@@ -10,9 +10,9 @@ namespace Finally::Renderer
 class ImguiRenderer
 {
 public:
-    ImguiRenderer(class Renderer& renderer, class Viewport& viewport);
+    ImguiRenderer(const class Renderer& renderer, const class Viewport& viewport);
 
-    void RenderDrawData(ImDrawData* draw_data, class CommandBuffer& commandBuffer);
+    void RecordDrawData(ImDrawData* draw_data, class CommandBuffer& commandBuffer);
 
 private:
     ImguiVulkanRenderer mVulkanLayer;

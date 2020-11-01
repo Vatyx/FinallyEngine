@@ -10,14 +10,14 @@
 namespace Finally::Renderer
 {
 
-VulkanShader::VulkanShader(const VulkanDevice& device, std::string_view code)
+VulkanShader::VulkanShader(const VulkanDevice& device, const std::vector<uint32_t>& bytecode)
 {
     mDevice = &device;
 
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+    createInfo.codeSize = bytecode.size();
+    createInfo.pCode = bytecode.data();
 
     if (vkCreateShaderModule(*mDevice, &createInfo, nullptr, &Handle) != VK_SUCCESS)
     {

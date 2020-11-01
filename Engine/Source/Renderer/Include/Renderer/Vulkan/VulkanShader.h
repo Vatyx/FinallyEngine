@@ -16,8 +16,13 @@ class VulkanShader : public VulkanResource<VkShaderModule>
 {
 public:
     [[nodiscard]] VulkanShader() = default;
-    [[nodiscard]] VulkanShader(const VulkanDevice& device, std::string_view code);
+    [[nodiscard]] VulkanShader(const VulkanDevice& device, const std::vector<uint32_t>& bytecode);
     ~VulkanShader();
+
+    VulkanShader(const VulkanShader&) = delete;
+    VulkanShader& operator=(const VulkanShader&) = delete;
+    VulkanShader(VulkanShader&&) = default;
+    VulkanShader& operator=(VulkanShader&&) = default;
 };
 
 }  // namespace Finally::Renderer

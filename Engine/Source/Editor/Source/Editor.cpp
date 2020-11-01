@@ -40,7 +40,7 @@ void Editor::Start()
 
 void Editor::Tick(float DeltaTime)
 {
-    //    mEngine->Tick(DeltaTime);
+    mEngine->Tick(DeltaTime);
 }
 
 bool Editor::ShouldShutDown()

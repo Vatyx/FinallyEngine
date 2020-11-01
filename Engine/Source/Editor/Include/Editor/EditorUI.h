@@ -1,8 +1,12 @@
 #pragma once
 
+#include "Renderer/imgui/ImguiRenderer.h"
+
 namespace Finally::Renderer
 {
+class CommandBuffer;
 class Renderer;
+class Viewport;
 }
 
 namespace Finally::AssetManager
@@ -16,13 +20,12 @@ namespace Finally::Editor
 class EditorUI
 {
 public:
-//    EditorUI() = delete;
-//    EditorUI(const Renderer::Renderer& renderer, const AssetManager::AssetManager& assetManager);
+    EditorUI(const Renderer::Renderer& renderer, const Renderer::Viewport& viewport);
 
-//    void Tick();
+    void Draw(Renderer::CommandBuffer& commandBuffer);
 
 private:
-    const AssetManager::AssetManager& mAssetManager;
+    Renderer::ImguiRenderer mImguiRenderer;
 };
 
 }

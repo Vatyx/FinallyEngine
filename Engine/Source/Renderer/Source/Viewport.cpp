@@ -27,8 +27,14 @@ RenderTarget& Viewport::AcquirePresentationRenderTarget()
 
     // Wait until the next image is done being used.
     mInFlightFences[nextImage].Wait();
+    mInFlightFences[nextImage].Reset();
 
     return mRenderTargets[nextImage];
+}
+
+void Viewport::Present(RenderTarget& renderTarget)
+{
+
 }
 
 }  // namespace Finally::Renderer

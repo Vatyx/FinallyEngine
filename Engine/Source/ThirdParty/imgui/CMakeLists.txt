@@ -8,6 +8,7 @@ find_package(Vulkan REQUIRED FATAL_ERROR)
 
 target_sources(imgui PRIVATE
         imgui.cpp
+        imgui_demo.cpp
         imgui_draw.cpp
         imgui_widgets.cpp
         imgui_impl_vulkan.cpp
