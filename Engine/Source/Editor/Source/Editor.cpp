@@ -1,24 +1,20 @@
 #include "Editor/Editor.h"
 
-#include "AssetManager/AssetManager.h"
 #include "Core/Assets/Factories/ShaderAssetFactory.h"
-#include "Core/Engine.h"
 
 namespace Finally::Editor
 {
 
 Editor::Editor()
-    : mEditorWindow{ mRenderer, 800, 800, "Finally Engine - Editor" }
+    : mEngine{ mRenderer }
+    , mEditorWindow{ mRenderer, 800, 800, "Finally Engine - Editor" }
+    , mEditorUI{ mRenderer, mEditorWindow.GetViewport() }
 {
-    mAssetManager = std::make_unique<AssetManager::AssetManager>();
-    mEngine = std::make_unique<Core::Engine>(mRenderer);
 }
 
 Editor::~Editor() = default;
 
-void Editor::Initialize()
-{
-}
+void Editor::Initialize() {}
 
 void Editor::Start()
 {
@@ -30,7 +26,8 @@ void Editor::Start()
 
         auto currentFrameTime = std::chrono::high_resolution_clock::now();
 
-        mDeltaSecondsThisFrame = std::chrono::duration<float, std::chrono::seconds::period>(currentFrameTime - mPreviousFrameTime).count();
+        mDeltaSecondsThisFrame =
+            std::chrono::duration<float, std::chrono::seconds::period>(currentFrameTime - mPreviousFrameTime).count();
 
         Tick(mDeltaSecondsThisFrame);
 
@@ -40,7 +37,22 @@ void Editor::Start()
 
 void Editor::Tick(float DeltaTime)
 {
-    mEngine->Tick(DeltaTime);
+    mEngine.Tick(DeltaTime);
+
+    Renderer::Viewport& viewport = mEditorWindow.GetViewport();
+
+    auto [renderTarget, waitSemaphore, fence] = viewport.AcquirePresentationRenderTarget();
+
+    viewport.WaitForCurrentFrame();
+
+    Renderer::CommandBuffer commandBuffer = mRenderer.CreateCommandBuffer();
+
+    mEditorUI.Draw(commandBuffer);
+
+    mRenderer.SubmitCommandBuffer(commandBuffer, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, &fence, &waitSemaphore,
+                                  &renderTarget.GetRenderingFinishedSignal());
+
+    mRenderer.Present(viewport, renderTarget.GetRenderingFinishedSignal());
 }
 
 bool Editor::ShouldShutDown()

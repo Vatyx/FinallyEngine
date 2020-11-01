@@ -22,13 +22,21 @@ enum class RenderTargetType : uint8_t
 class RenderTarget
 {
 public:
+    RenderTarget() = default;
     RenderTarget(const Renderer& renderer, const VulkanImage& presentationImage);
+
+    RenderTarget(const RenderTarget&) = delete;
+    RenderTarget& operator=(const RenderTarget&) = delete;
+    RenderTarget(RenderTarget&&) = default;
+    RenderTarget& operator=(RenderTarget&&) = default;
+
+    [[nodiscard]] const VulkanSemaphore& GetRenderingFinishedSignal() const { return mRenderingFinishedSignal; }
 
 private:
     std::vector<VulkanImage> mAttachments;
     VulkanRenderPass mRenderPass;
     VulkanFramebuffer mFramebuffer;
-    VulkanSemaphore mSemaphoreRenderingFinished;
+    VulkanSemaphore mRenderingFinishedSignal;
 };
 
 }  // namespace Finally::Renderer

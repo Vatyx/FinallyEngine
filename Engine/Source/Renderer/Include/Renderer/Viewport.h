@@ -30,10 +30,11 @@ public:
     Viewport(Viewport&&) = default;
     Viewport& operator=(Viewport&&) = default;
 
-    [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
+    [[nodiscard]] std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> AcquirePresentationRenderTarget();
+    void WaitForCurrentFrame();
 
-    [[nodiscard]] RenderTarget& AcquirePresentationRenderTarget();
-    void Present(RenderTarget& renderTarget);
+    [[nodiscard]] uint32_t GetCurrentFrameIndex() const { return mCurrentFrame; }
+    [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
 
 private:
     uint32_t mImageCount = SwapchainImageCount;

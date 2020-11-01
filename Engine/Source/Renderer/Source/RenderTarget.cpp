@@ -35,7 +35,7 @@ RenderTarget::RenderTarget(const Renderer& renderer, const VulkanImage& presenta
 
     mFramebuffer = device.CreateFramebuffer(mRenderPass, imageViews, presentationImage.GetExtent());
 
-    mSemaphoreRenderingFinished = VulkanSemaphore{ device };
+    mRenderingFinishedSignal = VulkanSemaphore{ device };
 }
 
 }  // namespace Finally::Renderer

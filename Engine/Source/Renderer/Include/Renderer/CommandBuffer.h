@@ -15,6 +15,8 @@ public:
     CommandBuffer(CommandBuffer&&) = default;
     CommandBuffer& operator=(CommandBuffer&&) = default;
 
+    explicit operator const VulkanCommandBuffer&() const { return mVulkanCommandBuffer; }
+
     [[nodiscard]] const VulkanCommandBuffer& GetVulkanCommandBuffer() const { return mVulkanCommandBuffer; }
 
 private:

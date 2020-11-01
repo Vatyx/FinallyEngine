@@ -1,6 +1,9 @@
 #pragma once
 
+#include "AssetManager/AssetManager.h"
+#include "Core/Engine.h"
 #include "Core/Window.h"
+#include "Editor/EditorUI.h"
 #include "Renderer/Renderer.h"
 
 #include <chrono>
@@ -43,10 +46,13 @@ private:
     void Tick(float DeltaTime);
     bool ShouldShutDown();
 
-    std::unique_ptr<Core::Engine> mEngine;
-    std::unique_ptr<AssetManager::AssetManager> mAssetManager;
     Renderer::Renderer mRenderer;
+    AssetManager::AssetManager mAssetManager;
+
+    Core::Engine mEngine;
     Core::Window mEditorWindow;
+
+    EditorUI mEditorUI;
 
     // Time
     TimePoint mPreviousFrameTime;

@@ -13,7 +13,7 @@ Window::Window(const class Renderer::Renderer& renderer, uint32_t width, uint32_
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     mWindowHandle = glfwCreateWindow(width, height, windowName.data(), nullptr, nullptr);
-    mRenderingViewport = Renderer::Viewport{renderer, mWindowHandle};
+    mRenderingViewport = Renderer::Viewport{ renderer, mWindowHandle };
 }
 
 Window::~Window()

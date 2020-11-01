@@ -19,7 +19,7 @@ Viewport::Viewport(const Renderer& renderer, GLFWwindow* window)
     }
 }
 
-RenderTarget& Viewport::AcquirePresentationRenderTarget()
+std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> Viewport::AcquirePresentationRenderTarget()
 {
     // Acquire the next image to be used to render to the screen.
     uint32_t nextImage = mViewport.AcquireNextImage(mImageAvailableSemaphores[mCurrentFrame]);
@@ -29,12 +29,15 @@ RenderTarget& Viewport::AcquirePresentationRenderTarget()
     mInFlightFences[nextImage].Wait();
     mInFlightFences[nextImage].Reset();
 
-    return mRenderTargets[nextImage];
+    mCurrentFrame = (mCurrentFrame + 1) % mImageCount;
+
+    return { mRenderTargets[nextImage], mImageAvailableSemaphores[mCurrentFrame], mInFlightFences[mCurrentFrame] };
 }
 
-void Viewport::Present(RenderTarget& renderTarget)
+void Viewport::WaitForCurrentFrame()
 {
-
+    mInFlightFences[mCurrentFrame].Wait();
+    mInFlightFences[mCurrentFrame].Reset();
 }
 
 }  // namespace Finally::Renderer

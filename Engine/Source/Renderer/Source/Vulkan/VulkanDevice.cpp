@@ -63,10 +63,10 @@ void VulkanDevice::CreateAllocator(const VulkanInstance& instance)
 
 void VulkanDevice::SetupQueues(const std::vector<VkDeviceQueueCreateInfo>& QueueCreateInfos)
 {
-    GraphicsQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)].queueFamilyIndex, 0 };
-    TransferQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Transfer)].queueFamilyIndex, 0 };
-    ComputeQueue = VulkanQueue{ GetHandle(), QueueCreateInfos[EnumIndex(QueueFamilyType::Compute)].queueFamilyIndex, 0 };
-    PresentQueue = VulkanQueue{ GetHandle(), GraphicsQueue.GetFamilyIndex(), 0 };
+    GraphicsQueue = VulkanQueue{ *this, QueueCreateInfos[EnumIndex(QueueFamilyType::Graphics)].queueFamilyIndex, 0 };
+    TransferQueue = VulkanQueue{ *this, QueueCreateInfos[EnumIndex(QueueFamilyType::Transfer)].queueFamilyIndex, 0 };
+    ComputeQueue = VulkanQueue{ *this, QueueCreateInfos[EnumIndex(QueueFamilyType::Compute)].queueFamilyIndex, 0 };
+    PresentQueue = VulkanPresentQueue{ *this, GraphicsQueue.GetFamilyIndex(), 0 };
 }
 
 std::vector<VkDeviceQueueCreateInfo> VulkanDevice::CreateQueueCreateInfos(VkPhysicalDevice PhysicalDevice)

@@ -33,15 +33,14 @@ public:
     VulkanViewport(VulkanViewport&& other) noexcept;
     VulkanViewport& operator=(VulkanViewport&& other) noexcept;
 
-    [[nodiscard]] VkViewport CreateVkViewport() const;
-
+    [[nodiscard]] VkSwapchainKHR GetSwapchain() const { return mSwapchain; }
     [[nodiscard]] VkFormat GetSwapchainFormat() const { return mImageFormat; }
     [[nodiscard]] VkExtent2D GetExtents() const { return mExtent; }
     [[nodiscard]] uint32_t GetImageCount() const { return mImageCount; }
     [[nodiscard]] const std::vector<VulkanImage>& GetSwapchainImages() const { return mSwapchainImages; }
+    [[nodiscard]] VkViewport GetVkViewport() const;
 
     [[nodiscard]] uint32_t AcquireNextImage(const VulkanSemaphore& waitSemaphore) const;
-    void Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const;
 
 private:
     void ValidatePhysicalDeviceSurfaceSupport() const;
@@ -56,13 +55,13 @@ private:
     const VulkanInstance* mInstance = nullptr;
     const VulkanDevice* mDevice = nullptr;
 
-    uint32_t mImageCount = 3;
-    uint32_t mCurrentImageIndex = 0;
     VkSurfaceKHR mSurface{};
     VkSwapchainKHR mSwapchain{};
     std::vector<VulkanImage> mSwapchainImages;
     VkFormat mImageFormat{};
     VkExtent2D mExtent{};
+
+    uint32_t mImageCount = 3;
 };
 
 }  // namespace Finally::Renderer

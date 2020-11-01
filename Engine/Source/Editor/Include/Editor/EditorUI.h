@@ -21,6 +21,12 @@ class EditorUI
 {
 public:
     EditorUI(const Renderer::Renderer& renderer, const Renderer::Viewport& viewport);
+    ~EditorUI() = default;
+
+    EditorUI(const EditorUI&) = delete;
+    EditorUI& operator=(const EditorUI&) = delete;
+    EditorUI(EditorUI&&) = delete;
+    EditorUI& operator=(EditorUI&&) = delete;
 
     void Draw(Renderer::CommandBuffer& commandBuffer);
 

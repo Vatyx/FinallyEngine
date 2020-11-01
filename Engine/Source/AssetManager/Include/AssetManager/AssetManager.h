@@ -2,7 +2,7 @@
 
 #include "AssetManager/Asset.h"
 #include "AssetManager/AssetFactory.h"
-//#include "Logging/Logger.h"
+#include "Logging/Logger.h"
 #include "Utilities/ConceptUtilities.h"
 
 #include <filesystem>
@@ -25,8 +25,8 @@ public:
     AssetManager() = default;
     AssetManager(const AssetManager&) = delete;
     AssetManager& operator=(const AssetManager&) = delete;
-    AssetManager(AssetManager&&) = default;
-    AssetManager& operator=(AssetManager&&) = default;
+    AssetManager(AssetManager&&) = delete;
+    AssetManager& operator=(AssetManager&&) = delete;
 
     template <typename T> requires IsBaseOf<T, AssetFactory>
     void RegisterAssetFactory();

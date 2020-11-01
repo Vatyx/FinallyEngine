@@ -2,13 +2,15 @@
 
 #include "Renderer/CommandBuffer.h"
 #include "Renderer/Vulkan/VulkanCommandPool.h"
+
 #include <memory>
 
 namespace Finally::Renderer
 {
 
-class VulkanInstance;
 class VulkanDevice;
+class VulkanInstance;
+class VulkanSemaphore;
 
 class Renderer
 {
@@ -21,10 +23,11 @@ public:
     Renderer(Renderer&&) = default;
     Renderer& operator=(Renderer&&) = default;
 
-    void SubmitCommandBuffer(const CommandBuffer& commandBuffer);
-    void Present(class Viewport* viewport);
-
-    void WaitUntilIdle();
+    void SubmitCommandBuffer(const CommandBuffer& commandBuffer, VkPipelineStageFlags flags = 0,
+                             const class VulkanFence* fence = nullptr, const VulkanSemaphore* waitSemaphore = nullptr,
+                             const VulkanSemaphore* signalSemaphore = nullptr) const;
+    void Present(const class Viewport& viewport, const VulkanSemaphore& waitSemaphore) const;
+    void WaitUntilIdle() const;
 
     [[nodiscard]] CommandBuffer CreateCommandBuffer() const;
 

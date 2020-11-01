@@ -73,7 +73,7 @@ void VulkanViewport::ValidatePhysicalDeviceSurfaceSupport() const
     assert(PresentSupport);
 }
 
-VkViewport VulkanViewport::CreateVkViewport() const
+VkViewport VulkanViewport::GetVkViewport() const
 {
     VkViewport Viewport{};
     Viewport.x = 0.0f;
@@ -215,24 +215,6 @@ uint32_t VulkanViewport::AcquireNextImage(const VulkanSemaphore& waitSemaphore) 
     vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, waitSemaphore, VK_NULL_HANDLE, &imageIndex);
 
     return imageIndex;
-}
-
-void VulkanViewport::Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const
-{
-    VkPresentInfoKHR presentInfo{};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-    presentInfo.waitSemaphoreCount = 1;
-    VkSemaphore semaphoreHandle[] = { waitSemaphore.GetHandle() };
-    presentInfo.pWaitSemaphores = semaphoreHandle;
-
-    VkSwapchainKHR swapChains[] = { mSwapchain };
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
-
-    presentInfo.pImageIndices = &imageIndex;
-
-    vkQueuePresentKHR(mDevice->GetPresentQueue(), &presentInfo);
 }
 
 }  // namespace Finally::Renderer

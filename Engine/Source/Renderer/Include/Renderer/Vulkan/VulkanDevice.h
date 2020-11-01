@@ -60,8 +60,8 @@ public:
 
     [[nodiscard]] const VulkanQueue& GetGraphicsQueue() const { return GraphicsQueue; }
     [[nodiscard]] const VulkanQueue& GetTransferQueue() const { return TransferQueue; }
-    [[nodiscard]] const VulkanQueue& GetPresentQueue() const { return PresentQueue; }
     [[nodiscard]] const VulkanQueue& GetComputeQueue() const { return ComputeQueue; }
+    [[nodiscard]] const VulkanPresentQueue& GetPresentQueue() const { return PresentQueue; }
 
     [[nodiscard]] VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes,
                                                             size_t numSizes) const;
@@ -90,7 +90,7 @@ private:
 
     VulkanQueue GraphicsQueue;
     VulkanQueue TransferQueue;
-    VulkanQueue PresentQueue;
+    VulkanPresentQueue PresentQueue;
     VulkanQueue ComputeQueue;
 };
 

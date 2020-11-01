@@ -29,6 +29,7 @@ public:
     Window(Window&& other) noexcept;
     Window& operator=(Window&& other) noexcept;
 
+    [[nodiscard]] Renderer::Viewport& GetViewport() { return mRenderingViewport; }
     [[nodiscard]] bool HasWindowBeenClosed() const;
 
 private:
