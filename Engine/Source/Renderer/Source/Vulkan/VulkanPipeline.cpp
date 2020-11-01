@@ -132,6 +132,7 @@ void VulkanPipeline::CreateRasterizerStep()
     Rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
     Rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
     Rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    Rasterizer.lineWidth = 1.0f;
     Rasterizer.depthBiasEnable = VK_FALSE;
     Rasterizer.depthBiasConstantFactor = 0.0f;  // Optional
     Rasterizer.depthBiasClamp = 0.0f;           // Optional

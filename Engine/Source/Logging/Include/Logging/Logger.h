@@ -10,7 +10,7 @@
 #include <memory>
 
 #define DeclareLogCategory(category, catDisplayName)                                                                                                 \
-    const char category##CatStr[] = "#catDisplayName";                                                                                               \
+    const char category##CatStr[] = #catDisplayName;                                                                                               \
     const auto category = Finally::Logger::LogCategory<category##CatStr>{};
 
 namespace Finally::Logger
@@ -77,4 +77,4 @@ namespace Details
 
 }  // namespace Finally::Logger
 
-DeclareLogCategory(LogDefault, "Default");
+DeclareLogCategory(LogDefault, Default);

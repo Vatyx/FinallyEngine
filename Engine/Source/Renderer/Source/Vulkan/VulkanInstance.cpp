@@ -1,6 +1,7 @@
 
 #include "Renderer/Vulkan/VulkanInstance.h"
 
+#include "Logging/Logger.h"
 #include "Renderer/Vulkan/VulkanDevice.h"
 #include "Renderer/Vulkan/VulkanFramebuffer.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
@@ -39,7 +40,7 @@ void VulkanInstance::CreateInstance()
     AppInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     AppInfo.pEngineName = "Finally Engine";
     AppInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    AppInfo.apiVersion = VK_API_VERSION_1_0;
+    AppInfo.apiVersion = VK_API_VERSION_1_1;
 
     VkInstanceCreateInfo CreateInfo = {};
     CreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

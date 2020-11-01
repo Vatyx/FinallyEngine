@@ -75,7 +75,7 @@ CB& VulkanCommandBuffer::EndRenderPass()
 
 CB& VulkanCommandBuffer::EndCommandBuffer()
 {
-    vkCmdEndRenderPass(Handle);
+    vkEndCommandBuffer(Handle);
 
     return *this;
 }

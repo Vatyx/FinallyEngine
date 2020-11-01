@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cassert>
+#include <optional>
 #include <stdexcept>
 
 namespace Finally::Renderer
@@ -35,7 +36,7 @@ VulkanRenderPass::VulkanRenderPass(const VulkanDevice& device, const std::vector
     vkAttachments.resize(attachmentDescriptions.size(), {});
 
     std::vector<VkAttachmentReference> colorReferences;
-    VkAttachmentReference depthReference;
+    std::optional<VkAttachmentReference> depthReference;
 
     for (uint32_t i = 0; i < attachmentDescriptions.size(); ++i)
     {
@@ -65,7 +66,10 @@ VulkanRenderPass::VulkanRenderPass(const VulkanDevice& device, const std::vector
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.pColorAttachments = colorReferences.data();
     subpass.colorAttachmentCount = static_cast<uint32_t>(colorReferences.size());
-    subpass.pDepthStencilAttachment = &depthReference;
+    if (depthReference)
+    {
+        subpass.pDepthStencilAttachment = &depthReference.value();
+    }
 
     std::array<VkSubpassDependency, 2> dependencies{};
     dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;

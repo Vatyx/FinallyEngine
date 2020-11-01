@@ -33,7 +33,7 @@ class VulkanImage : public VulkanResource<VkImage>
 public:
     [[nodiscard]] VulkanImage(VmaAllocator allocator, const VulkanDevice& device, ImageType type, VkFormat format, VkExtent2D extent,
                               bool isSampler = true);
-    [[nodiscard]] VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format);
+    [[nodiscard]] VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format, VkExtent2D extent);
     ~VulkanImage();
 
     VulkanImage(VulkanImage&& other) noexcept;

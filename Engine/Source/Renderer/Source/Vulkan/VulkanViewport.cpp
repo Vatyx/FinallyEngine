@@ -195,12 +195,12 @@ void VulkanViewport::RetrieveSwapchainImages()
 {
     uint32_t imageCount = 0;
     vkGetSwapchainImagesKHR(*mDevice, mSwapchain, &imageCount, nullptr);
-    std::vector<VkImage> images{ imageCount };
+    std::vector<VkImage> images( imageCount );
     vkGetSwapchainImagesKHR(*mDevice, mSwapchain, &imageCount, images.data());
 
     for (VkImage image : images)
     {
-        mSwapchainImages.emplace_back(*mDevice, image, ImageType::Color, mImageFormat);
+        mSwapchainImages.emplace_back(*mDevice, image, ImageType::Color, mImageFormat, mExtent);
     }
 }
 

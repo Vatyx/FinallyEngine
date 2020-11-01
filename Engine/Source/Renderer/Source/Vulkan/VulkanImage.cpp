@@ -78,6 +78,8 @@ VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, Ima
     , mExtent{ extent }
     , mAllocator{ allocator }
 {
+    mDevice = &device;
+
     VkImageCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     createInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -85,6 +87,9 @@ VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, Ima
     createInfo.extent.width = extent.width;
     createInfo.extent.height = extent.height;
     createInfo.extent.depth = 1;
+    createInfo.mipLevels = 1;
+    createInfo.arrayLayers  = 1;
+    createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 
     VkImageUsageFlags usageFlags = GetUsageFlagsForType(type);
@@ -98,18 +103,20 @@ VulkanImage::VulkanImage(VmaAllocator allocator, const VulkanDevice& device, Ima
     VmaAllocationCreateInfo AllocInfo{};
     AllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-    if (vmaCreateImage(mAllocator, &createInfo, &AllocInfo, &Handle, &mAllocation, nullptr) != VK_SUCCESS)
+    if (VkResult error = vmaCreateImage(mAllocator, &createInfo, &AllocInfo, &Handle, &mAllocation, nullptr))
     {
-        Logger::Error(LogDefault, "Failed to allocate image!");
+        Logger::Error(LogDefault, "Failed to allocate image! {}", std::to_string(error));
     }
 
     mDefaultView = VulkanImageView{ device, *this, type };
 }
 
-VulkanImage::VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format)
+VulkanImage::VulkanImage(const VulkanDevice& device, VkImage nonOwningImage, ImageType type, VkFormat format, VkExtent2D extent)
     : mFormat{ format }
     , mType{ type }
+    , mExtent{ extent }
 {
+    mDevice = &device;
     Handle = nonOwningImage;
     mDefaultView = VulkanImageView{ device, *this, type };
 }
@@ -143,7 +150,7 @@ VulkanImage& VulkanImage::operator=(VulkanImage&& other) noexcept
 
 VulkanImage VulkanImage::CloneNonOwningImage() const
 {
-    return VulkanImage{ *mDevice, Handle, mType, mFormat };
+    return VulkanImage{ *mDevice, Handle, mType, mFormat, mExtent };
 }
 
 }  // namespace Finally::Renderer
