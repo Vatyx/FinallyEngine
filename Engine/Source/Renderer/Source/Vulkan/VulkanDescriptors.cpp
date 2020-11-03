@@ -7,23 +7,17 @@
 namespace Finally::Renderer
 {
 
-VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const VulkanDevice& InDevice, uint32_t Binding, uint32_t DescriptorCount,
-                                                     VkShaderStageFlagBits StageFlags)
-    : Device(InDevice)
+VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const VulkanDevice& device,
+                                                     const std::vector<VkDescriptorSetLayoutBinding>& bindings)
 {
-    VkDescriptorSetLayoutBinding LayoutBinding{};
-    LayoutBinding.binding = Binding;
-    LayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    LayoutBinding.descriptorCount = DescriptorCount;
-    LayoutBinding.stageFlags = StageFlags;
-    LayoutBinding.pImmutableSamplers = nullptr;
+    mDevice = &device;
 
     VkDescriptorSetLayoutCreateInfo LayoutInfo{};
     LayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    LayoutInfo.bindingCount = 1;
-    LayoutInfo.pBindings = &LayoutBinding;
+    LayoutInfo.bindingCount = bindings.size();
+    LayoutInfo.pBindings = bindings.empty() ? nullptr : bindings.data();
 
-    if (vkCreateDescriptorSetLayout(InDevice, &LayoutInfo, nullptr, &Handle) != VK_SUCCESS)
+    if (vkCreateDescriptorSetLayout(*mDevice, &LayoutInfo, nullptr, &Handle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create descriptor set layout!");
     }
@@ -31,10 +25,14 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const VulkanDevice& InDevic
 
 VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
 {
-    vkDestroyDescriptorSetLayout(Device, Handle, nullptr);
+    if (mDevice != nullptr)
+    {
+        vkDestroyDescriptorSetLayout(*mDevice, Handle, nullptr);
+    }
 }
 
-VulkanDescriptorPool::VulkanDescriptorPool(const class VulkanDevice& device, const VkDescriptorPoolSize* poolSizes, size_t poolSizesCount)
+VulkanDescriptorPool::VulkanDescriptorPool(const class VulkanDevice& device, const VkDescriptorPoolSize* poolSizes,
+                                           size_t poolSizesCount)
 {
     mDevice = &device;
 
@@ -58,16 +56,44 @@ VulkanDescriptorPool::~VulkanDescriptorPool()
     }
 }
 
-// VulkanDescriptorSet::VulkanDescriptorSet(const VulkanDevice& InDevice, const VulkanDescriptorPool& DescriptorPool, uint32_t DescriptorSetCount,
-// const std::vector<VulkanDescriptorSetLayout>& Layouts)
-//{
-//    VkDescriptorSetAllocateInfo allocInfo{};
-//    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-//    allocInfo.descriptorPool = DescriptorPool;
-//    allocInfo.descriptorSetCount = DescriptorSetCount;
-//
-//    std::vector<VkDescriptorSetLayout> VkLayouts;
-//    std::transform(Layouts.begin(), Layouts.end(), VkLayouts.begin(), [](auto&& Layout) { return static_cast<VkDescriptorSetLayout>(Layout); });
-//    allocInfo.pSetLayouts = VkLayouts.data();
-//}
+VulkanDescriptorSet::VulkanDescriptorSet(const VulkanDevice& device, const VulkanDescriptorPool& descriptorPool,
+                                         const VulkanDescriptorSetLayout& layout, uint32_t DescriptorCount)
+{
+    mDevice = &device;
+    mDescriptorPool = &descriptorPool;
+
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = 1;
+    VkDescriptorSetLayout layouts[1] = { layout };
+    allocInfo.pSetLayouts = layouts;
+
+    if (vkAllocateDescriptorSets(*mDevice, &allocInfo, &Handle) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create descriptor pool!");
+    }
+}
+
+VulkanDescriptorSet::VulkanDescriptorSet(VulkanDescriptorSet&& other) noexcept
+{
+    *this = std::move(other);
+}
+
+VulkanDescriptorSet::~VulkanDescriptorSet()
+{
+    if (mDevice != nullptr && mDescriptorPool != nullptr)
+    {
+        vkFreeDescriptorSets(*mDevice, *mDescriptorPool, 1, &Handle);
+    }
+}
+
+VulkanDescriptorSet& VulkanDescriptorSet::operator=(VulkanDescriptorSet&& other) noexcept
+{
+    mDescriptorPool = std::exchange(other.mDescriptorPool, {});
+    VulkanResource<VkDescriptorSet>::operator=(std::move(other));
+
+    return *this;
+}
+
 }  // namespace Finally::Renderer

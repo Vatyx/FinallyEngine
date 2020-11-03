@@ -27,11 +27,6 @@ void Renderer::SubmitCommandBuffer(const CommandBuffer& commandBuffer, VkPipelin
     GetDevice().GetGraphicsQueue().Submit(commandBuffer.GetVulkanCommandBuffer(), &flags, fence, waitSemaphore, signalSemaphore);
 }
 
-void Renderer::Present(const Viewport& viewport, const VulkanSemaphore& waitSemaphore) const
-{
-    GetDevice().GetPresentQueue().Present(viewport.GetVulkanViewport(), viewport.GetCurrentFrameIndex(), waitSemaphore);
-}
-
 const VulkanDevice& Renderer::GetDevice() const
 {
     return mInstance->GetDevice();

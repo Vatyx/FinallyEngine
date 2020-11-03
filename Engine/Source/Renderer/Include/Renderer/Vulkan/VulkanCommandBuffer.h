@@ -26,18 +26,18 @@ public:
     VulkanCommandBuffer(VulkanCommandBuffer&&) noexcept = default;
     VulkanCommandBuffer& operator=(VulkanCommandBuffer&& other) noexcept = default;
 
-    CB& BeginInfo(VkCommandBufferUsageFlags flags = 0);
+    void BeginCommandBuffer(VkCommandBufferUsageFlags flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT) const;
 
-    CB& BeginRenderPass(const class VulkanRenderPass& RenderPass, const class VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
-                        const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents = VK_SUBPASS_CONTENTS_INLINE);
+    void BeginRenderPass(const class VulkanRenderPass& RenderPass, const class VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
+                        const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents = VK_SUBPASS_CONTENTS_INLINE) const;
 
-    CB& BindPipeline(VkPipelineBindPoint PipelineBindPoint, const class VulkanPipeline& Pipeline);
+    void BindPipeline(VkPipelineBindPoint PipelineBindPoint, const class VulkanPipeline& Pipeline) const;
 
-    CB& Draw(uint32_t VertexCount, uint32_t InstanceCount, uint32_t FirstVertex, uint32_t FirstInstance);
+    void Draw(uint32_t VertexCount, uint32_t InstanceCount, uint32_t FirstVertex, uint32_t FirstInstance) const;
 
-    CB& EndRenderPass();
+    void EndRenderPass() const;
 
-    CB& EndCommandBuffer();
+    void EndCommandBuffer() const;
 };
 
 }  // namespace Finally::Renderer

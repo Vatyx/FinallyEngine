@@ -41,6 +41,7 @@ public:
     [[nodiscard]] VkViewport GetVkViewport() const;
 
     [[nodiscard]] uint32_t AcquireNextImage(const VulkanSemaphore& waitSemaphore) const;
+    void Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const;
 
 private:
     void ValidatePhysicalDeviceSurfaceSupport() const;

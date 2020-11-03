@@ -125,12 +125,22 @@ VkDeviceQueueCreateInfo VulkanDevice::CreateQueueCreateInfoFromFlag(VkQueueFlagB
 
 void VulkanDevice::WaitUntilIdle() const
 {
-   vkDeviceWaitIdle(GetHandle());
+    vkDeviceWaitIdle(GetHandle());
 }
 
 VulkanDescriptorPool VulkanDevice::CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes, size_t numSizes) const
 {
     return VulkanDescriptorPool{ *this, descriptorPoolSizes, numSizes };
+}
+
+VulkanDescriptorSetLayout VulkanDevice::CreateDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings) const
+{
+    return VulkanDescriptorSetLayout{ *this, bindings };
+}
+
+VulkanSampler VulkanDevice::CreateSampler(float maxAnisotropy, float minLod, float maxLod) const
+{
+    return VulkanSampler{ *this, maxAnisotropy, minLod, maxLod };
 }
 
 VulkanRenderPass VulkanDevice::CreateRenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions) const
@@ -139,9 +149,11 @@ VulkanRenderPass VulkanDevice::CreateRenderPass(const std::vector<AttachmentDesc
 }
 
 VulkanPipeline VulkanDevice::CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
-                                            const VulkanShader& fragmentShader) const
+                                            const VulkanShader& fragmentShader,
+                                            const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                                            const std::vector<VkPushConstantRange>& pushConstantRanges) const
 {
-    return VulkanPipeline{ *this, renderPass, vertexShader, fragmentShader };
+    return VulkanPipeline{ *this, renderPass, vertexShader, fragmentShader, descriptorSetLayouts, pushConstantRanges };
 }
 
 VulkanCommandPool VulkanDevice::CreateCommandPool() const

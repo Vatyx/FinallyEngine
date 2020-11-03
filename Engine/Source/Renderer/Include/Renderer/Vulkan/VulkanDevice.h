@@ -6,6 +6,7 @@
 #include "Renderer/Vulkan/VulkanDescriptors.h"
 #include "Renderer/Vulkan/VulkanQueue.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
+#include "Renderer/Vulkan/VulkanSampler.h"
 #include "Utilities/TemplateUtilities.h"
 
 #include <iostream>
@@ -65,9 +66,13 @@ public:
 
     [[nodiscard]] VulkanDescriptorPool CreateDescriptorPool(const VkDescriptorPoolSize* descriptorPoolSizes,
                                                             size_t numSizes) const;
+    [[nodiscard]] VulkanDescriptorSetLayout CreateDescriptorSetLayout(const std::vector<VkDescriptorSetLayoutBinding>& bindings) const;
+    [[nodiscard]] VulkanSampler CreateSampler(float maxAnisotropy = 16.0f, float minLod = 0.0f, float maxLod = 0.0f) const;
     [[nodiscard]] VulkanRenderPass CreateRenderPass(const std::vector<AttachmentDescription>& attachmentDescriptions) const;
     [[nodiscard]] VulkanPipeline CreatePipeline(const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
-                                                const VulkanShader& fragmentShader) const;
+                                                const VulkanShader& fragmentShader,
+                                                const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                                                const std::vector<VkPushConstantRange>& pushConstantRanges) const;
     [[nodiscard]] VulkanCommandPool CreateCommandPool() const;
     [[nodiscard]] VulkanImage CreateImage(ImageType type, VkFormat format, VkExtent2D extent, bool isSampler = true) const;
     [[nodiscard]] VulkanFramebuffer CreateFramebuffer(const VulkanRenderPass& renderPass,

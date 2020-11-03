@@ -217,4 +217,12 @@ uint32_t VulkanViewport::AcquireNextImage(const VulkanSemaphore& waitSemaphore) 
     return imageIndex;
 }
 
+void VulkanViewport::Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const
+{
+    if (mDevice != nullptr)
+    {
+        mDevice->GetPresentQueue().Present(*this, imageIndex, waitSemaphore);
+    }
+}
+
 }  // namespace Finally::Renderer

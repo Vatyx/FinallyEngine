@@ -46,7 +46,7 @@ void VulkanQueue::Submit(const VulkanCommandBuffer& VulkanCommandBuffer, const V
         SubmitInfo.pSignalSemaphores = SignalSemaphores;
     }
 
-    vkQueueSubmit(Handle, 1, &SubmitInfo, Fence != nullptr ? *Fence : VK_NULL_HANDLE);
+    vkQueueSubmit(Handle, 1, &SubmitInfo, Fence != nullptr ? Fence->GetHandle() : VK_NULL_HANDLE);
 }
 
 void VulkanQueue::Submit(const std::vector<VkSubmitInfo>& SubmitInfo, const VulkanFence* Fence) const

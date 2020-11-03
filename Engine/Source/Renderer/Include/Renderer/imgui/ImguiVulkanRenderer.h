@@ -3,6 +3,8 @@
 #include "Renderer/Vulkan/VulkanDescriptors.h"
 #include "Renderer/Vulkan/VulkanPipeline.h"
 #include "Renderer/Vulkan/VulkanRenderPass.h"
+#include "Renderer/Vulkan/VulkanSampler.h"
+#include "Renderer/Vulkan/VulkanShader.h"
 
 struct GLFWwindow;
 struct ImDrawData;
@@ -23,7 +25,7 @@ public:
     ImguiVulkanRenderer(ImguiVulkanRenderer&&) noexcept = default;
     ImguiVulkanRenderer& operator=(ImguiVulkanRenderer&&) noexcept = default;
 
-    void RecordDrawData(ImDrawData* drawData, const VulkanCommandBuffer& commandBuffer);
+    void RecordDrawData(ImDrawData* drawData, const class RenderTarget& renderTarget, const VulkanCommandBuffer& commandBuffer);
 
     void NewFrame();
 
@@ -31,8 +33,11 @@ private:
     void UploadFonts(const VulkanDevice& device);
 
     VulkanDescriptorPool mDescriptorPool;
+    VulkanDescriptorSetLayout mDescriptorSetLayout;
+    VulkanSampler mFontSampler;
     VulkanRenderPass mRenderPass;
-    VulkanPipeline mPipeline;
+    VulkanShader mVertexShader;
+    VulkanShader mFragmentShader;
 };
 
 }

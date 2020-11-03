@@ -30,13 +30,17 @@ public:
     RenderTarget(RenderTarget&&) = default;
     RenderTarget& operator=(RenderTarget&&) = default;
 
+    [[nodiscard]] const VulkanRenderPass& GetRenderPass() const { return mRenderPass; }
+    [[nodiscard]] const VulkanFramebuffer& GetFramebuffer() const { return mFramebuffer; }
     [[nodiscard]] const VulkanSemaphore& GetRenderingFinishedSignal() const { return mRenderingFinishedSignal; }
+    [[nodiscard]] VkExtent2D GetExtent() const { return mExtent; }
 
 private:
     std::vector<VulkanImage> mAttachments;
     VulkanRenderPass mRenderPass;
     VulkanFramebuffer mFramebuffer;
     VulkanSemaphore mRenderingFinishedSignal;
+    VkExtent2D mExtent = {};
 };
 
 }  // namespace Finally::Renderer

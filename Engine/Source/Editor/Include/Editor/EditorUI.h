@@ -6,6 +6,7 @@ namespace Finally::Renderer
 {
 class CommandBuffer;
 class Renderer;
+class RenderTarget;
 class Viewport;
 }
 
@@ -28,7 +29,7 @@ public:
     EditorUI(EditorUI&&) = delete;
     EditorUI& operator=(EditorUI&&) = delete;
 
-    void Draw(Renderer::CommandBuffer& commandBuffer);
+    void Draw(const Renderer::RenderTarget& renderTarget, Renderer::CommandBuffer& commandBuffer);
 
 private:
     Renderer::ImguiRenderer mImguiRenderer;

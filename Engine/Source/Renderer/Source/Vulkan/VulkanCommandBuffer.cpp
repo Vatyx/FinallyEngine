@@ -24,7 +24,7 @@ VulkanCommandBuffer::VulkanCommandBuffer(VkCommandBuffer handle)
     Handle = handle;
 }
 
-CB& VulkanCommandBuffer::BeginInfo(VkBufferUsageFlags flags)
+void VulkanCommandBuffer::BeginCommandBuffer(VkBufferUsageFlags flags) const
 {
     VkCommandBufferBeginInfo BeginInfo{};
     BeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -32,12 +32,10 @@ CB& VulkanCommandBuffer::BeginInfo(VkBufferUsageFlags flags)
     BeginInfo.pInheritanceInfo = nullptr;
 
     vkBeginCommandBuffer(Handle, &BeginInfo);
-
-    return *this;
 }
 
-CB& VulkanCommandBuffer::BeginRenderPass(const VulkanRenderPass& RenderPass, const VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
-                                         const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents)
+void VulkanCommandBuffer::BeginRenderPass(const VulkanRenderPass& RenderPass, const VulkanFramebuffer& Framebuffer, const VkRect2D& RenderArea,
+                                         const ArrayType<VkClearValue>& ClearValues, VkSubpassContents SubpassContents) const
 {
     VkRenderPassBeginInfo RenderPassInfo{};
     RenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -48,36 +46,26 @@ CB& VulkanCommandBuffer::BeginRenderPass(const VulkanRenderPass& RenderPass, con
     RenderPassInfo.pClearValues = GetData(ClearValues);
 
     vkCmdBeginRenderPass(Handle, &RenderPassInfo, SubpassContents);
-
-    return *this;
 }
 
-CB& VulkanCommandBuffer::BindPipeline(VkPipelineBindPoint PipelineBindPoint, const VulkanPipeline& Pipeline)
+void VulkanCommandBuffer::BindPipeline(VkPipelineBindPoint PipelineBindPoint, const VulkanPipeline& Pipeline) const
 {
     vkCmdBindPipeline(Handle, PipelineBindPoint, Pipeline);
-
-    return *this;
 }
 
-CB& VulkanCommandBuffer::Draw(uint32_t VertexCount, uint32_t InstanceCount, uint32_t FirstVertex, uint32_t FirstInstance)
+void VulkanCommandBuffer::Draw(uint32_t VertexCount, uint32_t InstanceCount, uint32_t FirstVertex, uint32_t FirstInstance) const
 {
     vkCmdDraw(Handle, VertexCount, InstanceCount, FirstVertex, FirstInstance);
-
-    return *this;
 }
 
-CB& VulkanCommandBuffer::EndRenderPass()
+void VulkanCommandBuffer::EndRenderPass() const
 {
     vkCmdEndRenderPass(Handle);
-
-    return *this;
 }
 
-CB& VulkanCommandBuffer::EndCommandBuffer()
+void VulkanCommandBuffer::EndCommandBuffer() const
 {
     vkEndCommandBuffer(Handle);
-
-    return *this;
 }
 
 }  // namespace Finally::Renderer

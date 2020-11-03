@@ -5,19 +5,23 @@
 #include "Renderer/Vulkan/VulkanRenderPass.h"
 #include "Renderer/Vulkan/VulkanShader.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
+#include "Renderer/Vulkan/VulkanDescriptors.h"
 
+#include <algorithm>
 #include <stdexcept>
 #include <xutility>
 
 namespace Finally::Renderer
 {
 
-VulkanPipeline::VulkanPipeline(const VulkanDevice& device, const VulkanRenderPass& renderPass,
-                               const VulkanShader& vertexShader, const VulkanShader& fragmentShader)
+VulkanPipeline::VulkanPipeline(const VulkanDevice& device, const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
+                               const VulkanShader& fragmentShader,
+                               const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                               const std::vector<VkPushConstantRange>& pushConstantRanges)
 {
     mDevice = &device;
 
-    CreatePipelineLayout();
+    CreatePipelineLayout(descriptorSetLayouts, pushConstantRanges);
 
     CreateShaderSteps(vertexShader, fragmentShader);
     CreateVertexInputStep();
@@ -65,14 +69,19 @@ VulkanPipeline::~VulkanPipeline()
     }
 }
 
-void VulkanPipeline::CreatePipelineLayout()
+void VulkanPipeline::CreatePipelineLayout(const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                                          const std::vector<VkPushConstantRange>& pushConstantRanges)
 {
+    std::vector<VkDescriptorSetLayout> vkLayouts;
+    std::transform(descriptorSetLayouts.begin(), descriptorSetLayouts.end(), std::back_inserter(vkLayouts),
+                   [](const VulkanDescriptorSetLayout* layout) { return layout != nullptr ? layout->GetHandle() : VK_NULL_HANDLE; });
+
     VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
     PipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    PipelineLayoutInfo.setLayoutCount = 0;             // Optional
-    PipelineLayoutInfo.pSetLayouts = nullptr;          // Optional
-    PipelineLayoutInfo.pushConstantRangeCount = 0;     // Optional
-    PipelineLayoutInfo.pPushConstantRanges = nullptr;  // Optional
+    PipelineLayoutInfo.setLayoutCount = vkLayouts.size();
+    PipelineLayoutInfo.pSetLayouts = vkLayouts.empty() ? nullptr : vkLayouts.data();
+    PipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size();
+    PipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.empty() ? nullptr : pushConstantRanges.data();
 
     if (vkCreatePipelineLayout(*mDevice, &PipelineLayoutInfo, nullptr, &PipelineLayoutHandle) != VK_SUCCESS)
     {
@@ -154,7 +163,8 @@ void VulkanPipeline::CreateMultisamplerStep()
 void VulkanPipeline::CreateColorBlendingStep()
 {
     ColorBlendAttachment = VkPipelineColorBlendAttachmentState{};
-    ColorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    ColorBlendAttachment.colorWriteMask =
+        VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     ColorBlendAttachment.blendEnable = VK_FALSE;
     ColorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
     ColorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional

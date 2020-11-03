@@ -5,7 +5,7 @@
 namespace Finally::Renderer
 {
 
-VulkanSampler::VulkanSampler(const VulkanDevice& device)
+VulkanSampler::VulkanSampler(const VulkanDevice& device, float maxAnisotropy, float minLod, float maxLod)
 {
     mDevice = &device;
 
@@ -18,8 +18,9 @@ VulkanSampler::VulkanSampler(const VulkanDevice& device)
     createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 
-    createInfo.anisotropyEnable = VK_TRUE;
-    createInfo.maxAnisotropy = 16.0f;
+    createInfo.anisotropyEnable = maxAnisotropy > 1.0f;
+    createInfo.maxAnisotropy = maxAnisotropy;
+
     createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
     createInfo.unnormalizedCoordinates = VK_FALSE;
     createInfo.compareEnable = VK_FALSE;
@@ -27,8 +28,8 @@ VulkanSampler::VulkanSampler(const VulkanDevice& device)
 
     createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
     createInfo.mipLodBias = 0.0f;
-    createInfo.minLod = 0.0f;
-    createInfo.maxLod = 0.0f;
+    createInfo.minLod = minLod;
+    createInfo.maxLod = maxLod;
 
     if (vkCreateSampler(*mDevice, &createInfo, nullptr, &Handle) != VK_SUCCESS) {
         throw std::runtime_error("failed to create sampler!");

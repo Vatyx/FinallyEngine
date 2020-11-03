@@ -11,6 +11,7 @@ namespace Finally::Renderer
 
 using namespace EnumUtilities;
 
+class VulkanDescriptorSetLayout;
 class VulkanDevice;
 class VulkanRenderPass;
 class VulkanShader;
@@ -28,14 +29,17 @@ class VulkanPipeline : public VulkanResource<VkPipeline>
 public:
     [[nodiscard]] VulkanPipeline() = default;
     [[nodiscard]] VulkanPipeline(const VulkanDevice& device, const VulkanRenderPass& renderPass, const VulkanShader& vertexShader,
-                   const VulkanShader& fragmentShader);
+                                 const VulkanShader& fragmentShader,
+                                 const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                                 const std::vector<VkPushConstantRange>& pushConstantRanges);
     ~VulkanPipeline();
 
     VulkanPipeline(VulkanPipeline&&) = default;
     VulkanPipeline& operator=(VulkanPipeline&&) = default;
 
 private:
-    void CreatePipelineLayout();
+    void CreatePipelineLayout(const std::vector<VulkanDescriptorSetLayout*>& descriptorSetLayouts,
+                              const std::vector<VkPushConstantRange>& pushConstantRanges);
 
     void CreateShaderSteps(const VulkanShader& vertexShader, const VulkanShader& fragShader);
     void CreateVertexInputStep();

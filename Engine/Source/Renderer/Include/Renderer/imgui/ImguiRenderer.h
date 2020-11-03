@@ -14,7 +14,7 @@ public:
     ImguiRenderer(const class Renderer& renderer, const class Viewport& viewport, GLFWwindow* window);
 
     void NewFrame();
-    void RecordDrawData(ImDrawData* draw_data, class CommandBuffer& commandBuffer);
+    void RecordDrawData(ImDrawData* draw_data, const class RenderTarget& renderTarget, class CommandBuffer& commandBuffer);
 
 private:
     ImguiVulkanRenderer mVulkanLayer;

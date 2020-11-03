@@ -14,7 +14,7 @@ VulkanCommandPool::VulkanCommandPool(const VulkanDevice& device)
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.queueFamilyIndex = mDevice->GetGraphicsQueue().GetFamilyIndex();
-    poolInfo.flags = 0;
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
     if (vkCreateCommandPool(*mDevice, &poolInfo, nullptr, &Handle) != VK_SUCCESS)
     {

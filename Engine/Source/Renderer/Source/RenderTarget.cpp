@@ -13,19 +13,19 @@ RenderTarget::RenderTarget(const Renderer& renderer, const VulkanImage& presenta
     const VulkanDevice& device = renderer.GetDevice();
 
     mAttachments.emplace_back(presentationImage.CloneNonOwningImage());
-    mAttachments.push_back(
-        device.CreateImage(ImageType::DepthAndStencil, VK_FORMAT_D32_SFLOAT_S8_UINT, presentationImage.GetExtent(), false));
+//    mAttachments.push_back(
+//        device.CreateImage(ImageType::DepthAndStencil, VK_FORMAT_D32_SFLOAT_S8_UINT, presentationImage.GetExtent(), false));
 
-    std::vector<AttachmentDescription> attachmentDescriptions{ 2 };
+    std::vector<AttachmentDescription> attachmentDescriptions(1);
     attachmentDescriptions[0].format = mAttachments[0].GetFormat();
     attachmentDescriptions[0].type = mAttachments[0].GetType();
     attachmentDescriptions[0].initialLayout = AttachmentLayout::Undefined;
     attachmentDescriptions[0].finalLayout = AttachmentLayout::Present;
 
-    attachmentDescriptions[1].format = mAttachments[1].GetFormat();
-    attachmentDescriptions[1].type = mAttachments[1].GetType();
-    attachmentDescriptions[1].initialLayout = AttachmentLayout::Undefined;
-    attachmentDescriptions[1].finalLayout = AttachmentLayout::DepthStencil;
+//    attachmentDescriptions[1].format = mAttachments[1].GetFormat();
+//    attachmentDescriptions[1].type = mAttachments[1].GetType();
+//    attachmentDescriptions[1].initialLayout = AttachmentLayout::Undefined;
+//    attachmentDescriptions[1].finalLayout = AttachmentLayout::DepthStencil;
 
     mRenderPass = device.CreateRenderPass(attachmentDescriptions);
 
@@ -36,6 +36,8 @@ RenderTarget::RenderTarget(const Renderer& renderer, const VulkanImage& presenta
     mFramebuffer = device.CreateFramebuffer(mRenderPass, imageViews, presentationImage.GetExtent());
 
     mRenderingFinishedSignal = VulkanSemaphore{ device };
+
+    mExtent = presentationImage.GetExtent();
 }
 
 }  // namespace Finally::Renderer

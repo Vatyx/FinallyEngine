@@ -16,28 +16,36 @@ Viewport::Viewport(const Renderer& renderer, GLFWwindow* window)
         mRenderTargets.emplace_back(renderer, image);
         mImageAvailableSemaphores.emplace_back(renderer.GetDevice());
         mInFlightFences.emplace_back(renderer.GetDevice());
+        mCommandBuffers.emplace_back(renderer.CreateCommandBuffer());
     }
 }
 
-std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> Viewport::AcquirePresentationRenderTarget()
+std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&, CommandBuffer&> Viewport::AcquirePresentationRenderTarget()
 {
     // Acquire the next image to be used to render to the screen.
-    uint32_t nextImage = mViewport.AcquireNextImage(mImageAvailableSemaphores[mCurrentFrame]);
-    assert(nextImage >= 0 && nextImage < mRenderTargets.size());
+    mNextFrame = mViewport.AcquireNextImage(mImageAvailableSemaphores[mCurrentFrame]);
+    assert(mNextFrame >= 0 && mNextFrame < mRenderTargets.size());
 
     // Wait until the next image is done being used.
-    mInFlightFences[nextImage].Wait();
-    mInFlightFences[nextImage].Reset();
+    mInFlightFences[mNextFrame].Wait();
+    mInFlightFences[mNextFrame].Reset();
 
+    uint32_t tempCurrentFrame = mCurrentFrame;
     mCurrentFrame = (mCurrentFrame + 1) % mImageCount;
 
-    return { mRenderTargets[nextImage], mImageAvailableSemaphores[mCurrentFrame], mInFlightFences[mCurrentFrame] };
+    return { mRenderTargets[mNextFrame], mImageAvailableSemaphores[tempCurrentFrame], mInFlightFences[mNextFrame],
+             mCommandBuffers[mNextFrame] };
 }
 
 void Viewport::WaitForCurrentFrame() const
 {
     mInFlightFences[mCurrentFrame].Wait();
     mInFlightFences[mCurrentFrame].Reset();
+}
+
+void Viewport::Present(const VulkanSemaphore& waitSemaphore)
+{
+    mViewport.Present(mNextFrame, waitSemaphore);
 }
 
 }  // namespace Finally::Renderer

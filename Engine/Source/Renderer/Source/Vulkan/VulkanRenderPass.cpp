@@ -66,7 +66,7 @@ VulkanRenderPass::VulkanRenderPass(const VulkanDevice& device, const std::vector
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.pColorAttachments = colorReferences.data();
     subpass.colorAttachmentCount = static_cast<uint32_t>(colorReferences.size());
-    if (depthReference)
+    if (depthReference.has_value())
     {
         subpass.pDepthStencilAttachment = &depthReference.value();
     }

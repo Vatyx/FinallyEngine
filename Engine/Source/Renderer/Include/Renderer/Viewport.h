@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Renderer/CommandBuffer.h"
 #include "Renderer/RenderTarget.h"
 #include "Renderer/Vulkan/VulkanFence.h"
 #include "Renderer/Vulkan/VulkanSemaphore.h"
@@ -30,7 +31,8 @@ public:
     Viewport(Viewport&&) = default;
     Viewport& operator=(Viewport&&) = default;
 
-    [[nodiscard]] std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&> AcquirePresentationRenderTarget();
+    [[nodiscard]] std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&, CommandBuffer&> AcquirePresentationRenderTarget();
+    void Present(const VulkanSemaphore& waitSemaphore);
     void WaitForCurrentFrame() const;
 
     [[nodiscard]] uint32_t GetCurrentFrameIndex() const { return mCurrentFrame; }
@@ -38,12 +40,14 @@ public:
 
 private:
     uint32_t mImageCount = SwapchainImageCount;
+    uint32_t mNextFrame = 0;
     uint32_t mCurrentFrame = 0;
 
     VulkanViewport mViewport;
     std::vector<VulkanFence> mInFlightFences;
     std::vector<VulkanSemaphore> mImageAvailableSemaphores;
     std::vector<RenderTarget> mRenderTargets;
+    std::vector<CommandBuffer> mCommandBuffers;
 };
 
 }  // namespace Finally::Renderer

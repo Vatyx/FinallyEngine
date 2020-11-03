@@ -16,7 +16,7 @@ EditorUI::EditorUI(const Renderer::Renderer& renderer, const Core::Window& windo
     ImGui::StyleColorsDark();
 }
 
-void EditorUI::Draw(Renderer::CommandBuffer& commandBuffer)
+void EditorUI::Draw(const class Renderer::RenderTarget& renderTarget, Renderer::CommandBuffer& commandBuffer)
 {
     mImguiRenderer.NewFrame();
 
@@ -25,7 +25,7 @@ void EditorUI::Draw(Renderer::CommandBuffer& commandBuffer)
 
     ImGui::Render();
 
-    mImguiRenderer.RecordDrawData(ImGui::GetDrawData(), commandBuffer);
+    mImguiRenderer.RecordDrawData(ImGui::GetDrawData(), renderTarget, commandBuffer);
 
 }
 

@@ -26,7 +26,6 @@ public:
     void SubmitCommandBuffer(const CommandBuffer& commandBuffer, VkPipelineStageFlags flags = 0,
                              const class VulkanFence* fence = nullptr, const VulkanSemaphore* waitSemaphore = nullptr,
                              const VulkanSemaphore* signalSemaphore = nullptr) const;
-    void Present(const class Viewport& viewport, const VulkanSemaphore& waitSemaphore) const;
     void WaitUntilIdle() const;
 
     [[nodiscard]] CommandBuffer CreateCommandBuffer() const;

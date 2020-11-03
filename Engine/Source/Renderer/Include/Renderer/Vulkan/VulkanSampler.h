@@ -7,11 +7,11 @@
 namespace Finally::Renderer
 {
 
-class VulkanSampler : VulkanResource<VkSampler>
+class VulkanSampler : public VulkanResource<VkSampler>
 {
 public:
     VulkanSampler() = default;
-    VulkanSampler(const VulkanDevice& device);
+    explicit VulkanSampler(const VulkanDevice& device, float maxAnisotropy = 16.0f, float minLod = 0.0f, float maxLod = 0.0f);
     ~VulkanSampler();
 
     VulkanSampler(const VulkanSampler&) = delete;
