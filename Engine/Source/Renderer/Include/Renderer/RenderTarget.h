@@ -23,6 +23,7 @@ class RenderTarget
 {
 public:
     RenderTarget() = default;
+    RenderTarget(const Renderer& renderer, VkExtent2D extent);
     RenderTarget(const Renderer& renderer, const VulkanImage& presentationImage);
 
     RenderTarget(const RenderTarget&) = delete;
