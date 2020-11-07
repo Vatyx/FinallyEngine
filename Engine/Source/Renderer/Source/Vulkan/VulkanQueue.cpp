@@ -6,6 +6,8 @@
 #include "Renderer/Vulkan/VulkanSemaphore.h"
 #include "Renderer/Vulkan/VulkanViewport.h"
 
+#include "Logging/Logger.h"
+
 namespace Finally::Renderer
 {
 
@@ -23,12 +25,9 @@ void VulkanQueue::Submit(const VulkanCommandBuffer& VulkanCommandBuffer, const V
     VkSubmitInfo SubmitInfo{};
     SubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-    if (WaitSemaphore != nullptr)
-    {
-        VkSemaphore WaitSemaphores[] = { *WaitSemaphore };
-        SubmitInfo.waitSemaphoreCount = 1;
-        SubmitInfo.pWaitSemaphores = WaitSemaphores;
-    }
+    VkSemaphore waitSignal = GetHandleIfValid(WaitSemaphore);
+    SubmitInfo.waitSemaphoreCount = waitSignal != VK_NULL_HANDLE ? 1 : 0;
+    SubmitInfo.pWaitSemaphores = &waitSignal;
 
     if (WaitStage != nullptr)
     {
@@ -39,12 +38,9 @@ void VulkanQueue::Submit(const VulkanCommandBuffer& VulkanCommandBuffer, const V
     SubmitInfo.commandBufferCount = 1;
     SubmitInfo.pCommandBuffers = CommandBuffers;
 
-    if (SignalSemaphore != nullptr)
-    {
-        VkSemaphore SignalSemaphores[] = { *SignalSemaphore };
-        SubmitInfo.signalSemaphoreCount = 1;
-        SubmitInfo.pSignalSemaphores = SignalSemaphores;
-    }
+    VkSemaphore signal = GetHandleIfValid(SignalSemaphore);
+    SubmitInfo.signalSemaphoreCount = signal != VK_NULL_HANDLE ? 1 : 0;
+    SubmitInfo.pSignalSemaphores = &signal;
 
     vkQueueSubmit(Handle, 1, &SubmitInfo, Fence != nullptr ? Fence->GetHandle() : VK_NULL_HANDLE);
 }
@@ -54,7 +50,7 @@ void VulkanQueue::Submit(const std::vector<VkSubmitInfo>& SubmitInfo, const Vulk
     vkQueueSubmit(Handle, SubmitInfo.size(), SubmitInfo.data(), Fence != nullptr ? *Fence : VK_NULL_HANDLE);
 }
 
-void VulkanPresentQueue::Present(const VulkanViewport& viewport, uint32_t imageIndex,
+VkResult VulkanPresentQueue::Present(const VulkanViewport& viewport, uint32_t imageIndex,
                                  const VulkanSemaphore& signalSemaphore) const
 {
     VkPresentInfoKHR presentInfo{};
@@ -70,7 +66,7 @@ void VulkanPresentQueue::Present(const VulkanViewport& viewport, uint32_t imageI
 
     presentInfo.pImageIndices = &imageIndex;
 
-    vkQueuePresentKHR(Handle, &presentInfo);
+    return vkQueuePresentKHR(Handle, &presentInfo);
 }
 
 }  // namespace Finally::Renderer

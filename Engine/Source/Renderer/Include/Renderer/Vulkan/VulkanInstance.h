@@ -21,7 +21,7 @@ const uint32_t HEIGHT = 600;
 const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 
 #ifdef NDEBUG
-const bool enableValidationLayers = false;
+const bool enableValidationLayers = true;
 #else
 const bool enableValidationLayers = true;
 #endif

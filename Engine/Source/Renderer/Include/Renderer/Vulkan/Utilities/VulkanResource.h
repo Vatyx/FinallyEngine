@@ -41,4 +41,10 @@ protected:
     const class VulkanDevice* mDevice = nullptr;
 };
 
+template<typename Resource> requires requires (Resource* r) { r->GetHandle(); }
+auto GetHandleIfValid(Resource* resource)
+{
+    return resource != nullptr ? resource->GetHandle() : VK_NULL_HANDLE;
+}
+
 }  // namespace Finally::Renderer

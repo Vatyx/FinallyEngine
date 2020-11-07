@@ -41,7 +41,7 @@ public:
     {
     }
 
-    void Present(const class VulkanViewport& swapchain, uint32_t imageIndex, const VulkanSemaphore& signalSemaphore) const;
+    VkResult Present(const class VulkanViewport& swapchain, uint32_t imageIndex, const VulkanSemaphore& signalSemaphore) const;
 };
 
 }  // namespace Finally::Renderer

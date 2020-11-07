@@ -9,9 +9,10 @@ namespace Finally::Renderer
 {
 
 Viewport::Viewport(const Renderer& renderer, GLFWwindow* window)
-    : mViewport(renderer.GetVulkanInstance(), window, mImageCount)
+    : mVulkanViewport{renderer.GetVulkanInstance(), window, mImageCount}
+    , mRenderer{&renderer}
 {
-    for (const VulkanImage& image : mViewport.GetSwapchainImages())
+    for (const VulkanImage& image : mVulkanViewport.GetSwapchainImages())
     {
         mRenderTargets.emplace_back(renderer, image);
         mImageAvailableSemaphores.emplace_back(renderer.GetDevice());
@@ -20,32 +21,53 @@ Viewport::Viewport(const Renderer& renderer, GLFWwindow* window)
     }
 }
 
-std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&, CommandBuffer&> Viewport::AcquirePresentationRenderTarget()
+std::optional<Viewport::RenderTargetAcquiredData> Viewport::AcquirePresentationRenderTarget()
 {
     // Acquire the next image to be used to render to the screen.
-    mNextFrame = mViewport.AcquireNextImage(mImageAvailableSemaphores[mCurrentFrame]);
+    VkResult result = mVulkanViewport.AcquireNextImage(mImageAvailableSemaphores[mSignalIndex], mNextFrame);
+
+    if ((mShouldRecreateSwapchain = (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)))
+    {
+        return {};
+    }
+
     assert(mNextFrame >= 0 && mNextFrame < mRenderTargets.size());
 
     // Wait until the next image is done being used.
     mInFlightFences[mNextFrame].Wait();
     mInFlightFences[mNextFrame].Reset();
 
-    uint32_t tempCurrentFrame = mCurrentFrame;
-    mCurrentFrame = (mCurrentFrame + 1) % mImageCount;
+    uint32_t signalIndex = mSignalIndex;
+    mSignalIndex = (mSignalIndex + 1) % mImageCount;
 
-    return { mRenderTargets[mNextFrame], mImageAvailableSemaphores[tempCurrentFrame], mInFlightFences[mNextFrame],
+    return Viewport::RenderTargetAcquiredData{ mRenderTargets[mNextFrame], mImageAvailableSemaphores[signalIndex], mInFlightFences[mNextFrame],
              mCommandBuffers[mNextFrame] };
-}
-
-void Viewport::WaitForCurrentFrame() const
-{
-    mInFlightFences[mCurrentFrame].Wait();
-    mInFlightFences[mCurrentFrame].Reset();
 }
 
 void Viewport::Present(const VulkanSemaphore& waitSemaphore)
 {
-    mViewport.Present(mNextFrame, waitSemaphore);
+    VkResult result = mVulkanViewport.Present(mNextFrame, waitSemaphore);
+    mShouldRecreateSwapchain = (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR);
+}
+
+void Viewport::ConditionallyRecreateSwapchain()
+{
+    if (!mShouldRecreateSwapchain)
+    {
+        return;
+    }
+
+    // Wait until all resources aren't being used.
+    mRenderer->WaitUntilIdle();
+
+    mRenderTargets.clear();
+    mVulkanViewport.RecreateSwapchain();
+
+    assert(mRenderer != nullptr);
+    for (const VulkanImage& image : mVulkanViewport.GetSwapchainImages())
+    {
+        mRenderTargets.emplace_back(*mRenderer, image);
+    }
 }
 
 }  // namespace Finally::Renderer

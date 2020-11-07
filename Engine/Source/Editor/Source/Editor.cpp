@@ -43,10 +43,18 @@ void Editor::Tick(float DeltaTime)
 
     Renderer::Viewport& viewport = mEditorWindow.GetViewport();
 
+    viewport.ConditionallyRecreateSwapchain();
+
+    auto RenderTargetData = viewport.AcquirePresentationRenderTarget();
+    if (!RenderTargetData.has_value())
+    {
+        return;
+    }
+
     // RenderTarget is the next image to be presented.
     // waitSemaphore is the signal for when the image is render to be rendered to.
     // fence is signaled after RenderTarget is finished being rendered to on the CPU side.
-    auto [renderTarget, waitSemaphore, fence, commandBuffer] = viewport.AcquirePresentationRenderTarget();
+    auto [renderTarget, waitSemaphore, fence, commandBuffer] = RenderTargetData.value();
 
     commandBuffer.BeginRecording();
 

@@ -15,9 +15,10 @@ namespace Finally::Renderer
 VulkanViewport::VulkanViewport(const VulkanInstance& instance, GLFWwindow* window, uint32_t imageCount)
     : mInstance(&instance)
     , mDevice(&instance.GetDevice())
+    , mWindow(window)
     , mImageCount(imageCount)
 {
-    if (glfwCreateWindowSurface(instance, window, nullptr, &mSurface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(*mInstance, mWindow, nullptr, &mSurface) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to create window surface!");
     }
@@ -25,7 +26,6 @@ VulkanViewport::VulkanViewport(const VulkanInstance& instance, GLFWwindow* windo
     ValidatePhysicalDeviceSurfaceSupport();
 
     CreateSwapchain();
-    RetrieveSwapchainImages();
 }
 
 VulkanViewport::~VulkanViewport()
@@ -115,6 +115,8 @@ void VulkanViewport::CreateSwapchain()
     {
         throw std::runtime_error("!ailed to create swap chain!");
     }
+
+    RetrieveSwapchainImages();
 }
 
 SwapChainSupportDetails VulkanViewport::CreateSwapchainSupportDetails() const
@@ -180,14 +182,16 @@ VkExtent2D VulkanViewport::ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilitie
     }
     else
     {
-        VkExtent2D ActualExtent = { WIDTH, HEIGHT };
+        int width, height = 0;
+        glfwGetFramebufferSize(mWindow, &width, &height);
+        VkExtent2D actualExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 
-        ActualExtent.width =
-            std::max(Capabilities.minImageExtent.width, std::min(Capabilities.maxImageExtent.width, ActualExtent.width));
-        ActualExtent.height =
-            std::max(Capabilities.minImageExtent.height, std::min(Capabilities.maxImageExtent.height, ActualExtent.height));
+        actualExtent.width =
+            std::max(Capabilities.minImageExtent.width, std::min(Capabilities.maxImageExtent.width, actualExtent.width));
+        actualExtent.height =
+            std::max(Capabilities.minImageExtent.height, std::min(Capabilities.maxImageExtent.height, actualExtent.height));
 
-        return ActualExtent;
+        return actualExtent;
     }
 }
 
@@ -204,25 +208,40 @@ void VulkanViewport::RetrieveSwapchainImages()
     }
 }
 
-uint32_t VulkanViewport::AcquireNextImage(const VulkanSemaphore& waitSemaphore) const
+VkResult VulkanViewport::AcquireNextImage(const VulkanSemaphore& waitSemaphore, uint32_t& imageIndex) const
 {
     if (mDevice == nullptr)
     {
-        return 0;
+        imageIndex = 0;
+        return VK_SUCCESS;
     }
 
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, waitSemaphore, VK_NULL_HANDLE, &imageIndex);
-
-    return imageIndex;
+    return vkAcquireNextImageKHR(*mDevice, mSwapchain, UINT64_MAX, waitSemaphore, VK_NULL_HANDLE, &imageIndex);
 }
 
-void VulkanViewport::Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const
+VkResult VulkanViewport::Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const
 {
-    if (mDevice != nullptr)
+    if (mDevice == nullptr)
     {
-        mDevice->GetPresentQueue().Present(*this, imageIndex, waitSemaphore);
+        return VK_SUCCESS;
     }
+
+    return mDevice->GetPresentQueue().Present(*this, imageIndex, waitSemaphore);
+}
+
+void VulkanViewport::RecreateSwapchain()
+{
+    if (mDevice == nullptr || mInstance == nullptr)
+    {
+        return;
+    }
+
+    mDevice->WaitUntilIdle();
+
+    mSwapchainImages.clear();
+    vkDestroySwapchainKHR(*mDevice, mSwapchain, nullptr);
+
+    CreateSwapchain();
 }
 
 }  // namespace Finally::Renderer

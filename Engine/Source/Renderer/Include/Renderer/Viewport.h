@@ -8,6 +8,7 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 #include <vulkan/vulkan.h>
 
 struct GLFWwindow;
@@ -15,14 +16,15 @@ struct GLFWwindow;
 namespace Finally::Renderer
 {
 
+class Renderer;
+
 static const uint32_t SwapchainImageCount = 3;
-static const uint32_t MaxFramesInFlight = 2;
 
 class Viewport
 {
 public:
     Viewport() = default;
-    Viewport(const class Renderer& renderer, GLFWwindow* window);
+    Viewport(const Renderer& renderer, GLFWwindow* window);
     ~Viewport() = default;
 
     Viewport(const Viewport&) = delete;
@@ -31,19 +33,30 @@ public:
     Viewport(Viewport&&) = default;
     Viewport& operator=(Viewport&&) = default;
 
-    [[nodiscard]] std::tuple<RenderTarget&, VulkanSemaphore&, VulkanFence&, CommandBuffer&> AcquirePresentationRenderTarget();
-    void Present(const VulkanSemaphore& waitSemaphore);
-    void WaitForCurrentFrame() const;
+    struct RenderTargetAcquiredData
+    {
+        RenderTarget& renderTarget;
+        VulkanSemaphore& waitSemaphore;
+        VulkanFence& presentationFence;
+        CommandBuffer& commandBuffer;
+    };
+    [[nodiscard]] std::optional<RenderTargetAcquiredData> AcquirePresentationRenderTarget();
 
-    [[nodiscard]] uint32_t GetCurrentFrameIndex() const { return mCurrentFrame; }
-    [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mViewport; }
+    void Present(const VulkanSemaphore& waitSemaphore);
+    void ConditionallyRecreateSwapchain();
+
+    [[nodiscard]] uint32_t GetCurrentFrameIndex() const { return mSignalIndex; }
+    [[nodiscard]] const VulkanViewport& GetVulkanViewport() const { return mVulkanViewport; }
 
 private:
     uint32_t mImageCount = SwapchainImageCount;
     uint32_t mNextFrame = 0;
-    uint32_t mCurrentFrame = 0;
+    uint32_t mSignalIndex = 0;
+    bool mShouldRecreateSwapchain = false;
 
-    VulkanViewport mViewport;
+    VulkanViewport mVulkanViewport;
+    const Renderer* mRenderer = nullptr;
+
     std::vector<VulkanFence> mInFlightFences;
     std::vector<VulkanSemaphore> mImageAvailableSemaphores;
     std::vector<RenderTarget> mRenderTargets;

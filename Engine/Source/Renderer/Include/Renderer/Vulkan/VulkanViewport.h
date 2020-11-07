@@ -40,8 +40,10 @@ public:
     [[nodiscard]] const std::vector<VulkanImage>& GetSwapchainImages() const { return mSwapchainImages; }
     [[nodiscard]] VkViewport GetVkViewport() const;
 
-    [[nodiscard]] uint32_t AcquireNextImage(const VulkanSemaphore& waitSemaphore) const;
-    void Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const;
+    [[nodiscard]] VkResult AcquireNextImage(const VulkanSemaphore& waitSemaphore, uint32_t& imageIndex) const;
+    [[nodiscard]] VkResult Present(uint32_t imageIndex, const VulkanSemaphore& waitSemaphore) const;
+
+    void RecreateSwapchain();
 
 private:
     void ValidatePhysicalDeviceSurfaceSupport() const;
@@ -51,18 +53,19 @@ private:
     [[nodiscard]] SwapChainSupportDetails CreateSwapchainSupportDetails() const;
     static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR>& Formats);
     static VkPresentModeKHR ChooseSwapPresentMode(std::vector<VkPresentModeKHR>& PresentModes);
-    static VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);
+    VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR Capabilities);
+
+    uint32_t mImageCount = 3;
 
     const VulkanInstance* mInstance = nullptr;
     const VulkanDevice* mDevice = nullptr;
+    GLFWwindow* mWindow = nullptr;
 
     VkSurfaceKHR mSurface{};
     VkSwapchainKHR mSwapchain{};
     std::vector<VulkanImage> mSwapchainImages;
     VkFormat mImageFormat{};
     VkExtent2D mExtent{};
-
-    uint32_t mImageCount = 3;
 };
 
 }  // namespace Finally::Renderer

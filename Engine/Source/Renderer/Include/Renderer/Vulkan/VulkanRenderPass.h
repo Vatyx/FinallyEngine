@@ -3,8 +3,8 @@
 #include "Renderer/Vulkan/Utilities/VulkanResource.h"
 #include "Renderer/Vulkan/VulkanImage.h"
 
-#include <vulkan/vulkan.h>
 #include <vector>
+#include <vulkan/vulkan.h>
 
 namespace Finally::Renderer
 {
@@ -20,13 +20,13 @@ enum class AttachmentLayout : uint8_t
     MAX
 };
 
-struct AttachmentDescription {
+struct AttachmentDescription
+{
     VkFormat format;
     ImageType type;
     AttachmentLayout initialLayout;
     AttachmentLayout finalLayout;
 };
-
 
 class VulkanRenderPass : public VulkanResource<VkRenderPass>
 {

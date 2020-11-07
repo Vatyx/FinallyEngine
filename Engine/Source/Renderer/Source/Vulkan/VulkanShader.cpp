@@ -2,9 +2,6 @@
 #include "Renderer/Vulkan/VulkanShader.h"
 #include "Renderer/Vulkan/VulkanDevice.h"
 
-#include "Utilities/FileUtilities.h"
-
-#include <cassert>
 #include <stdexcept>
 
 namespace Finally::Renderer

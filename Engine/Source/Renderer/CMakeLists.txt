@@ -7,6 +7,8 @@ find_package(glfw3 REQUIRED FATAL_ERROR)
 
 add_library(FinallyRenderer)
 
+#target_compile_options(FinallyRenderer PRIVATE "/DEBUG /Z7 /OPT:REF /OPT:ICF /O2")
+
 target_sources(FinallyRenderer
         PRIVATE
         Source/CommandBuffer.cpp
